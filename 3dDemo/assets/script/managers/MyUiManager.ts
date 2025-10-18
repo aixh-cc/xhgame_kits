@@ -1,7 +1,7 @@
-import { DI, INode, IUiDrive, UiManager } from "@aixh-cc/xhgame_ec_framework"
-import { TestUiDrive } from "../../../tests/myTestGame/test/drive/TestUiDrive"
+import { DI, IUiDrive, UiManager } from "@aixh-cc/xhgame_ec_framework"
+import { Node } from "cc"
 
-export class MyUiManager extends UiManager<IUiDrive, INode> {
+export class MyUiManager extends UiManager<IUiDrive, Node> {
 
     constructor() {
         super(DI.make('IUiDrive'))

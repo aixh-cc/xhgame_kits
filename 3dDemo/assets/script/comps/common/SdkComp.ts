@@ -2,8 +2,8 @@
 import { Platform, System } from "@aixh-cc/xhgame_ec_framework"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { xhgame } from "db://assets/script/xhgame"
-import { WeixinSDK } from "../../../../extensions/xhgame_plugin/assets/util/third/WeixinSDK";
-import { DouyinSDK } from "../../../../extensions/xhgame_plugin/assets/util/third/DouyinSDK";
+import { DouyinSDK } from "db://xhgame_plugin/util/third/DouyinSDK";
+import { WeixinSDK } from "db://xhgame_plugin/util/third/WeixinSDK";
 
 export class DdkSystem extends System {
 

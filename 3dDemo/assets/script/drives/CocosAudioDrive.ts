@@ -1,8 +1,8 @@
 import { _decorator, Component, director, instantiate, Node, Prefab } from "cc";
 import { xhgame } from "db://assets/script/xhgame";
 import { DI, IAudioDrive } from "@aixh-cc/xhgame_ec_framework";
-import { AudioEffect } from "../../../extensions/xhgame_plugin/assets/ccComponent/AudioEffect";
-import { AudioMusic } from "../../../extensions/xhgame_plugin/assets/ccComponent/AudioMusic";
+import { AudioEffect } from "db://xhgame_plugin/ccComponent/AudioEffect";
+import { AudioMusic } from "db://xhgame_plugin/ccComponent/AudioMusic";
 
 const { ccclass } = _decorator;
 
@@ -21,8 +21,6 @@ export class CocosAudioDrive extends Component implements IAudioDrive {
         var music = new Node("MusicNode");
         music.parent = node;
         this.music = effect.addComponent(AudioMusic);
-        // 绑定到容器里
-        DI.bindInstance('AudioDrive', this)
     }
     protected start(): void {
         // 

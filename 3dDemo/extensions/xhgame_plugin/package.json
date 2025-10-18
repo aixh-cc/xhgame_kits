@@ -1,6 +1,6 @@
 {
     "name": "xhgame_plugin",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "package_version": 2,
     "type": "module",
     "main": "./dist/browser.cjs",
@@ -28,6 +28,12 @@
         "vue-tsc": "^2.1.10"
     },
     "contributions": {
+        "asset-db": {
+            "mount": {
+                "path": "./assets",
+                "readonly": false
+            }
+        },
         "menu": [{
                 "path": "i18n:menu.panel/xhgame_plugin",
                 "label": "i18n:xhgame_plugin.title",

@@ -1,6 +1,6 @@
 import { BaseFactory, IItem, IItemProduceDrive } from "@aixh-cc/xhgame_ec_framework";
-import { UnitAnimator } from "../../cocos/items/CocosUnitItem";
-import { IUnitState } from "../../common/unit/State";
+// import { UnitAnimator } from "../../cocos/items/CocosUnitItem";
+// import { IUnitState } from "../../common/unit/State";
 
 export enum FactoryType {
     unitItem = "unitItem",
@@ -37,11 +37,11 @@ export interface IUiItem extends IItem {
 }
 export interface IUnitItem extends IItem {
     owner_is_player: boolean
-    animator: UnitAnimator
+    animator: any // 
     hp: number
     maxHp: number
     bloodUnitUiItem: IUnitUiItem
-    state: IUnitState
+    state: any // IUnitState
     active: boolean
     getModelName(): string
     // 动作

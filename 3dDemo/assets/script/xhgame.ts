@@ -2,8 +2,8 @@
 import { DI, IGame, IManagers, TimeSystem } from "@aixh-cc/xhgame_ec_framework";
 // import { CocosGameManagers } from "./CocosGameManagers";
 // import { CocosGame } from "./CocosGame";
-import { TestGameManagers } from "../../tests/myTestGame/test/TestGameManagers";
-import { TestGame } from "../../tests/myTestGame/TestGame";
+// import { TestGameManagers } from "../../tests/myTestGame/test/TestGameManagers";
+// import { TestGame } from "../../tests/myTestGame/TestGame";
 import { CocosGameManagers } from "./CocosGameManagers";
 import { CocosGame } from "./CocosGame";
 import { CocosDrives } from "./CocosDrives";

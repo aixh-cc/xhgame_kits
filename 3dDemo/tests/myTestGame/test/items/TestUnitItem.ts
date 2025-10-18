@@ -1,10 +1,8 @@
 import { IUnitItem, IUnitUiItem } from "db://assets/script/managers/myFactory/MyFactorys"
-// import { IUnitState, StandingState } from "../../../../assets//script/common/unit/State"
-// import { UnitAnimator } from "../../../../assets/script/cocos/items/CocosUnitItem"
 
 import { xhgame } from "../../../../assets/script/xhgame"
 import { BaseTestItem } from "./BaseTestItem"
-import { IFactory, IItem, IItemProduceDrive } from "@aixh-cc/xhgame_ec_framework"
+import { IItem, IItemProduceDrive } from "@aixh-cc/xhgame_ec_framework"
 
 export class TestUnitItem extends BaseTestItem implements IUnitItem {
     static className = 'TestUnitItem'

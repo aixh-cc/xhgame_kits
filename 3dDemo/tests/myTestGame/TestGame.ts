@@ -5,6 +5,7 @@ import { IConfigTableItem } from "db://assets/script/managers/myTable/tables/Con
 import { xhgame } from "db://assets/script/xhgame";
 import { LoadResourceViewComp } from "db://assets/script/comps/enter/LoadResourceViewComp";
 import { GameEnterComp } from "db://assets/script/comps/enter/GameEnterComp";
+import { TestDrives } from "./TestDrives";
 // import { Platform } from "db://assets/script/common/ClientEnum";
 // import { HelpComp } from "db://assets/script/severs/common/HelpComp";
 // import { LoadResourceViewComp } from "db://assets/script/severs/common/LoadResourceViewComp";
@@ -35,9 +36,12 @@ export class TestGame implements IGame {
     async start() {
         this.serverNo = 'dev_001'
         this.at_platform = Platform.H5
+        const drives = new TestDrives()
         const managers = new TestGameManagers()
+        DI.bindInstance('IDrives', drives)
         DI.bindInstance('IGame', this)
         DI.bindInstance('IManagers', managers)
+
         managers.init(this.node)
         await this.init()
         console.log('init over')

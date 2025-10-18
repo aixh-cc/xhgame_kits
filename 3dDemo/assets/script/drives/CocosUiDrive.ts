@@ -1,9 +1,8 @@
 import { _decorator, assetManager, Component, instantiate, math, Node, Prefab, ResolutionPolicy, screen, UITransform, view } from "cc";
-import { BaseModelComp, DI, IUiDrive } from "@aixh-cc/xhgame_ec_framework";
+import { BaseModelComp, DI, IUiDrive, IView } from "@aixh-cc/xhgame_ec_framework";
 import { xhgame } from "../xhgame";
 import { IUiItem } from "../managers/myFactory/MyFactorys";
-import { CocosBaseView } from "@aixh-cc/xhgame_cocos";
-// import { BaseView } from "../../../extensions/xhgame_plugin/assets/ccComponent/BaseView";
+import { CocosBaseView } from "db://xhgame_plugin/Ui/CocosBaseView";
 
 const { ccclass } = _decorator;
 
@@ -116,7 +115,6 @@ export class CocosUiDrive extends Component implements IUiDrive {
 
     onLoad() {
         this.init();
-        DI.bindInstance('IUiDrive', this)
     }
 
     /** 初始化引擎 */

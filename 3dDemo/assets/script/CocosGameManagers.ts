@@ -1,14 +1,20 @@
 import { Node, sys } from "cc";
-import { CryptoEmpty, CryptoManager, IManagers, INode, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
-// import { MyUiManager } from "./managers/MyUiManager";
+import { CryptoEmpty, CryptoManager, DI, IManagers, INode, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
+import { MyUiManager } from "./managers/MyUiManager";
 import { MyAudioManager } from "./managers/MyAudioManager";
-// import { MyNetManager } from "./managers/MyNetManager";
-// import { MyFactoryManager } from "./managers/MyFactoryManager";
+import { MyNetManager } from "./managers/MyNetManager";
+import { MyFactoryManager } from "./managers/MyFactoryManager";
 import { MyTableManager } from "./managers/MyTableManager";
 import { MyEventManager } from "./managers/MyEventManager";
+import { CocosUiDrive } from "./drives/CocosUiDrive";
 
 export class CocosGameManagers implements IManagers {
     node: Node
+
+    constructor() {
+        // 先驱动
+        DI.bindSingleton<CocosUiDrive>('IUiDrive', CocosUiDrive)
+    }
 
     init(node: Node | INode) {
         this.node = node as Node
@@ -16,14 +22,14 @@ export class CocosGameManagers implements IManagers {
     }
 
     build() {
+        console.log('CocosGameManagers build')
         this.setEventManager(new MyEventManager())
         this.setTableManager(this.getTables())
-        this.setFactoryManager(this.getFactorys())
+        // this.setFactoryManager(this.getFactorys())
         this.setNetManager(new MyNetManager())
         this.setGuiManager(new MyUiManager())
         this.setStorageManager(new StorageManager('xhgame', sys.localStorage))
         this.setCryptoManager(new CryptoManager('s', new CryptoEmpty()))
-
         this.setAudioManager(new MyAudioManager())
     }
     getTables() {
@@ -73,15 +79,6 @@ export class CocosGameManagers implements IManagers {
     getFactoryManager(): MyFactoryManager {
         return this.factoryManager
     }
-    // 
-    // cameraManager: CameraManager<UICamera, UICamera>
-    // setCameraManager(cameraManager) {
-    //     this.cameraManager = cameraManager
-    //     return this
-    // }
-    // getCameraManager(): CameraManager<UICamera, UICamera> {
-    //     return this.cameraManager
-    // }
     netManager: MyNetManager
     setNetManager(netManager: MyNetManager) {
         this.netManager = netManager
