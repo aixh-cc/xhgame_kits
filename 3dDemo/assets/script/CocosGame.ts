@@ -8,11 +8,12 @@ import { BYTEDANCE, DEBUG, WECHAT } from "cc/env";
 // import { SdkComp } from "./severs/common/SdkComp";
 import { DI, Entity, IGame, Platform, TimeSystem } from "@aixh-cc/xhgame_ec_framework";
 import { Game, Component, assetManager, game, director, profiler, _decorator } from "cc";
-import { LoadResourceView } from "./cocos/view/ui/LoadResourceView";
+// import { LoadResourceView } from "./cocos/view/ui/LoadResourceView";
 import { IConfigTableItem } from "./managers/myTable/tables/ConfigTable";
 import { LoadResourceViewComp } from "./comps/enter/LoadResourceViewComp";
-import { GameEnterComp } from "./comps/enter/GameEnterComp";
+// import { GameEnterComp } from "./comps/enter/GameEnterComp";
 import { CocosGameManagers } from "./CocosGameManagers";
+import { CocosDrives } from "./CocosDrives";
 
 const { ccclass, property } = _decorator;
 @ccclass('CocosGame')
@@ -41,9 +42,12 @@ export class CocosGame extends Component implements IGame {
             this.serverNo = 'dev_001' // 0
             this.at_platform = Platform.H5
         }
+        const drives = new CocosDrives()
         const managers = new CocosGameManagers()
-        DI.bindInstance('IGame', this)
+        DI.bindInstance('IDrives', drives)
         DI.bindInstance('IManagers', managers)
+        DI.bindInstance('IGame', this)
+
         managers.init(this.node)
         await this.init()
         await this.play()
@@ -54,15 +58,15 @@ export class CocosGame extends Component implements IGame {
     async init() {
         this.onGameShowHide()
         this.setGameEntity(Entity.createEntity<GameEntity>(GameEntity))
-        this.addComponent(LoadResourceView)
+        // this.addComponent(LoadResourceView)
         await xhgame.gameEntity.attachComponent(LoadResourceViewComp).done()
         // 这个时候xhgame.table.config已经有值了
         this.config = xhgame.table.getTable(xhgame.table.enums.config).getInfo(this.serverNo)
     }
 
     async play() {
-        xhgame.timer.timePlay()
-        await xhgame.gameEntity.attachComponent(GameEnterComp).done()
+        // xhgame.timer.timePlay()
+        // await xhgame.gameEntity.attachComponent(GameEnterComp).done()
     }
 
     // is_pause: boolean = false

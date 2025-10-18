@@ -1,6 +1,9 @@
 import { AudioManager, IAudioDrive } from "@aixh-cc/xhgame_ec_framework"
 
-export class MyAudioManager<T extends IAudioDrive> extends AudioManager<T> {
+export class MyAudioManager extends AudioManager<IAudioDrive> {
+    constructor() {
+        super(null)
+    }
     get enums() {
         return AudioEnums
     }

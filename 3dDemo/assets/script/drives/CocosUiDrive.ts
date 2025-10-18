@@ -2,7 +2,8 @@ import { _decorator, assetManager, Component, instantiate, math, Node, Prefab, R
 import { BaseModelComp, DI, IUiDrive } from "@aixh-cc/xhgame_ec_framework";
 import { xhgame } from "../xhgame";
 import { IUiItem } from "../managers/myFactory/MyFactorys";
-import { BaseView } from "../../../extensions/xhgame_plugin/assets/ccComponent/BaseView";
+import { CocosBaseView } from "@aixh-cc/xhgame_cocos";
+// import { BaseView } from "../../../extensions/xhgame_plugin/assets/ccComponent/BaseView";
 
 const { ccclass } = _decorator;
 
@@ -78,7 +79,7 @@ export class CocosUiDrive extends Component implements IUiDrive {
                         }
                         let node = instantiate(prefab);
                         node.active = true
-                        let ccview = node.getComponent(BaseView)!
+                        let ccview = node.getComponent(CocosBaseView)
                         // console.log('ccview', ccview)
                         ccview.setViewComp(comp)
                         this.nodeMap.set(uiid, node)

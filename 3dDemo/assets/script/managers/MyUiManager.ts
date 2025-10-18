@@ -4,7 +4,6 @@ import { TestUiDrive } from "../../../tests/myTestGame/test/drive/TestUiDrive"
 export class MyUiManager extends UiManager<IUiDrive, INode> {
 
     constructor() {
-        DI.bindSingleton<TestUiDrive>('IUiDrive', TestUiDrive)
         super(DI.make('IUiDrive'))
     }
 
