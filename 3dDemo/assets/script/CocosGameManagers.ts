@@ -6,15 +6,9 @@ import { MyNetManager } from "./managers/MyNetManager";
 import { MyFactoryManager } from "./managers/MyFactoryManager";
 import { MyTableManager } from "./managers/MyTableManager";
 import { MyEventManager } from "./managers/MyEventManager";
-import { CocosUiDrive } from "./drives/CocosUiDrive";
 
 export class CocosGameManagers implements IManagers {
     node: Node
-
-    constructor() {
-        // 先驱动
-        DI.bindSingleton<CocosUiDrive>('IUiDrive', CocosUiDrive)
-    }
 
     init(node: Node | INode) {
         this.node = node as Node
@@ -25,7 +19,7 @@ export class CocosGameManagers implements IManagers {
         console.log('CocosGameManagers build')
         this.setEventManager(new MyEventManager())
         this.setTableManager(this.getTables())
-        // this.setFactoryManager(this.getFactorys())
+        this.setFactoryManager(this.getFactorys())
         this.setNetManager(new MyNetManager())
         this.setGuiManager(new MyUiManager())
         this.setStorageManager(new StorageManager('xhgame', sys.localStorage))

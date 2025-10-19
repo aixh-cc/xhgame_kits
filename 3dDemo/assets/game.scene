@@ -552,7 +552,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "eecc7e54-7513-4a10-a1b8-1b3cf92c37cd@f9941",
+      "__uuid__": "57520716-48c8-4a19-8acf-41c9f8777fb0@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -1445,32 +1445,32 @@
     "__type__": "cc.AmbientInfo",
     "_skyColorHDR": {
       "__type__": "cc.Vec4",
-      "x": 0.365754,
-      "y": 0.568107,
-      "z": 0.908079,
+      "x": 0.452588,
+      "y": 0.607642,
+      "z": 0.755699,
       "w": 0.520833125
     },
     "_skyColor": {
       "__type__": "cc.Vec4",
-      "x": 0.365754,
-      "y": 0.568107,
-      "z": 0.908079,
+      "x": 0.452588,
+      "y": 0.607642,
+      "z": 0.755699,
       "w": 0.520833125
     },
     "_skyIllumHDR": 20000,
     "_skyIllum": 20000,
     "_groundAlbedoHDR": {
       "__type__": "cc.Vec4",
-      "x": 0.455624,
-      "y": 0.403274,
-      "z": 0.370948,
+      "x": 0.618555,
+      "y": 0.577848,
+      "z": 0.544564,
       "w": 0
     },
     "_groundAlbedo": {
       "__type__": "cc.Vec4",
-      "x": 0.455624,
-      "y": 0.403274,
-      "z": 0.370948,
+      "x": 0.618555,
+      "y": 0.577848,
+      "z": 0.544564,
       "w": 0
     },
     "_skyColorLDR": {
@@ -1528,16 +1528,22 @@
     },
     "_envmapLDR": null,
     "_diffuseMapHDR": {
-      "__uuid__": "c0767e5c-0346-4936-8e56-00db3a6a7cf2@b47c0",
+      "__uuid__": "3d243c8d-0e90-46e1-886b-51e691dc98aa@b47c0",
       "__expectedType__": "cc.TextureCube"
     },
     "_diffuseMapLDR": null,
-    "_enabled": true,
+    "_enabled": false,
     "_useHDR": true,
-    "_editableMaterial": null,
-    "_reflectionHDR": null,
+    "_editableMaterial": {
+      "__uuid__": "d3c7820c-2a98-4429-8bc7-b8453bc9ac41",
+      "__expectedType__": "cc.Material"
+    },
+    "_reflectionHDR": {
+      "__uuid__": "a8b3b76d-0473-4825-87cd-0e1fe75e656e@b47c0",
+      "__expectedType__": "cc.TextureCube"
+    },
     "_reflectionLDR": null,
-    "_rotationAngle": 0
+    "_rotationAngle": 77
   },
   {
     "__type__": "cc.FogInfo",

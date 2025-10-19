@@ -47,7 +47,6 @@ export class CocosGame extends Component implements IGame {
         DI.bindInstance('IDrives', drives)
         DI.bindInstance('IGame', this)
         DI.bindInstance('IManagers', managers)
-
         managers.init(this.node)
         await this.init()
         await this.play()
