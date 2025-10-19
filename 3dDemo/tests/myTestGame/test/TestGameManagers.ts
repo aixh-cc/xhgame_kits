@@ -9,6 +9,7 @@ import { MyNetManager } from "db://assets/script/managers/MyNetManager";
 import { MyTableManager } from "db://assets/script/managers/MyTableManager";
 import { MyFactoryManager } from "db://assets/script/managers/MyFactoryManager";
 import { ApiEnums } from "db://assets/script/managers/ApiEnums";
+import { AssetManager } from "cc";
 
 export class MyTestNetManager extends NetManager<FetchHttp, Websocket> {
     constructor() {
@@ -26,6 +27,29 @@ export class TestNode implements INode {
         this.name = name
     }
 }
+interface IBundle {
+    loadDir(dir: string, onProgress: ((finished: number, total: number, item: any) => void) | null, onComplete: (err: Error | null, data: any[]) => void): void
+}
+class TestBundle implements IBundle {
+    loadDir(dir: string, onProgress: ((finished: number, total: number, item: any) => void) | null, onComplete: (err: Error | null, data: any[]) => void): void {
+        let finished = 100
+        let total = 100
+        let item = {}
+        onProgress(finished, total, item)
+        let items = []
+        onComplete(null, items)
+    }
+}
+interface IAssetManager {
+    loadBundle(nameOrUrl: string, onComplete?: (err: Error, data: IBundle) => void): void
+}
+class TestAssetManager implements IAssetManager {
+    loadBundle(nameOrUrl: string, onComplete: (err: Error, data: IBundle) => void) {
+        let err = null
+        let data = new TestBundle()
+        onComplete(err, data)
+    }
+}
 
 export class TestGameManagers implements IManagers {
     init(node: TestNode) {
@@ -38,6 +62,7 @@ export class TestGameManagers implements IManagers {
         // // this.setCameraManager(new CameraManager(new UICamera(), new UICamera()))
         // this.setCryptoManager(new CryptoManager('s', new CryptoEmpty()))
         this.setAudioManager(new MyAudioManager())
+        this.setAssetManager(new TestAssetManager())
         console.log('构建完成')
         // let mm = DI.make('mm')
         // console.log('mm', mm, mm.getDdd())
@@ -107,6 +132,13 @@ export class TestGameManagers implements IManagers {
     }
     getEventManager(): EventManager {
         return this._eventManager
+    }
+    private _assetManager: IAssetManager
+    setAssetManager(assetManager: IAssetManager) {
+        this._assetManager = assetManager
+    }
+    getAssetManager(): IAssetManager {
+        return this._assetManager
     }
     getFactorys() {
         let factoryManager = new MyFactoryManager()

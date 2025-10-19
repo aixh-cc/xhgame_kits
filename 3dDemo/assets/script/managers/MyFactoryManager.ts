@@ -1,11 +1,11 @@
-import { FactoryManager } from "@aixh-cc/xhgame_ec_framework"
+import { DI, FactoryManager, IFactoryConfig } from "@aixh-cc/xhgame_ec_framework"
 import { MyFactoryActions } from "./myFactory/MyFactoryActions"
-import { MyCocosFactoryConfig } from "./myFactory/MyCocosFactoryConfig"
+// import { MyCocosFactoryConfig } from "./myFactory/MyCocosFactoryConfig"
 
-export class MyFactoryManager extends FactoryManager<MyCocosFactoryConfig> {
+export class MyFactoryManager extends FactoryManager<IFactoryConfig> {
 
     constructor() {
-        super(new MyCocosFactoryConfig())
+        super(DI.make('IFactoryDrive'))
     }
     /** 快速操作 */
     private _myFactoryActions: MyFactoryActions = null
