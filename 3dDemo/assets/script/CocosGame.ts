@@ -14,6 +14,7 @@ import { LoadResourceViewComp } from "./comps/enter/LoadResourceViewComp";
 // import { GameEnterComp } from "./comps/enter/GameEnterComp";
 import { CocosGameManagers } from "./CocosGameManagers";
 import { CocosDrives } from "./CocosDrives";
+import { LoadResourceToGateComp } from "./comps/enter/LoadResourceToGateComp";
 
 const { ccclass, property } = _decorator;
 @ccclass('CocosGame')
@@ -51,14 +52,15 @@ export class CocosGame extends Component implements IGame {
         await this.init()
         await this.play()
         console.log('等待玩家操作')
-        assetManager.loadBundle('bundle_game') // 为了提取加载资源
+        // assetManager.loadBundle('bundle_game') // 为了提取加载资源
     }
 
     async init() {
         this.onGameShowHide()
         this.setGameEntity(Entity.createEntity<GameEntity>(GameEntity))
         // this.addComponent(LoadResourceView)
-        await xhgame.gameEntity.attachComponent(LoadResourceViewComp).done()
+        await xhgame.gameEntity.attachComponent(LoadResourceToGateComp).done()
+        // await xhgame.gameEntity.attachComponent(LoadResourceViewComp).done()
         // 这个时候xhgame.table.config已经有值了
         this.config = xhgame.table.getTable(xhgame.table.enums.config).getInfo(this.serverNo)
     }

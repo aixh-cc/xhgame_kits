@@ -23,6 +23,7 @@ export class LoadResourceViewComp extends BaseModelComp {
     compName: string = 'LoadResourceViewComp'
     initBySystems: (typeof System)[] = [LoadResourceViewSystem]
     loadFinishedCallback: Function = null
+
     reset() {
         this.loadFinishedCallback = null
     }

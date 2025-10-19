@@ -1,6 +1,7 @@
 import { DI } from "@aixh-cc/xhgame_ec_framework";
 import { CocosUiDrive } from "./drives/CocosUiDrive";
 import { CocosAudioDrive } from "./drives/CocosAudioDrive";
+import { AssetManager, assetManager } from "cc";
 
 export class CocosDrives {
     constructor() {

@@ -73,4 +73,7 @@ export class xhgame {
     static get timer() {
         return TimeSystem.getInstance()
     }
+    static get asset() {
+        return this.getManagers().getAssetManager()
+    }
 }

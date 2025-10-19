@@ -1,4 +1,4 @@
-import { Node, sys } from "cc";
+import { assetManager, AssetManager, Node, sys } from "cc";
 import { CryptoEmpty, CryptoManager, DI, IManagers, INode, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
 import { MyUiManager } from "./managers/MyUiManager";
 import { MyAudioManager } from "./managers/MyAudioManager";
@@ -25,6 +25,8 @@ export class CocosGameManagers implements IManagers {
         this.setStorageManager(new StorageManager('xhgame', sys.localStorage))
         this.setCryptoManager(new CryptoManager('s', new CryptoEmpty()))
         this.setAudioManager(new MyAudioManager())
+        //
+        this.setAssetManager(assetManager)
     }
     getTables() {
         let tableManager = new MyTableManager()
@@ -94,6 +96,15 @@ export class CocosGameManagers implements IManagers {
     }
     getEventManager(): MyEventManager {
         return this._eventManager
+    }
+
+    //
+    private _assetManager: AssetManager
+    setAssetManager(assetManager: AssetManager) {
+        this._assetManager = assetManager
+    }
+    getAssetManager(): AssetManager {
+        return this._assetManager
     }
 }
 

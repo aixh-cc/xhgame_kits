@@ -1,6 +1,6 @@
 import { TestAudioDrive } from "./drive/TestAudioDrive";
 import { TestUiDrive } from "./drive/TestUiDrive";
-import { CryptoEmpty, CryptoManager, DI, EventManager, FactoryManager, FetchHttp, IManagers, INode, NetManager, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
+import { CryptoEmpty, CryptoManager, DI, EventManager, FetchHttp, IManagers, INode, NetManager, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
 import { MyTestFactoryConfig } from "../MyTestFactoryConfig";
 import { MyFactoryActions } from "db://assets/script/managers/myFactory/MyFactoryActions";
 import { MyAudioManager } from "db://assets/script/managers/MyAudioManager";
@@ -71,11 +71,11 @@ export class TestGameManagers implements IManagers {
         return this.tableManager
     }
     // factory
-    factoryManager: MyFactoryManager<MyTestFactoryConfig>
-    setFactoryManager(factoryManager: MyFactoryManager<MyTestFactoryConfig>) {
+    factoryManager: MyFactoryManager
+    setFactoryManager(factoryManager: MyFactoryManager) {
         this.factoryManager = factoryManager
     }
-    getFactoryManager(): MyFactoryManager<MyTestFactoryConfig> {
+    getFactoryManager(): MyFactoryManager {
         return this.factoryManager
     }
     // cameraManager: CameraManager<UICamera, UICamera>
@@ -109,7 +109,7 @@ export class TestGameManagers implements IManagers {
         return this._eventManager
     }
     getFactorys() {
-        let factoryManager = new FactoryManager<MyTestFactoryConfig>(new MyTestFactoryConfig())
+        let factoryManager = new MyFactoryManager()
         factoryManager.autoRegister()
         return factoryManager
     }
