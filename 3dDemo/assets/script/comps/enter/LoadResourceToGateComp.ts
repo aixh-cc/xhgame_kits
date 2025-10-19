@@ -5,10 +5,10 @@ import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { TableType } from "../../managers/MyTableManager"
 
 export class LoadResourceToGateSystem extends System {
+
     static async initComp(comp: LoadResourceToGateComp) {
         // 这个是唯一直接已挂载在root上的
         await this.load_resource(comp)
-
         // xhgame.event.emit('load_resource')
         // comp.viewVM.is_load_resource = true
         // comp.notify()

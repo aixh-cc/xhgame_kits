@@ -15,6 +15,7 @@ import { LoadResourceViewComp } from "./comps/enter/LoadResourceViewComp";
 import { CocosGameManagers } from "./CocosGameManagers";
 import { CocosDrives } from "./CocosDrives";
 import { LoadResourceToGateComp } from "./comps/enter/LoadResourceToGateComp";
+import { GameEnterComp } from "./comps/enter/GameEnterComp";
 
 const { ccclass, property } = _decorator;
 @ccclass('CocosGame')
@@ -66,8 +67,8 @@ export class CocosGame extends Component implements IGame {
     }
 
     async play() {
-        // xhgame.timer.timePlay()
-        // await xhgame.gameEntity.attachComponent(GameEnterComp).done()
+        xhgame.timer.timePlay()
+        await xhgame.gameEntity.attachComponent(GameEnterComp).done()
     }
 
     // is_pause: boolean = false
