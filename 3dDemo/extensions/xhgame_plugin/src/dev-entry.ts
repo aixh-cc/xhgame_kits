@@ -92,7 +92,7 @@ if (import.meta.env.DEV) {
                 const version = await cocosEditorBridge.getVersion();
                 console.log('Version:', version);
                 
-                const sceneInfo = await cocosEditorBridge.requestMessage('scene', 'get-scene-info');
+                const sceneInfo = await cocosEditorBridge.getSceneInfo();
                 console.log('Scene Info:', sceneInfo);
                 
                 return { success: true, version, sceneInfo };

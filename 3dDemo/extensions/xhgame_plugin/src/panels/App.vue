@@ -44,7 +44,7 @@ async function showVersion() {
 async function testEditorCommunication() {
     try {
         // 测试获取场景信息
-        const sceneInfo = await cocosEditorBridge.requestMessage('scene', 'get-scene-info');
+        const sceneInfo = await cocosEditorBridge.getSceneInfo();
         message({ 
             message: `场景信息: ${JSON.stringify(sceneInfo)}`, 
             type: 'success',

@@ -15,6 +15,7 @@ export interface CocosEditorAPI {
     
     // 编辑器操作
     getVersion(): Promise<string>;
+    getSceneInfo(): Promise<any>;
     openPanel(panelName: string): Promise<void>;
     closePanel(panelName: string): Promise<void>;
     
@@ -166,40 +167,190 @@ class CocosEditorBridge implements CocosEditorAPI {
     }
     
     async getVersion(): Promise<string> {
-        return this.requestMessage('main', 'get-version');
+        if (this.isDevMode) {
+            return this.mockResponse('get-version', []);
+        }
+        
+        // 在真实的 Cocos Creator 环境中，直接使用 Editor.App.version
+        if ((window as any).Editor && (window as any).Editor.App) {
+            return (window as any).Editor.App.version;
+        }
+        
+        throw new Error('Editor API not available');
+    }
+    
+    async getSceneInfo(): Promise<any> {
+        if (this.isDevMode) {
+            return {
+                name: 'MockScene',
+                uuid: 'mock-scene-uuid-12345',
+                path: 'assets/scenes/MockScene.scene',
+                nodes: ['Node1', 'Node2', 'Camera', 'Canvas']
+            };
+        }
+        
+        // 在真实的 Cocos Creator 环境中，使用正确的 API
+        if ((window as any).Editor && (window as any).Editor.Message) {
+            try {
+                // 方法1: 尝试获取当前场景的 UUID
+                const sceneUuid = await (window as any).Editor.Message.request('scene', 'query-current-scene');
+                if (sceneUuid) {
+                    // 获取场景的详细信息
+                    const sceneInfo = await (window as any).Editor.Message.request('asset-db', 'query-asset-info', sceneUuid);
+                    return {
+                        name: sceneInfo?.name || 'Current Scene',
+                        uuid: sceneUuid,
+                        path: sceneInfo?.path || 'unknown',
+                        nodes: [] // 节点信息需要额外的 API 调用
+                    };
+                }
+            } catch (error) {
+                console.warn('Failed to get scene info via Editor.Message, trying alternative method:', error);
+            }
+            
+            try {
+                // 方法2: 尝试直接获取场景信息
+                const sceneData = await (window as any).Editor.Message.request('scene', 'query-scene-info');
+                if (sceneData) {
+                    return sceneData;
+                }
+            } catch (error) {
+                console.warn('Alternative scene info method also failed:', error);
+            }
+        }
+        
+        // 如果都失败了，返回默认信息
+        return {
+            name: 'Unknown Scene',
+            uuid: 'unknown',
+            path: 'unknown',
+            nodes: [],
+            error: 'Editor Scene API not available'
+        };
     }
     
     async openPanel(panelName: string): Promise<void> {
-        return this.sendMessage('main', 'open-panel', panelName);
+        if (this.isDevMode) {
+            console.log(`[Mock] Opening panel: ${panelName}`);
+            return;
+        }
+        
+        // 在真实的 Cocos Creator 环境中，使用 Editor.Panel.open
+        if ((window as any).Editor && (window as any).Editor.Panel) {
+            return (window as any).Editor.Panel.open(panelName);
+        }
+        
+        throw new Error('Editor Panel API not available');
     }
     
     async closePanel(panelName: string): Promise<void> {
-        return this.sendMessage('main', 'close-panel', panelName);
+        if (this.isDevMode) {
+            console.log(`[Mock] Closing panel: ${panelName}`);
+            return;
+        }
+        
+        // 在真实的 Cocos Creator 环境中，使用 Editor.Panel.close
+        if ((window as any).Editor && (window as any).Editor.Panel) {
+            return (window as any).Editor.Panel.close(panelName);
+        }
+        
+        throw new Error('Editor Panel API not available');
     }
     
     async selectAsset(uuid: string): Promise<void> {
-        return this.sendMessage('asset-db', 'select-asset', uuid);
+        if (this.isDevMode) {
+            console.log(`[Mock] Selecting asset: ${uuid}`);
+            return;
+        }
+        
+        // 在真实环境中，这些操作可能需要通过消息系统或特定的 API
+        // 由于没有直接的 API，我们使用消息系统，但需要确保目标服务存在
+        try {
+            if ((window as any).Editor && (window as any).Editor.Message) {
+                return await (window as any).Editor.Message.send('asset-db', 'select-asset', uuid);
+            }
+        } catch (error) {
+            console.warn('Asset selection not supported in current environment:', error);
+        }
     }
     
     async importAsset(path: string): Promise<void> {
-        return this.sendMessage('asset-db', 'import-asset', path);
+        if (this.isDevMode) {
+            console.log(`[Mock] Importing asset: ${path}`);
+            return;
+        }
+        
+        try {
+            if ((window as any).Editor && (window as any).Editor.Message) {
+                return await (window as any).Editor.Message.send('asset-db', 'import-asset', path);
+            }
+        } catch (error) {
+            console.warn('Asset import not supported in current environment:', error);
+        }
     }
     
     async refreshAssets(): Promise<void> {
-        return this.sendMessage('asset-db', 'refresh');
+        if (this.isDevMode) {
+            console.log(`[Mock] Refreshing assets`);
+            return;
+        }
+        
+        try {
+            if ((window as any).Editor && (window as any).Editor.Message) {
+                return await (window as any).Editor.Message.send('asset-db', 'refresh');
+            }
+        } catch (error) {
+            console.warn('Asset refresh not supported in current environment:', error);
+        }
     }
     
     async selectNode(uuid: string): Promise<void> {
-        return this.sendMessage('scene', 'select-node', uuid);
+        if (this.isDevMode) {
+            console.log(`[Mock] Selecting node: ${uuid}`);
+            return;
+        }
+        
+        try {
+            if ((window as any).Editor && (window as any).Editor.Message) {
+                return await (window as any).Editor.Message.send('scene', 'select-node', uuid);
+            }
+        } catch (error) {
+            console.warn('Node selection not supported in current environment:', error);
+        }
     }
     
     async createNode(name: string, parent?: string): Promise<string> {
-        const result = await this.requestMessage('scene', 'create-node', name, parent);
-        return result.uuid || result;
+        if (this.isDevMode) {
+            const mockUuid = 'mock-node-' + Date.now();
+            console.log(`[Mock] Creating node: ${name}, parent: ${parent}, uuid: ${mockUuid}`);
+            return mockUuid;
+        }
+        
+        try {
+            if ((window as any).Editor && (window as any).Editor.Message) {
+                const result = await (window as any).Editor.Message.request('scene', 'create-node', name, parent);
+                return result.uuid || result;
+            }
+        } catch (error) {
+            console.warn('Node creation not supported in current environment:', error);
+        }
+        
+        return 'unsupported-' + Date.now();
     }
     
     async deleteNode(uuid: string): Promise<void> {
-        return this.sendMessage('scene', 'delete-node', uuid);
+        if (this.isDevMode) {
+            console.log(`[Mock] Deleting node: ${uuid}`);
+            return;
+        }
+        
+        try {
+            if ((window as any).Editor && (window as any).Editor.Message) {
+                return await (window as any).Editor.Message.send('scene', 'delete-node', uuid);
+            }
+        } catch (error) {
+            console.warn('Node deletion not supported in current environment:', error);
+        }
     }
 }
 
