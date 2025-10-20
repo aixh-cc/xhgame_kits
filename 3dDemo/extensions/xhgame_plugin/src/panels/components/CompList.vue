@@ -477,6 +477,8 @@ async function downloadAndInstall(component:any) {
     :title="currentReviewComponentId ? componentList.find(c => c.id === currentReviewComponentId)?.name + ' 的评价' : '评价'"
     width="500px"
     :append-to-body="true"
+    destroy-on-close
+    class="review-dialog"
   >
     <div v-if="currentReviewComponentId && reviews[currentReviewComponentId]?.length">
       <div v-for="(review, index) in reviews[currentReviewComponentId]" :key="index" class="review-item">
@@ -495,6 +497,11 @@ async function downloadAndInstall(component:any) {
     <div v-else class="no-reviews">
       暂无评价
     </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="reviewDialogVisible = false">返回</el-button>
+      </div>
+    </template>
   </el-dialog>
 </template>
 
@@ -503,7 +510,7 @@ async function downloadAndInstall(component:any) {
   padding: 20px;
   height: calc(100vh - 150px);
   overflow-y: auto;
-  padding-bottom: 60px; /* 增加底部空间 */
+  padding-bottom: 120px; /* 增加更多底部空间 */
 }
 
 .comp-filter-tabs {
@@ -523,6 +530,15 @@ async function downloadAndInstall(component:any) {
 .components-grid {
   display: grid;
   gap: 20px;
+  margin-bottom: 150px; /* 添加大量底部边距确保最后一个组件完全可见 */
+}
+
+/* 添加一个空白元素在列表底部 */
+.components-grid::after {
+  content: "";
+  display: block;
+  height: 200px; /* 确保有足够的空间 */
+  grid-column: 1 / -1;
 }
 
 .description {
@@ -728,9 +744,18 @@ async function downloadAndInstall(component:any) {
 }
 
 /* 评价对话框样式 */
+.review-dialog :deep(.el-dialog__body) {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 20px;
+}
+
 .review-item {
-  padding: 12px;
+  padding: 15px;
   border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
 }
 
 .review-item:last-child {
@@ -740,11 +765,12 @@ async function downloadAndInstall(component:any) {
 .review-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .review-user {
   font-weight: bold;
+  color: #409EFF;
 }
 
 .review-date {
@@ -753,12 +779,30 @@ async function downloadAndInstall(component:any) {
 }
 
 .review-rating {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .review-comment {
   color: #333;
-  line-height: 1.5;
+  line-height: 1.6;
+  padding: 8px;
+  background-color: white;
+  border-radius: 4px;
+  border-left: 3px solid #409EFF;
+}
+
+.no-reviews {
+  text-align: center;
+  color: #999;
+  padding: 30px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.dialog-footer {
+  text-align: right;
+  margin-top: 15px;
 }
 
 .no-reviews {
