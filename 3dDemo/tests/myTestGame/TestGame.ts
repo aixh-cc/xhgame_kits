@@ -52,19 +52,9 @@ export class TestGame implements IGame {
     }
 
     async init() {
-        // return new Promise<void>((resolve, reject) => {
         this.setGameEntity(Entity.createEntity<GameEntity>(GameEntity))
         await xhgame.gameEntity.attachComponent(LoadResourceToGateComp).done()
-        // const comp = xhgame.gameEntity.attachComponent(LoadResourceViewComp)
-        // setTimeout(() => {
-        //     this.tableInit()
-        //     console.log('模拟加载资源完成')
-        //     comp.loadFinishedCallback()
-        //     // 这个时候xhgame.table.config已经有值里
-        //     this.config = xhgame.table.getTable(xhgame.table.enums.config).getInfo(this.serverNo)
-        //     resolve()
-        // }, 1000)
-        // })
+        this.config = xhgame.table.getTable(xhgame.table.enums.config).getInfo(this.serverNo)
     }
 
     async play(): Promise<void> {

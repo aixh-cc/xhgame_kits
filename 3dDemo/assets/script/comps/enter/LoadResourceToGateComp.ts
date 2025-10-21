@@ -45,10 +45,10 @@ export class LoadResourceToGateSystem extends System {
                     console.error('加载资源失败', err);
                     return;
                 }
-                console.log('json加载资源成功', assets);
+                // console.log('json加载资源成功', assets);
                 for (let i = 0; i < assets.length; i++) {
                     const _asset = assets[i] as any;
-                    let _table = xhgame.table.getTable(assets[i].name as TableType)
+                    let _table = xhgame.table.getTable(_asset.name as TableType)
                     if (_table != undefined) {
                         _table.init(_asset.json)
                     }

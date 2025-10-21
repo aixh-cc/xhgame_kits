@@ -59,10 +59,7 @@ export class CocosGame extends Component implements IGame {
     async init() {
         this.onGameShowHide()
         this.setGameEntity(Entity.createEntity<GameEntity>(GameEntity))
-        // this.addComponent(LoadResourceView)
         await xhgame.gameEntity.attachComponent(LoadResourceToGateComp).done()
-        // await xhgame.gameEntity.attachComponent(LoadResourceViewComp).done()
-        // 这个时候xhgame.table.config已经有值了
         this.config = xhgame.table.getTable(xhgame.table.enums.config).getInfo(this.serverNo)
     }
 
