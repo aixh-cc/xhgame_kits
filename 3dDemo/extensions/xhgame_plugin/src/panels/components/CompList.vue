@@ -258,95 +258,6 @@ function showReviews(component:any) {
   reviewDialogVisible.value = true;
 }
 
-// 下载并安装组件
-async function downloadAndInstall(component:any) {
-  try {
-    // 确认信息
-    let confirmMessage = '';
-    let confirmTitle = '';
-    let isUpdate = false;
-    
-    if (component.installed) {
-      if (component.needsUpdate) {
-        confirmMessage = `确定要更新 "${component.name}" 组件吗？\n当前版本: ${component.installedVersion}\n最新版本: ${component.version}`;
-        confirmTitle = '确认更新';
-        isUpdate = true;
-      } else {
-        message({
-          message: `组件 "${component.name}" 已安装最新版本`,
-          type: 'info'
-        });
-        return;
-      }
-    } else {
-      const targetPathsText = component.targetPaths.map((t:any) => `${t.path} (${t.description})`).join('\n- ');
-      confirmMessage = `确定要下载并安装 "${component.name}" 组件到以下路径吗？\n- ${targetPathsText}`;
-      confirmTitle = '确认安装';
-    }
-    
-    await ElMessageBox.confirm(
-      confirmMessage,
-      confirmTitle,
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        appendTo: appRootDom
-      }
-    );
-    
-    // 模拟下载过程
-    message({
-      message: isUpdate ? `正在更新 ${component.name}...` : `正在下载 ${component.name}...`,
-      type: 'info'
-    });
-    
-    // 实际下载和安装逻辑
-    // 这里需要调用Cocos Creator编辑器API进行实际操作
-    try {
-      const result = await Editor.Message.request(name, 'download-component', {
-        url: component.downloadUrl,
-        targetPaths: component.targetPaths,
-        name: component.name,
-        isUpdate: isUpdate,
-        currentVersion: component.installedVersion,
-        newVersion: component.version
-      });
-      
-      if (result && result.success) {
-        // 更新组件状态
-        component.installed = true;
-        component.installedVersion = component.version;
-        component.needsUpdate = false;
-        component.installedPaths = result.installedPaths || component.targetPaths.map((t:any) => ({
-          path: t.path + component.name.replace(/\s+/g, '') + '.ts',
-          description: t.description,
-          type: ResourceType.SCRIPT
-        }));
-        
-        message({
-          message: isUpdate ? `${component.name} 更新成功！` : `${component.name} 安装成功！`,
-          type: 'success'
-        });
-      } else {
-        throw new Error(result?.error || (isUpdate ? '更新失败' : '安装失败'));
-      }
-    } catch (err: any) {
-      message({
-        message: `操作失败: ${err.message || err}`,
-        type: 'error'
-      });
-    }
-  } catch (error:any) {
-    if (error === 'cancel') return;
-    
-    message({
-      message: `操作失败: ${error.message || error}`,
-      type: 'error'
-    });
-  }
-}
-
 // 从插件assets安装组件
 async function installFromAssets(component: any) {
   console.log(`[xhgame_plugin] 安装【本地组件】请求:`, component.name);
@@ -383,7 +294,10 @@ async function installFromAssets(component: any) {
         type: 'success'
       });
     } else {
-      throw new Error(result?.error || '安装失败');
+      message({
+        message: result.message,
+        type: 'error'
+      });
     }
   } catch (error: any) {
     if (error === 'cancel') return;
@@ -497,15 +411,9 @@ async function installFromAssets(component: any) {
         
         <div class="actions">
           <el-button 
-            :type="component.installed ? (component.needsUpdate ? 'warning' : 'success') : 'primary'" 
-            :disabled="component.installed && !component.needsUpdate"
-            @click="downloadAndInstall(component)">
-            {{ component.installed ? (component.needsUpdate ? '更新' : '已安装') : '下载安装' }}
-          </el-button>
-          <el-button 
             type="success" 
             @click="installFromAssets(component)">
-            Install
+             {{ component.installed ? (component.needsUpdate ? '更新' : '已安装') : '下载安装' }}
           </el-button>
           <el-button type="info" @click="showReviews(component)">
             查看评价 ({{ component.reviewCount }})

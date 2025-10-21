@@ -167,6 +167,7 @@ class CocosEditorBridge implements CocosEditorAPI {
     }
 
     async getVersion(): Promise<string> {
+        return await this.requestMessage('xhgame_plugin', 'get-version');
         // if (this.isDevMode) {
         //     return this.mockResponse('get-version', []);
         // }
@@ -177,7 +178,7 @@ class CocosEditorBridge implements CocosEditorAPI {
         //     return (window as any).Editor.App.version;
         // }
 
-        throw new Error('Editor API not available');
+        // throw new Error('Editor API not available');
     }
 
     async getSceneInfo(): Promise<any> {
