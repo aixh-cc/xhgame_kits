@@ -3,20 +3,9 @@ import { TestGameManagers, TestNode } from "./test/TestGameManagers";
 import { GameEntity } from "db://assets/script/GameEntity";
 import { IConfigTableItem } from "db://assets/script/managers/myTable/tables/ConfigTable";
 import { xhgame } from "db://assets/script/xhgame";
-import { LoadResourceViewComp } from "db://assets/script/comps/enter/LoadResourceViewComp";
 import { GameEnterComp } from "db://assets/script/comps/enter/GameEnterComp";
 import { TestDrives } from "./TestDrives";
 import { LoadResourceToGateComp } from "db://assets/script/comps/enter/LoadResourceToGateComp";
-// import { Platform } from "db://assets/script/common/ClientEnum";
-// import { HelpComp } from "db://assets/script/severs/common/HelpComp";
-// import { LoadResourceViewComp } from "db://assets/script/severs/common/LoadResourceViewComp";
-// import { SdkComp } from "db://assets/script/severs/common/SdkComp";
-// import { GameEntity } from "db://assets/script/severs/entitys/GameEntity";
-// import { GateSenceComp } from "db://assets/script/severs/gate/GateSenceComp";
-// import { PlayerLoginComp } from "db://assets/script/severs/player/PlayerLoginComp";
-// import { xhgame } from "db://assets/script/xhgame";
-// import { TestNode } from "./test/TestGameManagers";
-// import { IConfigTableItem } from "db://assets/script/managers/myTable/tables/ConfigTable";
 
 export class TestGame implements IGame {
     name = 'TestGame';

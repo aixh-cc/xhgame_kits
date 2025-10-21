@@ -1,17 +1,9 @@
 import { GameEntity } from "./GameEntity";
 import { xhgame } from "db://assets/script/xhgame";
-// import { GateSenceComp } from "./severs/gate/GateSenceComp";
-// import { HelpComp } from "./severs/common/HelpComp";
 import { BYTEDANCE, DEBUG, WECHAT } from "cc/env";
-// import { PlayerLoginComp } from "./severs/player/PlayerLoginComp";
-// import { BattleGameBoxComp } from "./severs/battle/BattleGameBoxComp";
-// import { SdkComp } from "./severs/common/SdkComp";
 import { DI, Entity, IGame, Platform, TimeSystem } from "@aixh-cc/xhgame_ec_framework";
 import { Game, Component, game, director, profiler, _decorator } from "cc";
-// import { LoadResourceView } from "./cocos/view/ui/LoadResourceView";
 import { IConfigTableItem } from "./managers/myTable/tables/ConfigTable";
-import { LoadResourceViewComp } from "./comps/enter/LoadResourceViewComp";
-// import { GameEnterComp } from "./comps/enter/GameEnterComp";
 import { CocosGameManagers } from "./CocosGameManagers";
 import { CocosDrives } from "./CocosDrives";
 import { LoadResourceToGateComp } from "./comps/enter/LoadResourceToGateComp";
