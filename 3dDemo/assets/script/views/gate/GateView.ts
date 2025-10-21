@@ -120,7 +120,7 @@ export class GateView extends CocosBaseView implements IGateViewVM {
 
     enterGame() {
         let comp = this.viewModelComp as GateSenceComp
-        comp.actions.startBattle(xhgame.gameEntity.playerModel.selectedBattleId)
+        comp.actions.startBattle()
     }
 
     openGateGroupMission() {

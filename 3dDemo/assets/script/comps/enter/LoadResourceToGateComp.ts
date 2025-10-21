@@ -54,11 +54,6 @@ export class LoadResourceToGateSystem extends System {
             });
         })
     }
-    // static loadFinished(comp: LoadResourceToGateComp) {
-    //     return new Promise((resolve, reject) => {
-    //         comp.loadFinishedCallback = resolve
-    //     })
-    // }
 }
 export interface ILoadResourceToGateViewVM {
     resValue: number,

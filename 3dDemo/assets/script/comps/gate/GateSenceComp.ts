@@ -1,8 +1,9 @@
-import { System } from "@aixh-cc/xhgame_ec_framework"
+import { DI, System } from "@aixh-cc/xhgame_ec_framework"
 import { xhgame } from "../../xhgame"
 // import { GateGroupMissionComp } from "./GateGroupMissionComp"
 // import { GateToBattleComp } from "./GateToBattleComp"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
+import { PlayerModelComp } from "../models/PlayerModelComp"
 
 // import { SettingViewComp } from "../common/SettingViewComp"
 // import { GateStorePanelComp } from "./GateStorePanelComp"
@@ -18,7 +19,11 @@ export class GateSenceSystem extends System {
     }
 
     /** 从gate进入战役 */
-    static async startBattle(comp: GateSenceComp, battleId: number = 0) {
+    static async startBattle(comp: GateSenceComp) {
+        const playerModel = DI.make<PlayerModelComp>('PlayerModelComp')
+        let battleId = playerModel.selectedBattleId
+
+        // 
         // const curBattle = xhgame.table.getTable(xhgame.table.enums.battle).getInfo(battleId)
         // if (curBattle == undefined) {
         //     xhgame.gui.toast('未找到该关卡信息，敬请期待')
@@ -62,8 +67,8 @@ export class GateSenceComp extends BaseModelComp {
     // 在gate场景,玩家的操作
     actions = {
         /** 开始游戏 */
-        startBattle: (battleId: number = 0) => {
-            return GateSenceSystem.startBattle(this, battleId)
+        startBattle: () => {
+            return GateSenceSystem.startBattle(this)
         },
         /** 打开关卡 */
         openGateGroupMission: () => {

@@ -139,6 +139,48 @@ export const methods = {
 
             // 复制所有assets目录下的文件到项目script目录
             const copiedFiles: string[] = [];
+            const conflictFiles: string[] = [];
+
+            // 先检查是否有同名文件冲突
+            async function checkConflicts(srcDir: string, destDir: string, relativePath: string = '') {
+                const items = await fs.promises.readdir(srcDir, { withFileTypes: true });
+
+                for (const item of items) {
+                    const destPath = path.join(destDir, item.name);
+                    const relPath = path.join(relativePath, item.name);
+
+                    // 跳过.meta文件
+                    if (item.name.endsWith('.meta')) {
+                        continue;
+                    }
+
+                    if (item.isDirectory()) {
+                        // 检查目录下的文件
+                        const srcSubDir = path.join(srcDir, item.name);
+                        await checkConflicts(srcSubDir, destPath, relPath);
+                    } else {
+                        // 检查文件是否已存在
+                        try {
+                            await fs.promises.access(destPath);
+                            conflictFiles.push(relPath);
+                        } catch (error) {
+                            // 文件不存在，没有冲突
+                        }
+                    }
+                }
+            }
+
+            // 先检查冲突
+            await checkConflicts(assetsSourcePath, targetPath);
+
+            // 如果有冲突文件，返回错误
+            if (conflictFiles.length > 0) {
+                return {
+                    success: false,
+                    message: `安装失败：检测到以下文件已存在，请先删除或备份这些文件：\n${conflictFiles.join('\n')}`,
+                    conflictFiles: conflictFiles
+                };
+            }
 
             async function copyDirectory(srcDir: string, destDir: string, relativePath: string = '') {
                 const items = await fs.promises.readdir(srcDir, { withFileTypes: true });
