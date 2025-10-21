@@ -1,4 +1,4 @@
-import { assetManager, AssetManager, Node, sys } from "cc";
+import { AssetManager, Node, sys } from "cc";
 import { CryptoEmpty, CryptoManager, DI, IManagers, INode, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
 import { MyUiManager } from "./managers/MyUiManager";
 import { MyAudioManager } from "./managers/MyAudioManager";
@@ -7,6 +7,8 @@ import { MyFactoryManager } from "./managers/MyFactoryManager";
 import { MyTableManager } from "./managers/MyTableManager";
 import { MyEventManager } from "./managers/MyEventManager";
 import { CocosUiDrive } from "./drives/CocosUiDrive";
+import { MyAssetManager } from "./managers/MyAssetManager";
+import { CocosAssetDrive } from "./drives/CocosAssetDrive";
 
 export class CocosGameManagers implements IManagers {
     node: Node
@@ -27,7 +29,7 @@ export class CocosGameManagers implements IManagers {
         this.setCryptoManager(new CryptoManager('s', new CryptoEmpty()))
         this.setAudioManager(new MyAudioManager())
         //
-        this.setAssetManager(assetManager)
+        this.setAssetManager(new MyAssetManager<CocosAssetDrive>())
     }
     getTables() {
         let tableManager = new MyTableManager()
@@ -100,11 +102,11 @@ export class CocosGameManagers implements IManagers {
     }
 
     //
-    private _assetManager: AssetManager
-    setAssetManager(assetManager: AssetManager) {
+    private _assetManager: MyAssetManager<CocosAssetDrive>
+    setAssetManager(assetManager: MyAssetManager<CocosAssetDrive>) {
         this._assetManager = assetManager
     }
-    getAssetManager(): AssetManager {
+    getAssetManager(): MyAssetManager<CocosAssetDrive> {
         return this._assetManager
     }
 }

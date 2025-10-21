@@ -8,6 +8,7 @@ export class TestDrives {
     constructor() {
         DI.bindSingleton<TestUiDrive>('IUiDrive', TestUiDrive)
         DI.bindSingleton<TestAudioDrive>('IAudioDrive', TestAudioDrive)
+        DI.bindSingleton<TestAudioDrive>('IAssetDrive', TestAudioDrive)
 
         DI.bindSingleton<MyTestFactoryConfig>('IFactoryDrive', MyTestFactoryConfig)
 

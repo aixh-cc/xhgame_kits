@@ -1,6 +1,6 @@
 import { TestAudioDrive } from "./drive/TestAudioDrive";
 import { TestUiDrive } from "./drive/TestUiDrive";
-import { CryptoEmpty, CryptoManager, DI, EventManager, FetchHttp, IManagers, INode, NetManager, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
+import { AssetManager, CryptoEmpty, CryptoManager, DI, EventManager, FetchHttp, IAssetDrive, IBundle, IManagers, INode, NetManager, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
 import { MyTestFactoryConfig } from "../MyTestFactoryConfig";
 import { MyFactoryActions } from "db://assets/script/managers/myFactory/MyFactoryActions";
 import { MyAudioManager } from "db://assets/script/managers/MyAudioManager";
@@ -9,7 +9,8 @@ import { MyNetManager } from "db://assets/script/managers/MyNetManager";
 import { MyTableManager } from "db://assets/script/managers/MyTableManager";
 import { MyFactoryManager } from "db://assets/script/managers/MyFactoryManager";
 import { ApiEnums } from "db://assets/script/managers/ApiEnums";
-import { AssetManager } from "cc";
+import { MyAssetManager } from "db://assets/script/managers/MyAssetManager";
+import { TestAssetDrive } from "./drive/TestAssetDrive";
 
 export class MyTestNetManager extends NetManager<FetchHttp, Websocket> {
     constructor() {
@@ -27,29 +28,8 @@ export class TestNode implements INode {
         this.name = name
     }
 }
-export interface IBundle {
-    loadDir(dir: string, onProgress: ((finished: number, total: number, item: any) => void) | null, onComplete: (err: Error | null, data: any[]) => void): void
-}
-class TestBundle implements IBundle {
-    loadDir(dir: string, onProgress: ((finished: number, total: number, item: any) => void) | null, onComplete: (err: Error | null, data: any[]) => void): void {
-        let finished = 100
-        let total = 100
-        let item = {}
-        onProgress(finished, total, item)
-        let items = []
-        onComplete(null, items)
-    }
-}
-interface IAssetManager {
-    loadBundle(nameOrUrl: string, onComplete?: (err: Error, data: IBundle) => void): void
-}
-class TestAssetManager implements IAssetManager {
-    loadBundle(nameOrUrl: string, onComplete: (err: Error, data: IBundle) => void) {
-        let err = null
-        let data = new TestBundle()
-        onComplete(err, data)
-    }
-}
+
+
 
 export class TestGameManagers implements IManagers {
     init(node: TestNode) {
@@ -62,7 +42,7 @@ export class TestGameManagers implements IManagers {
         // // this.setCameraManager(new CameraManager(new UICamera(), new UICamera()))
         // this.setCryptoManager(new CryptoManager('s', new CryptoEmpty()))
         this.setAudioManager(new MyAudioManager())
-        this.setAssetManager(new TestAssetManager())
+        this.setAssetManager(new MyAssetManager<TestAssetDrive>())
         console.log('构建完成')
         // let mm = DI.make('mm')
         // console.log('mm', mm, mm.getDdd())
@@ -133,11 +113,11 @@ export class TestGameManagers implements IManagers {
     getEventManager(): EventManager {
         return this._eventManager
     }
-    private _assetManager: IAssetManager
-    setAssetManager(assetManager: IAssetManager) {
+    private _assetManager: MyAssetManager<TestAssetDrive>
+    setAssetManager(assetManager: MyAssetManager<TestAssetDrive>) {
         this._assetManager = assetManager
     }
-    getAssetManager(): IAssetManager {
+    getAssetManager(): MyAssetManager<TestAssetDrive> {
         return this._assetManager
     }
     getFactorys() {
