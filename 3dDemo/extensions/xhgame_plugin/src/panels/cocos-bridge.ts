@@ -7,23 +7,23 @@ export interface CocosEditorAPI {
     // 消息通信
     sendMessage(target: string, method: string, ...args: any[]): Promise<any>;
     requestMessage(target: string, method: string, ...args: any[]): Promise<any>;
-    
+
     // 事件监听
     on(event: string, callback: Function): void;
     off(event: string, callback: Function): void;
     emit(event: string, ...args: any[]): void;
-    
+
     // 编辑器操作
     getVersion(): Promise<string>;
     getSceneInfo(): Promise<any>;
     openPanel(panelName: string): Promise<void>;
     closePanel(panelName: string): Promise<void>;
-    
+
     // 资源操作
     selectAsset(uuid: string): Promise<void>;
     importAsset(path: string): Promise<void>;
     refreshAssets(): Promise<void>;
-    
+
     // 场景操作
     selectNode(uuid: string): Promise<void>;
     createNode(name: string, parent?: string): Promise<string>;
@@ -33,12 +33,12 @@ export interface CocosEditorAPI {
 class CocosEditorBridge implements CocosEditorAPI {
     private eventListeners: Map<string, Function[]> = new Map();
     private isDevMode: boolean = false;
-    
+
     constructor() {
         this.isDevMode = import.meta.env.DEV || !(window as any).Editor;
         this.initializeEventSystem();
     }
-    
+
     private initializeEventSystem() {
         if (this.isDevMode) {
             console.log('🔧 [CocosEditorBridge] Running in development mode');
@@ -48,7 +48,7 @@ class CocosEditorBridge implements CocosEditorAPI {
             this.setupEditorHandlers();
         }
     }
-    
+
     private setupDevModeHandlers() {
         // 开发模式下的模拟处理器
         (window as any).__COCOS_BRIDGE_DEV__ = {
@@ -70,10 +70,10 @@ class CocosEditorBridge implements CocosEditorAPI {
                 });
             }
         };
-        
+
         console.log('🛠️ Dev mode handlers available at window.__COCOS_BRIDGE_DEV__');
     }
-    
+
     private setupEditorHandlers() {
         // 真实编辑器环境下的事件监听
         if ((window as any).Editor && (window as any).Editor.Message) {
@@ -81,39 +81,39 @@ class CocosEditorBridge implements CocosEditorAPI {
             (window as any).Editor.Message.addBroadcastListener('asset-db:asset-change', (event: any) => {
                 this.emit('asset-change', event);
             });
-            
+
             (window as any).Editor.Message.addBroadcastListener('scene:node-changed', (event: any) => {
                 this.emit('node-changed', event);
             });
         }
     }
-    
+
     async sendMessage(target: string, method: string, ...args: any[]): Promise<any> {
         if (this.isDevMode) {
             console.log(`📤 [Mock] Send message: ${target}.${method}`, args);
             return this.mockResponse(method, args);
         }
-        
+
         if ((window as any).Editor && (window as any).Editor.Message) {
             return (window as any).Editor.Message.send(target, method, ...args);
         }
-        
+
         throw new Error('Editor API not available');
     }
-    
+
     async requestMessage(target: string, method: string, ...args: any[]): Promise<any> {
         if (this.isDevMode) {
             console.log(`📥 [Mock] Request message: ${target}.${method}`, args);
             return this.mockResponse(method, args);
         }
-        
+
         if ((window as any).Editor && (window as any).Editor.Message) {
             return (window as any).Editor.Message.request(target, method, ...args);
         }
-        
+
         throw new Error('Editor API not available');
     }
-    
+
     private mockResponse(method: string, args: any[]): any {
         switch (method) {
             case 'get-version':
@@ -135,14 +135,14 @@ class CocosEditorBridge implements CocosEditorAPI {
                 return { success: true, method, args };
         }
     }
-    
+
     on(event: string, callback: Function): void {
         if (!this.eventListeners.has(event)) {
             this.eventListeners.set(event, []);
         }
         this.eventListeners.get(event)!.push(callback);
     }
-    
+
     off(event: string, callback: Function): void {
         const listeners = this.eventListeners.get(event);
         if (listeners) {
@@ -152,7 +152,7 @@ class CocosEditorBridge implements CocosEditorAPI {
             }
         }
     }
-    
+
     emit(event: string, ...args: any[]): void {
         const listeners = this.eventListeners.get(event);
         if (listeners) {
@@ -165,20 +165,21 @@ class CocosEditorBridge implements CocosEditorAPI {
             });
         }
     }
-    
+
     async getVersion(): Promise<string> {
         if (this.isDevMode) {
             return this.mockResponse('get-version', []);
         }
-        
+
         // 在真实的 Cocos Creator 环境中，直接使用 Editor.App.version
         if ((window as any).Editor && (window as any).Editor.App) {
+            console.log('真实的cocos编辑器环境', (window as any).Editor)
             return (window as any).Editor.App.version;
         }
-        
+
         throw new Error('Editor API not available');
     }
-    
+
     async getSceneInfo(): Promise<any> {
         if (this.isDevMode) {
             return {
@@ -188,7 +189,7 @@ class CocosEditorBridge implements CocosEditorAPI {
                 nodes: ['Node1', 'Node2', 'Camera', 'Canvas']
             };
         }
-        
+
         // 在真实的 Cocos Creator 环境中，使用正确的 API
         if ((window as any).Editor && (window as any).Editor.Message) {
             try {
@@ -207,7 +208,7 @@ class CocosEditorBridge implements CocosEditorAPI {
             } catch (error) {
                 console.warn('Failed to get scene info via Editor.Message, trying alternative method:', error);
             }
-            
+
             try {
                 // 方法2: 尝试直接获取场景信息
                 const sceneData = await (window as any).Editor.Message.request('scene', 'query-scene-info');
@@ -218,7 +219,7 @@ class CocosEditorBridge implements CocosEditorAPI {
                 console.warn('Alternative scene info method also failed:', error);
             }
         }
-        
+
         // 如果都失败了，返回默认信息
         return {
             name: 'Unknown Scene',
@@ -228,41 +229,41 @@ class CocosEditorBridge implements CocosEditorAPI {
             error: 'Editor Scene API not available'
         };
     }
-    
+
     async openPanel(panelName: string): Promise<void> {
         if (this.isDevMode) {
             console.log(`[Mock] Opening panel: ${panelName}`);
             return;
         }
-        
+
         // 在真实的 Cocos Creator 环境中，使用 Editor.Panel.open
         if ((window as any).Editor && (window as any).Editor.Panel) {
             return (window as any).Editor.Panel.open(panelName);
         }
-        
+
         throw new Error('Editor Panel API not available');
     }
-    
+
     async closePanel(panelName: string): Promise<void> {
         if (this.isDevMode) {
             console.log(`[Mock] Closing panel: ${panelName}`);
             return;
         }
-        
+
         // 在真实的 Cocos Creator 环境中，使用 Editor.Panel.close
         if ((window as any).Editor && (window as any).Editor.Panel) {
             return (window as any).Editor.Panel.close(panelName);
         }
-        
+
         throw new Error('Editor Panel API not available');
     }
-    
+
     async selectAsset(uuid: string): Promise<void> {
         if (this.isDevMode) {
             console.log(`[Mock] Selecting asset: ${uuid}`);
             return;
         }
-        
+
         // 在真实环境中，这些操作可能需要通过消息系统或特定的 API
         // 由于没有直接的 API，我们使用消息系统，但需要确保目标服务存在
         try {
@@ -273,13 +274,13 @@ class CocosEditorBridge implements CocosEditorAPI {
             console.warn('Asset selection not supported in current environment:', error);
         }
     }
-    
+
     async importAsset(path: string): Promise<void> {
         if (this.isDevMode) {
             console.log(`[Mock] Importing asset: ${path}`);
             return;
         }
-        
+
         try {
             if ((window as any).Editor && (window as any).Editor.Message) {
                 return await (window as any).Editor.Message.send('asset-db', 'import-asset', path);
@@ -288,13 +289,13 @@ class CocosEditorBridge implements CocosEditorAPI {
             console.warn('Asset import not supported in current environment:', error);
         }
     }
-    
+
     async refreshAssets(): Promise<void> {
         if (this.isDevMode) {
             console.log(`[Mock] Refreshing assets`);
             return;
         }
-        
+
         try {
             if ((window as any).Editor && (window as any).Editor.Message) {
                 return await (window as any).Editor.Message.send('asset-db', 'refresh');
@@ -303,13 +304,13 @@ class CocosEditorBridge implements CocosEditorAPI {
             console.warn('Asset refresh not supported in current environment:', error);
         }
     }
-    
+
     async selectNode(uuid: string): Promise<void> {
         if (this.isDevMode) {
             console.log(`[Mock] Selecting node: ${uuid}`);
             return;
         }
-        
+
         try {
             if ((window as any).Editor && (window as any).Editor.Message) {
                 return await (window as any).Editor.Message.send('scene', 'select-node', uuid);
@@ -318,14 +319,14 @@ class CocosEditorBridge implements CocosEditorAPI {
             console.warn('Node selection not supported in current environment:', error);
         }
     }
-    
+
     async createNode(name: string, parent?: string): Promise<string> {
         if (this.isDevMode) {
             const mockUuid = 'mock-node-' + Date.now();
             console.log(`[Mock] Creating node: ${name}, parent: ${parent}, uuid: ${mockUuid}`);
             return mockUuid;
         }
-        
+
         try {
             if ((window as any).Editor && (window as any).Editor.Message) {
                 const result = await (window as any).Editor.Message.request('scene', 'create-node', name, parent);
@@ -334,16 +335,16 @@ class CocosEditorBridge implements CocosEditorAPI {
         } catch (error) {
             console.warn('Node creation not supported in current environment:', error);
         }
-        
+
         return 'unsupported-' + Date.now();
     }
-    
+
     async deleteNode(uuid: string): Promise<void> {
         if (this.isDevMode) {
             console.log(`[Mock] Deleting node: ${uuid}`);
             return;
         }
-        
+
         try {
             if ((window as any).Editor && (window as any).Editor.Message) {
                 return await (window as any).Editor.Message.send('scene', 'delete-node', uuid);

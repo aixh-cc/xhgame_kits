@@ -11,14 +11,16 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "adm-zip": "^0.5.16",
         "element-plus": "^2.8.6",
-        "vue": "^3.4.37",
         "tsrpc-browser": "^3.4.1",
-        "tsrpc-miniapp": "^3.4.1"
+        "tsrpc-miniapp": "^3.4.1",
+        "vue": "^3.4.37"
     },
     "devDependencies": {
         "@cocos-fe/vite-plugin-cocos-panel": "^1.0.3",
         "@cocos/creator-types": "^3.8.6",
+        "@types/adm-zip": "^0.5.7",
         "@types/node": "^22.15.21",
         "@vitejs/plugin-vue": "^5.2.2",
         "@vue/tsconfig": "^0.7.0",
@@ -61,6 +63,16 @@
             "increase": {
                 "methods": [
                     "default.increase"
+                ]
+            },
+            "download-component": {
+                "methods": [
+                    "downloadComponent"
+                ]
+            },
+            "install-from-assets": {
+                "methods": [
+                    "installFromAssets"
                 ]
             }
         }

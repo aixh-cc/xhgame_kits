@@ -125,10 +125,10 @@ const componentList = ref([
   },
   {
     id: 2,
-    name: '物理交互系统',
+    name: 'help组件',
     description: '基于物理引擎的交互系统，支持拾取、投掷和碰撞反馈',
     usage: '添加到场景中的Manager对象，并配置相关参数',
-    downloadUrl: 'https://example.com/components/physics-interaction.zip',
+    downloadUrl: 'http://hcz.jk-kj.com/xhgame_plugin_comps/HelpComp.zip',
     version: '2.0.1',
     latestVersion: '2.0.1',
     resources: [
@@ -137,9 +137,7 @@ const componentList = ref([
       { type: ResourceType.AUDIO, count: 3 }
     ],
     targetPaths: [
-      { path: 'assets/script/systems/', description: '系统脚本' },
-      { path: 'assets/prefabs/physics/', description: '物理预制体' },
-      { path: 'assets/audio/effects/', description: '音效资源' }
+      { path: 'assets/script/comps/third/HelpComp', description: 'comps脚本' }
     ],
     author: '李四',
     stars: 4.5,
@@ -329,20 +327,10 @@ async function downloadAndInstall(component:any) {
       } else {
         throw new Error(result?.error || (isUpdate ? '更新失败' : '安装失败'));
       }
-    } catch (err) {
-      // 如果后端消息处理器尚未实现，显示模拟成功消息并更新状态
-      component.installed = true;
-      component.installedVersion = component.version;
-      component.needsUpdate = false;
-      component.installedPaths = component.targetPaths.map((t:any) => ({
-        path: t.path + component.name.replace(/\s+/g, '') + '.ts',
-        description: t.description,
-        type: ResourceType.SCRIPT
-      }));
-      
+    } catch (err: any) {
       message({
-        message: isUpdate ? `模拟更新: ${component.name} 已成功更新` : `模拟安装: ${component.name} 已成功安装到项目中`,
-        type: 'success'
+        message: `操作失败: ${err.message || err}`,
+        type: 'error'
       });
     }
   } catch (error:any) {
@@ -350,6 +338,52 @@ async function downloadAndInstall(component:any) {
     
     message({
       message: `操作失败: ${error.message || error}`,
+      type: 'error'
+    });
+  }
+}
+
+// 从插件assets安装组件
+async function installFromAssets(component: any) {
+  try {
+    // 确认安装
+    const confirmMessage = `确定要从插件内置资源安装 "${component.name}" 组件到项目的 assets/script 目录吗？`;
+    
+    await ElMessageBox.confirm(
+      confirmMessage,
+      '确认安装',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        appendTo: appRootDom
+      }
+    );
+    
+    message({
+      message: `正在安装 ${component.name}...`,
+      type: 'info'
+    });
+    
+    // 调用后端API进行文件复制
+    const result = await Editor.Message.request(name, 'install-from-assets', {
+      componentName: component.name,
+      componentId: component.id
+    });
+    
+    if (result && result.success) {
+      message({
+        message: `${component.name} 从内置资源安装成功！`,
+        type: 'success'
+      });
+    } else {
+      throw new Error(result?.error || '安装失败');
+    }
+  } catch (error: any) {
+    if (error === 'cancel') return;
+    
+    message({
+      message: `安装失败: ${error.message || error}`,
       type: 'error'
     });
   }
@@ -461,6 +495,11 @@ async function downloadAndInstall(component:any) {
             :disabled="component.installed && !component.needsUpdate"
             @click="downloadAndInstall(component)">
             {{ component.installed ? (component.needsUpdate ? '更新' : '已安装') : '下载安装' }}
+          </el-button>
+          <el-button 
+            type="success" 
+            @click="installFromAssets(component)">
+            Install
           </el-button>
           <el-button type="info" @click="showReviews(component)">
             查看评价 ({{ component.reviewCount }})

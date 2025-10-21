@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, onMounted, onUnmounted } from 'vue';
+import { inject, ref, onMounted, onUnmounted, watch } from 'vue';
 
 import { ElMessage } from 'element-plus';
 
@@ -96,6 +96,17 @@ onMounted(() => {
     // 检查编辑器连接状态
     editorConnected.value = !(import.meta.env.DEV && !(window as any).Editor);
     
+    // 监听连接状态变化
+    watch(editorConnected, (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+            message({ 
+                message: newValue ? '已连接到 Cocos Creator 编辑器' : '开发模式 - 使用模拟编辑器环境',
+                type: newValue ? 'success' : 'warning'
+            });
+        }
+    });
+
+    // 初始提示
     message({ 
         message: editorConnected.value ? '已连接到 Cocos Creator 编辑器' : '开发模式 - 使用模拟编辑器环境',
         type: editorConnected.value ? 'success' : 'warning'
