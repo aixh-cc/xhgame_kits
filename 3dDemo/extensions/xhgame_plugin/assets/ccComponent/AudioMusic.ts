@@ -1,6 +1,6 @@
 
-import { assetManager } from 'cc';
 import { AudioClip, AudioSource, _decorator, error, resources } from 'cc';
+import { xhgame } from 'db://assets/script/xhgame';
 
 const { ccclass, menu } = _decorator;
 
@@ -43,8 +43,8 @@ export class AudioMusic extends AudioSource {
             bundle_name = _arr[0]
             path = _arr[1]
         }
-        assetManager.loadBundle(bundle_name, (err, bundle) => {
-            bundle.load(path, AudioClip, (err, data: AudioClip) => {
+        xhgame.asset.loadBundle(bundle_name, (err, bundle) => {
+            bundle.load<AudioClip>(path, (err, data: AudioClip) => {
                 if (err) {
                     console.error('Failed to load AudioClip:', err);
                     return;

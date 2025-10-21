@@ -1,5 +1,5 @@
 import { CCString, Node } from "cc";
-import { _decorator, Animation, assetManager, Component, instantiate, Label, Prefab, v3 } from "cc"
+import { _decorator, Animation, Component, instantiate, Label, Prefab, v3 } from "cc"
 import { BaseCocosItem } from "./BaseCocosItem";
 import { IItemProduceDrive } from "@aixh-cc/xhgame_ec_framework";
 import { ITextUiItem } from "./consts/Interfaces";
@@ -63,14 +63,14 @@ export class CocosTextUiItemFactoryDrive extends Component implements IItemProdu
     async preloadItemsResource(): Promise<boolean> {
         console.log('CocosTextUiItemFactoryDrive preloadItemsResource 22')
         return new Promise((resolve, reject) => {
-            assetManager.loadBundle('bundle_game', (err, bundle) => {
-                bundle.load('prefabs/cocosItems/cocosTextUiItem', Prefab, (errp, prefab: Prefab) => {
+            xhgame.asset.loadBundle('bundle_game', (err, bundle) => {
+                bundle.load<Prefab>('prefabs/cocosItems/cocosTextUiItem', (errp, prefab: Prefab) => {
                     if (errp) {
                         console.error(errp)
                     }
                     this._prefab = prefab
                     // console.log('this._prefab', this._prefab)
-                    bundle.loadDir('prefabs/modelViews/textUiItems', Prefab, (errp, prefabs: Prefab[]) => {
+                    bundle.loadDir<Prefab>('prefabs/modelViews/textUiItems', (errp, prefabs: Prefab[]) => {
                         if (errp) {
                             console.error(errp)
                             reject(false)

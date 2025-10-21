@@ -1,4 +1,4 @@
-import { _decorator, assetManager, CCString, Camera, Component, instantiate, Label, Node, Prefab, v3, Vec3 } from "cc"
+import { _decorator, CCString, Camera, Component, instantiate, Label, Node, Prefab, v3, Vec3 } from "cc"
 import { BaseCocosItem } from "./BaseCocosItem";
 import { IItemProduceDrive } from "@aixh-cc/xhgame_ec_framework";
 import { IUnitItem, IUnitUiItem } from "./consts/Interfaces";
@@ -88,14 +88,14 @@ export class CocosUnitUiItemFactoryDrive extends Component implements IItemProdu
     async preloadItemsResource(): Promise<boolean> {
         console.log('CocosUnitUiItemFactoryDrive preloadItemsResource 66')
         return new Promise((resolve, reject) => {
-            assetManager.loadBundle('bundle_game', (err, bundle) => {
-                bundle.load('prefabs/cocosItems/cocosUnitUiItem', Prefab, (errp, prefab: Prefab) => {
+            xhgame.asset.loadBundle('bundle_game', (err, bundle) => {
+                bundle.load<Prefab>('prefabs/cocosItems/cocosUnitUiItem', (errp, prefab: Prefab) => {
                     if (errp) {
                         console.error(errp)
                     }
                     this._prefab = prefab
                     // console.log('this.prefab', this._prefab)
-                    bundle.loadDir('prefabs/modelViews/unitUiItems', Prefab, (errp, prefabs: Prefab[]) => {
+                    bundle.loadDir<Prefab>('prefabs/modelViews/unitUiItems', (errp, prefabs: Prefab[]) => {
                         if (errp) {
                             console.error(errp)
                         }

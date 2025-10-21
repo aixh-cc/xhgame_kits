@@ -1,4 +1,4 @@
-import { _decorator, assetManager, Component, instantiate, Label, Node, Prefab, v3 } from "cc"
+import { _decorator, Component, instantiate, Label, Node, Prefab, v3 } from "cc"
 import { BaseCocosItem } from "./BaseCocosItem";
 import { IItemProduceDrive } from "@aixh-cc/xhgame_ec_framework";
 import { xhgame } from "db://assets/script/xhgame";
@@ -40,8 +40,8 @@ export class CocosTiledItemFactoryDrive extends Component implements IItemProduc
     async preloadItemsResource(): Promise<boolean> {
         console.log('CocosTiledItemFactoryDrive preloadItemsResource 33')
         return new Promise((resolve, reject) => {
-            assetManager.loadBundle('bundle_game', (err, bundle) => {
-                bundle.load('prefabs/cocosItems/cocosTiledItem', Prefab, (errp, prefab: Prefab) => {
+            xhgame.asset.loadBundle('bundle_game', (err, bundle) => {
+                bundle.load<Prefab>('prefabs/cocosItems/cocosTiledItem', (errp, prefab: Prefab) => {
                     if (errp) {
                         console.error(errp)
                         reject(false)
@@ -49,7 +49,7 @@ export class CocosTiledItemFactoryDrive extends Component implements IItemProduc
                     }
                     this._prefab = prefab
                     // console.log('this.prefab', this._prefab)
-                    bundle.loadDir('prefabs/modelViews/tiledItems', Prefab, (errp, prefabs: Prefab[]) => {
+                    bundle.loadDir<Prefab>('prefabs/modelViews/tiledItems', (errp, prefabs: Prefab[]) => {
                         if (errp) {
                             console.error(errp)
                             reject(false)

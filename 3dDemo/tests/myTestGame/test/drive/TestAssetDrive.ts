@@ -5,17 +5,22 @@ class TestBundle implements IBundle {
     constructor(nameOrUrl: string) {
         this.nameOrUrl = nameOrUrl
     }
-    loadDir(dir: string, onProgress: ((finished: number, total: number, item: any) => void) | null, onComplete: (err: Error | null, data: any[]) => void): void {
+    load() {
+
+    }
+    release(path: string): void {
+
+    }
+    loadDir(dir: string, onComplete: (err: Error | null, data: any[]) => void): void {
         let finished = 100
         let total = 100
         let item = {}
-        onProgress(finished, total, item)
         let items = []
         console.log('loadDir', this.nameOrUrl)
         if (this.nameOrUrl == 'bundle_gate') {
             // 模拟
             if (dir == 'config') {
-                console.log('模拟加载config数据', __dirname)
+                console.log('模拟加载config数据')
                 var fs = require('fs');
                 var battledata = fs.readFileSync(__dirname + '/../../config/client/battle.json', 'utf8');
                 items.push({ name: 'battle', json: JSON.parse(battledata) })
@@ -34,7 +39,7 @@ class TestBundle implements IBundle {
     }
 }
 export class TestAssetDrive implements IAssetDrive {
-    loadBundle(nameOrUrl: string, onComplete: (err: Error, data: IBundle) => void) {
+    loadBundle(nameOrUrl: string, onComplete: (err: Error, data: any) => void) {
         let err = null
         let data = new TestBundle(nameOrUrl);
         onComplete(err, data)

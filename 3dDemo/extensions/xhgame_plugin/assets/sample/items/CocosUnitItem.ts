@@ -1,4 +1,4 @@
-import { _decorator, assetManager, Component, instantiate, Label, Node, Prefab, SkeletalAnimation, v3 } from "cc"
+import { _decorator, Component, instantiate, Label, Node, Prefab, SkeletalAnimation, v3 } from "cc"
 // import { IUnitState, StandingState } from "../../common/unit/State";
 // import { AnimatorAlias } from "../../../../extensions/xhgame-plugin-framework/assets/ccComponent/AnimatorAlias";
 import { Quat } from "cc";
@@ -185,8 +185,8 @@ export class CocosUnitItemFactoryDrive extends Component implements IItemProduce
     async preloadItemsResource(): Promise<boolean> {
         console.log('CocosUnitItemFactoryDrive preloadItemsResource 55')
         return new Promise((resolve, reject) => {
-            assetManager.loadBundle('bundle_game', (err, bundle) => {
-                bundle.load('prefabs/cocosItems/cocosUnitItem', Prefab, (errp, prefab: Prefab) => {
+            xhgame.asset.loadBundle('bundle_game', (err, bundle) => {
+                bundle.load<Prefab>('prefabs/cocosItems/cocosUnitItem', (errp, prefab: Prefab) => {
                     if (errp) {
                         console.error(errp)
                         reject(false)
@@ -194,7 +194,7 @@ export class CocosUnitItemFactoryDrive extends Component implements IItemProduce
                     }
                     this._prefab = prefab
                     // console.log('this.prefab', this._prefab)
-                    bundle.loadDir('prefabs/modelViews/unitItems', Prefab, (errp, prefabs: Prefab[]) => {
+                    bundle.loadDir<Prefab>('prefabs/modelViews/unitItems', (errp, prefabs: Prefab[]) => {
                         if (errp) {
                             console.error(errp)
                             reject(false)

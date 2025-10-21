@@ -1,6 +1,6 @@
-import { _decorator, assetManager, Component, instantiate, math, Node, Prefab, ResolutionPolicy, screen, UITransform, view } from "cc";
+import { _decorator, AssetManager, Component, instantiate, math, Node, Prefab, ResolutionPolicy, screen, UITransform, view } from "cc";
 import { BaseModelComp, DI, IUiDrive, IView } from "@aixh-cc/xhgame_ec_framework";
-import { xhgame } from "../xhgame";
+import { xhgame } from "db://assets/script/xhgame";
 import { IUiItem } from "../managers/myFactory/MyFactorys";
 import { CocosBaseView } from "db://xhgame_plugin/Ui/CocosBaseView";
 
@@ -70,8 +70,8 @@ export class CocosUiDrive extends Component implements IUiDrive {
                     bundle_name = _arr[0]
                     res_path = _arr[1]
                 }
-                assetManager.loadBundle(bundle_name, (err, bundle) => {
-                    bundle.load(res_path, Prefab, (err, prefab) => {
+                xhgame.asset.loadBundle<AssetManager.Bundle>(bundle_name, (err, bundle) => {
+                    bundle.load<Prefab>(res_path, (err, prefab) => {
                         if (err) {
                             console.error('Failed to load prefab:', err);
                             return;

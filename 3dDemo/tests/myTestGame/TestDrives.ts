@@ -3,7 +3,6 @@ import { TestUiDrive } from "./test/drive/TestUiDrive";
 import { TestAudioDrive } from "./test/drive/TestAudioDrive";
 import { MyTestFactoryConfig } from "./MyTestFactoryConfig";
 import { TestAssetDrive } from "./test/drive/TestAssetDrive";
-// import { AssetManager, assetManager } from "cc";
 
 export class TestDrives {
     constructor() {
@@ -12,9 +11,6 @@ export class TestDrives {
         DI.bindSingleton<TestAssetDrive>('IAssetDrive', TestAssetDrive)
 
         DI.bindSingleton<MyTestFactoryConfig>('IFactoryDrive', MyTestFactoryConfig)
-
-        // 
-        // DI.bindSingleton<AssetManager>('AssetManager', assetManager)
     }
 }
 

@@ -7,7 +7,7 @@ import { BYTEDANCE, DEBUG, WECHAT } from "cc/env";
 // import { BattleGameBoxComp } from "./severs/battle/BattleGameBoxComp";
 // import { SdkComp } from "./severs/common/SdkComp";
 import { DI, Entity, IGame, Platform, TimeSystem } from "@aixh-cc/xhgame_ec_framework";
-import { Game, Component, assetManager, game, director, profiler, _decorator } from "cc";
+import { Game, Component, game, director, profiler, _decorator } from "cc";
 // import { LoadResourceView } from "./cocos/view/ui/LoadResourceView";
 import { IConfigTableItem } from "./managers/myTable/tables/ConfigTable";
 import { LoadResourceViewComp } from "./comps/enter/LoadResourceViewComp";
@@ -53,7 +53,6 @@ export class CocosGame extends Component implements IGame {
         await this.init()
         await this.play()
         console.log('等待玩家操作')
-        // assetManager.loadBundle('bundle_game') // 为了提取加载资源
     }
 
     async init() {
