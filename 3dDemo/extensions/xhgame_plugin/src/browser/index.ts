@@ -6,7 +6,7 @@ import AdmZip from 'adm-zip';
 
 export const methods = {
     async open() {
-        Editor.Panel.open(name);
+        return Editor.Panel.open(name);
     },
     getVersion() {
         return Editor.App.version;
@@ -113,8 +113,9 @@ export const methods = {
     },
 
     // 从插件assets安装组件的消息处理器
-    async installFromAssets(info: any) {
-        const { componentName, componentId } = info;
+    async installFromAssets(param: any) {
+
+        const { componentName, componentId, componentCode } = param;
 
         console.log(`[xhgame_plugin] 从内置资源安装组件请求: ${componentName}, ID: ${componentId}`);
 
@@ -124,11 +125,11 @@ export const methods = {
             if (!extensionPath) {
                 throw new Error('无法获取插件路径');
             }
-            const assetsSourcePath = path.join(extensionPath, 'assets');
+            const assetsSourcePath = path.join(extensionPath, 'assets', 'packages', componentCode);
 
             // 获取项目assets/script目录路径
             const projectPath = Editor.Project.path;
-            const targetPath = path.join(projectPath, 'assets', 'script');
+            const targetPath = path.join(projectPath, 'assets');
 
             // 确保目标目录存在
             await fs.promises.mkdir(targetPath, { recursive: true });
@@ -176,7 +177,7 @@ export const methods = {
             };
 
         } catch (error) {
-            console.error(`[xhgame_plugin] 从内置资源安装组件失败:`, error);
+            console.error(`[xhgame_plugin] 从内置资源安装组件失败: `, error);
             return {
                 success: false,
                 error: error instanceof Error ? error.message : String(error)

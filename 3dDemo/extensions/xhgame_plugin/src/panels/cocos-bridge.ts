@@ -167,15 +167,15 @@ class CocosEditorBridge implements CocosEditorAPI {
     }
 
     async getVersion(): Promise<string> {
-        if (this.isDevMode) {
-            return this.mockResponse('get-version', []);
-        }
+        // if (this.isDevMode) {
+        //     return this.mockResponse('get-version', []);
+        // }
 
-        // 在真实的 Cocos Creator 环境中，直接使用 Editor.App.version
-        if ((window as any).Editor && (window as any).Editor.App) {
-            console.log('真实的cocos编辑器环境', (window as any).Editor)
-            return (window as any).Editor.App.version;
-        }
+        // // 在真实的 Cocos Creator 环境中，直接使用 Editor.App.version
+        // if ((window as any).Editor && (window as any).Editor.App) {
+        //     console.log('真实的cocos编辑器环境', (window as any).Editor)
+        //     return (window as any).Editor.App.version;
+        // }
 
         throw new Error('Editor API not available');
     }

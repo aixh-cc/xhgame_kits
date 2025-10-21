@@ -92,6 +92,7 @@ const componentList = ref([
   {
     id: 1,
     name: '3D角色控制器',
+    code: 'CharacterController',
     description: '基础的3D角色控制器，支持WASD移动和鼠标视角控制',
     usage: '将组件拖拽到角色对象上，设置相机引用即可使用',
     downloadUrl: 'https://example.com/components/character-controller.zip',
@@ -126,6 +127,7 @@ const componentList = ref([
   {
     id: 2,
     name: 'help组件',
+    code:'HelpAndChat',
     description: '基于物理引擎的交互系统，支持拾取、投掷和碰撞反馈',
     usage: '添加到场景中的Manager对象，并配置相关参数',
     downloadUrl: 'http://hcz.jk-kj.com/xhgame_plugin_comps/HelpComp.zip',
@@ -151,6 +153,7 @@ const componentList = ref([
   {
     id: 3,
     name: 'UI管理器',
+    code: 'UIManager',
     description: '完整的UI管理系统，支持界面层级、过渡动画和数据绑定',
     usage: '在项目中创建UIManager单例，通过API调用打开和关闭界面',
     downloadUrl: 'https://example.com/components/ui-manager.zip',
@@ -193,6 +196,7 @@ const componentList = ref([
   {
     id: 4,
     name: '存档系统',
+    code: 'SaveManager',
     description: '跨平台存档系统，支持本地和云端存储，自动同步和冲突解决',
     usage: '初始化SaveManager并配置存储选项，使用API进行数据存取',
     downloadUrl: 'https://example.com/components/save-system.zip',
@@ -345,6 +349,7 @@ async function downloadAndInstall(component:any) {
 
 // 从插件assets安装组件
 async function installFromAssets(component: any) {
+  console.log(`[xhgame_plugin] 安装【本地组件】请求:`, component.name);
   try {
     // 确认安装
     const confirmMessage = `确定要从插件内置资源安装 "${component.name}" 组件到项目的 assets/script 目录吗？`;
@@ -368,7 +373,8 @@ async function installFromAssets(component: any) {
     // 调用后端API进行文件复制
     const result = await Editor.Message.request(name, 'install-from-assets', {
       componentName: component.name,
-      componentId: component.id
+      componentId: component.id,
+      componentCode: component.code
     });
     
     if (result && result.success) {
