@@ -1,5 +1,5 @@
 
-import { System } from "@aixh-cc/xhgame_ec_framework"
+import { IBundle, System } from "@aixh-cc/xhgame_ec_framework"
 import { xhgame } from "../../xhgame"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { TableType } from "../../managers/MyTableManager"
