@@ -2,36 +2,28 @@
 import { DI, IManagers, TimeSystem } from "@aixh-cc/xhgame_ec_framework";
 import { CocosGameManagers } from "./CocosGameManagers";
 import { CocosGame } from "./CocosGame";
-import { CocosDrives } from "./CocosDrives";
 import { TestGameManagers } from "../../tests/myTestGame/test/TestGameManagers";
 import { TestGame } from "../../tests/myTestGame/TestGame";
-import { TestDrives } from "../../tests/myTestGame/TestDrives";
 export class xhgame {
     /**
     * test 时,打开下面的注释 
     * ==== test start ====
     */
-    // static getManagers() {
-    //     return DI.make<IManagers>('IManagers') as TestGameManagers;
-    // }
-    // static getGame() {
-    //     return DI.make<TestGame>('IGame') as TestGame;
-    // }
-    // static getDrives() {
-    //     return DI.make<TestDrives>('IDrives') as TestDrives;
-    // }
+    static getManagers() {
+        return DI.make<IManagers>('IManagers') as TestGameManagers;
+    }
+    static getGame() {
+        return DI.make<TestGame>('IGame') as TestGame;
+    }
     // ==== test end ====
 
     // cocos 时,打开下面的注释  ==== cocos start ====
-    static getManagers() {
-        return DI.make<CocosGameManagers>('IManagers') as CocosGameManagers;
-    }
-    static getGame() {
-        return DI.make<CocosGame>('IGame') as CocosGame;
-    }
-    static getDrives() {
-        return DI.make<CocosDrives>('IDrives') as CocosDrives;
-    }
+    // static getManagers() {
+    //     return DI.make<CocosGameManagers>('IManagers') as CocosGameManagers;
+    // }
+    // static getGame() {
+    //     return DI.make<CocosGame>('IGame') as CocosGame;
+    // }
     // ==== cocos end ====
     static get game() {
         return this.getGame();

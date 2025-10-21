@@ -6,6 +6,7 @@ import { MyNetManager } from "./managers/MyNetManager";
 import { MyFactoryManager } from "./managers/MyFactoryManager";
 import { MyTableManager } from "./managers/MyTableManager";
 import { MyEventManager } from "./managers/MyEventManager";
+import { CocosUiDrive } from "./drives/CocosUiDrive";
 
 export class CocosGameManagers implements IManagers {
     node: Node
@@ -21,7 +22,7 @@ export class CocosGameManagers implements IManagers {
         this.setTableManager(this.getTables())
         this.setFactoryManager(this.getFactorys())
         this.setNetManager(new MyNetManager())
-        this.setGuiManager(new MyUiManager())
+        this.setGuiManager(new MyUiManager<CocosUiDrive, Node>())
         this.setStorageManager(new StorageManager('xhgame', sys.localStorage))
         this.setCryptoManager(new CryptoManager('s', new CryptoEmpty()))
         this.setAudioManager(new MyAudioManager())
@@ -38,11 +39,11 @@ export class CocosGameManagers implements IManagers {
         factoryManager.autoRegister()
         return factoryManager
     }
-    guiManager: MyUiManager
-    setGuiManager(guiManager) {
+    guiManager: MyUiManager<CocosUiDrive, Node>
+    setGuiManager(guiManager: MyUiManager<CocosUiDrive, Node>) {
         this.guiManager = guiManager
     }
-    getGuiManager(): MyUiManager {
+    getGuiManager(): MyUiManager<CocosUiDrive, Node> {
         return this.guiManager
     }
     cryptoManager: CryptoManager<CryptoEmpty>
