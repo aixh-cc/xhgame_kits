@@ -7,28 +7,21 @@ import { TableType } from "../../managers/MyTableManager"
 export class LoadResourceToGateSystem extends System {
 
     static async initComp(comp: LoadResourceToGateComp) {
-        // 这个是唯一直接已挂载在root上的
-        await this.load_resource(comp)
-        // xhgame.event.emit('load_resource')
-        // comp.viewVM.is_load_resource = true
-        // comp.notify()
-        // await this.loadFinished(comp)
+        await this.loadResource(comp)
     }
 
-    static load_resource(comp: LoadResourceToGateComp) {
+    static loadResource(comp: LoadResourceToGateComp) {
         return new Promise((resolve, reject) => {
             xhgame.asset.loadBundle('bundle_gate', async (err, bundle: any) => {
                 await this.load_gui(comp, bundle)
                 await this.load_json(comp, bundle)
                 comp.vm.resValue = 1;
                 comp.vm.isLoadResFinished = false;
-                // const comp = xhgame.gameEntity.getComponent(LoadResourceViewComp)
-                // comp.loadFinishedCallback && comp.loadFinishedCallback()
                 resolve(true)
             })
         })
     }
-    static async load_gui(comp: LoadResourceToGateComp, bundle: any) {
+    static async load_gui(comp: LoadResourceToGateComp, bundle: IBundle) {
         return new Promise((resolve, reject) => {
             bundle.loadDir('gui', (finished: number, total: number) => {
                 console.log(`gui加载资源进度: ${finished}/${total}`);

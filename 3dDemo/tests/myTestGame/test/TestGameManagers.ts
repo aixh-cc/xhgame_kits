@@ -27,7 +27,7 @@ export class TestNode implements INode {
         this.name = name
     }
 }
-interface IBundle {
+export interface IBundle {
     loadDir(dir: string, onProgress: ((finished: number, total: number, item: any) => void) | null, onComplete: (err: Error | null, data: any[]) => void): void
 }
 class TestBundle implements IBundle {
