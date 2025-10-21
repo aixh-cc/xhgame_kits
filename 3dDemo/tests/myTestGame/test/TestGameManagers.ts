@@ -8,19 +8,10 @@ import { MyUiManager } from "db://assets/script/managers/MyUiManager";
 import { MyNetManager } from "db://assets/script/managers/MyNetManager";
 import { MyTableManager } from "db://assets/script/managers/MyTableManager";
 import { MyFactoryManager } from "db://assets/script/managers/MyFactoryManager";
-import { ApiEnums } from "db://assets/script/managers/ApiEnums";
 import { MyAssetManager } from "db://assets/script/managers/MyAssetManager";
 import { TestAssetDrive } from "./drive/TestAssetDrive";
+import { MyEventManager } from "db://assets/script/managers/MyEventManager";
 
-export class MyTestNetManager extends NetManager<FetchHttp, Websocket> {
-    constructor() {
-        super(new FetchHttp(), new Websocket())
-    }
-
-    get enums() {
-        return ApiEnums
-    }
-}
 
 export class TestNode implements INode {
     name: string = ''
@@ -33,10 +24,10 @@ export class TestNode implements INode {
 
 export class TestGameManagers implements IManagers {
     init(node: TestNode) {
-        this.setEventManager(new EventManager())
+        this.setEventManager(new MyEventManager())
         this.setTableManager(getTables())
         this.setFactoryManager(this.getFactorys())
-        this.setNetManager(new MyTestNetManager())
+        this.setNetManager(new MyNetManager<FetchHttp, Websocket>())
         this.setGuiManager(new MyUiManager<TestUiDrive, TestNode>())
         this.setStorageManager(new StorageManager('xhgame', getLocalStorage()))
         // // this.setCameraManager(new CameraManager(new UICamera(), new UICamera()))
@@ -91,12 +82,12 @@ export class TestGameManagers implements IManagers {
     // getCameraManager(): CameraManager<UICamera, UICamera> {
     //     return this.cameraManager
     // }
-    netManager: MyTestNetManager
-    setNetManager(netManager: MyTestNetManager) {
+    netManager: MyNetManager<FetchHttp, Websocket>
+    setNetManager(netManager: MyNetManager<FetchHttp, Websocket>) {
         this.netManager = netManager
         return this
     }
-    getNetManager(): MyTestNetManager {
+    getNetManager(): MyNetManager<FetchHttp, Websocket> {
         return this.netManager
     }
     storageManager: StorageManager

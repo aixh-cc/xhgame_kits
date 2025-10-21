@@ -1,4 +1,4 @@
-import { DI } from "@aixh-cc/xhgame_ec_framework";
+import { DI, FetchHttp, Websocket } from "@aixh-cc/xhgame_ec_framework";
 import { TestUiDrive } from "./test/drive/TestUiDrive";
 import { TestAudioDrive } from "./test/drive/TestAudioDrive";
 import { MyTestFactoryConfig } from "./MyTestFactoryConfig";
@@ -9,7 +9,8 @@ export class TestDrives {
         DI.bindSingleton<TestUiDrive>('IUiDrive', TestUiDrive)
         DI.bindSingleton<TestAudioDrive>('IAudioDrive', TestAudioDrive)
         DI.bindSingleton<TestAssetDrive>('IAssetDrive', TestAssetDrive)
-
+        DI.bindSingleton<FetchHttp>('IHttp', FetchHttp)
+        DI.bindSingleton<Websocket>('ISocket', Websocket)
         DI.bindSingleton<MyTestFactoryConfig>('IFactoryDrive', MyTestFactoryConfig)
     }
 }

@@ -1,9 +1,9 @@
-import { FetchHttp, NetManager, Websocket } from "@aixh-cc/xhgame_ec_framework"
+import { DI, IHttp, ISocket, NetManager } from "@aixh-cc/xhgame_ec_framework"
 import { ApiEnums } from "./ApiEnums"
 
-export class MyNetManager extends NetManager<FetchHttp, Websocket> {
+export class MyNetManager<T extends IHttp, TS extends ISocket> extends NetManager<T, TS> {
     constructor() {
-        super(new FetchHttp(), new Websocket())
+        super(DI.make('IHttp'), DI.make('ISocket'))
     }
 
     get enums() {

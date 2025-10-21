@@ -23,10 +23,7 @@ export class LoadResourceToGateSystem extends System {
     }
     static async load_gui(comp: LoadResourceToGateComp, bundle: IBundle) {
         return new Promise((resolve, reject) => {
-            bundle.loadDir('gui', (finished: number, total: number) => {
-                console.log(`gui加载资源进度: ${finished}/${total}`);
-                comp.vm.resValue = finished / total;
-            }, (err, assets) => {
+            bundle.loadDir('gui', (err, assets) => {
                 if (err) {
                     console.error('加载资源失败', err);
                     return;
@@ -38,9 +35,7 @@ export class LoadResourceToGateSystem extends System {
     }
     static async load_json(comp: LoadResourceToGateComp, bundle: any) {
         return new Promise((resolve, reject) => {
-            bundle.loadDir('config', (finished: number, total: number) => {
-                console.log(`json加载资源进度: ${finished}/${total}`);
-            }, (err, assets) => {
+            bundle.loadDir('config', (err, assets) => {
                 if (err) {
                     console.error('加载资源失败', err);
                     return;

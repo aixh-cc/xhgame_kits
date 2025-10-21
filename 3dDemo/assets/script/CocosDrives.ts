@@ -1,4 +1,4 @@
-import { DI } from "@aixh-cc/xhgame_ec_framework";
+import { DI, FetchHttp, Websocket } from "@aixh-cc/xhgame_ec_framework";
 import { CocosUiDrive } from "./drives/CocosUiDrive";
 import { CocosAudioDrive } from "./drives/CocosAudioDrive";
 import { MyCocosFactoryConfig } from "./managers/myFactory/MyCocosFactoryConfig";
@@ -9,8 +9,8 @@ export class CocosDrives {
         DI.bindSingleton<CocosUiDrive>('IUiDrive', CocosUiDrive)
         DI.bindSingleton<CocosAudioDrive>('IAudioDrive', CocosAudioDrive)
         DI.bindSingleton<CocosAssetDrive>('IAssetDrive', CocosAssetDrive)
-
-        // 
+        DI.bindSingleton<FetchHttp>('IHttp', FetchHttp)
+        DI.bindSingleton<Websocket>('ISocket', Websocket)
         DI.bindSingleton<MyCocosFactoryConfig>('IFactoryDrive', MyCocosFactoryConfig)
     }
 }

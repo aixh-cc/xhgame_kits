@@ -1,5 +1,5 @@
 import { AssetManager, Node, sys } from "cc";
-import { CryptoEmpty, CryptoManager, DI, IManagers, INode, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
+import { CryptoEmpty, CryptoManager, DI, FetchHttp, IManagers, INode, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
 import { MyUiManager } from "./managers/MyUiManager";
 import { MyAudioManager } from "./managers/MyAudioManager";
 import { MyNetManager } from "./managers/MyNetManager";
@@ -23,7 +23,7 @@ export class CocosGameManagers implements IManagers {
         this.setEventManager(new MyEventManager())
         this.setTableManager(this.getTables())
         this.setFactoryManager(this.getFactorys())
-        this.setNetManager(new MyNetManager())
+        this.setNetManager(new MyNetManager<FetchHttp, Websocket>())
         this.setGuiManager(new MyUiManager<CocosUiDrive, Node>())
         this.setStorageManager(new StorageManager('xhgame', sys.localStorage))
         this.setCryptoManager(new CryptoManager('s', new CryptoEmpty()))
@@ -78,12 +78,12 @@ export class CocosGameManagers implements IManagers {
     getFactoryManager(): MyFactoryManager {
         return this.factoryManager
     }
-    netManager: MyNetManager
-    setNetManager(netManager: MyNetManager) {
+    netManager: MyNetManager<FetchHttp, Websocket>
+    setNetManager(netManager: MyNetManager<FetchHttp, Websocket>) {
         this.netManager = netManager
         return this
     }
-    getNetManager(): MyNetManager {
+    getNetManager(): MyNetManager<FetchHttp, Websocket> {
         return this.netManager
     }
     storageManager: StorageManager
