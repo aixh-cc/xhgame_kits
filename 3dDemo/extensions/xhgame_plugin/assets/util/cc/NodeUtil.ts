@@ -1,5 +1,4 @@
 import { Node, tween, UITransform, v3, Vec3 } from "cc";
-import { xhgame } from "db://assets/script/xhgame";
 
 export class NodeUtil {
     /**
@@ -21,10 +20,10 @@ export class NodeUtil {
      * @param targetMountNode 
      * @returns 
      */
-    static touchPosToLocalPos(touch_x: number, touch_y: number, targetMountNode: Node): number[] {
-        let new_position = NodeUtil.calculateASpaceToBSpacePos(xhgame.gui.gui_root, targetMountNode, v3(touch_x, touch_y, 0))
-        return [new_position.x - xhgame.game.screen.w / 2, new_position.y - xhgame.game.screen.h / 2, 0]
-    }
+    // static touchPosToLocalPos(touch_x: number, touch_y: number, targetMountNode: Node): number[] {
+    //     // let new_position = NodeUtil.calculateASpaceToBSpacePos(xhgame.gui.gui_root, targetMountNode, v3(touch_x, touch_y, 0))
+    //     // return [new_position.x - xhgame.game.screen.w / 2, new_position.y - xhgame.game.screen.h / 2, 0]
+    // }
     /**
     * 二阶贝塞尔曲线运动
     * @param target 目标

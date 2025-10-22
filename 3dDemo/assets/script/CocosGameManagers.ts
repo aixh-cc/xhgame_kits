@@ -8,7 +8,6 @@ import { MyTableManager } from "./managers/MyTableManager";
 import { MyEventManager } from "./managers/MyEventManager";
 import { CocosUiDrive } from "./drives/CocosUiDrive";
 import { MyAssetManager } from "./managers/MyAssetManager";
-import { CocosAssetDrive } from "./drives/CocosAssetDrive";
 import { CocosAudioDrive } from "./drives/CocosAudioDrive";
 
 export class CocosGameManagers implements IManagers {
@@ -30,7 +29,7 @@ export class CocosGameManagers implements IManagers {
         this.setCryptoManager(new CryptoManager('s', new CryptoEmpty()))
         this.setAudioManager(new MyAudioManager())
         //
-        this.setAssetManager(new MyAssetManager<CocosAssetDrive>())
+        this.setAssetManager(new MyAssetManager<AssetManager>())
     }
     getTables() {
         let tableManager = new MyTableManager()
@@ -107,11 +106,11 @@ export class CocosGameManagers implements IManagers {
     }
 
     //
-    private _assetManager: MyAssetManager<CocosAssetDrive>
-    setAssetManager(assetManager: MyAssetManager<CocosAssetDrive>) {
+    private _assetManager: MyAssetManager<AssetManager>
+    setAssetManager(assetManager: MyAssetManager<AssetManager>) {
         this._assetManager = assetManager
     }
-    getAssetManager(): MyAssetManager<CocosAssetDrive> {
+    getAssetManager(): MyAssetManager<AssetManager> {
         return this._assetManager
     }
 }

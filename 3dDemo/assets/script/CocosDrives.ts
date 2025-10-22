@@ -6,7 +6,7 @@ import { AssetManager, assetManager } from "cc";
 
 export class CocosDrives {
     constructor() {
-        // DI.bindInstance<AssetManager>('IAssetDrive', assetManager)
+        DI.bindInstance<AssetManager>('IAssetDrive', assetManager)
         DI.bindSingleton<CocosUiDrive>('IUiDrive', CocosUiDrive)
         DI.bindSingleton<CocosAudioDrive>('IAudioDrive', CocosAudioDrive)
         DI.bindSingleton<FetchHttp>('IHttp', FetchHttp)

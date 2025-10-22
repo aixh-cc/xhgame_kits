@@ -20,7 +20,7 @@ export class TestGame implements IGame {
     serverNo: string = '0'
     config: IConfigTableItem = null
     at_platform: Platform = Platform.H5
-    screen: { w: number, h: number } = { w: 640, h: 960 }
+    // screen: { w: number, h: number } = { w: 640, h: 960 }
     testing: boolean = false
 
     async start() {

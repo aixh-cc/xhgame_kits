@@ -164,8 +164,8 @@ export class CocosUiDrive extends Component implements IUiDrive {
         view.setDesignResolutionSize(finalW, finalH, ResolutionPolicy.UNKNOWN);
         this.transform!.width = finalW;
         this.transform!.height = finalH;
-        xhgame.game.screen.w = finalW
-        xhgame.game.screen.h = finalH
+        // xhgame.game.screen.w = finalW
+        // xhgame.game.screen.h = finalH
 
         console.log(dr, "设计尺寸");
         console.log(s, "屏幕尺寸");

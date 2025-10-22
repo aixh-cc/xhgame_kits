@@ -10,11 +10,12 @@ export class MyAudioManager<T extends IAudioDrive> extends AudioManager<T> {
 }
 
 enum AudioEnums {
+    QingBg = 'bundle_gate://audio/qingbg',
+    // 
     Chose = 'bundle_game://audio/shengli',
     ShengLi = 'bundle_game://audio/shengli',
     ShiBai = 'bundle_game://audio/shibai',
     //
     BingDong = 'bundle_game://audio/skill_wuxing_3',
     MyGameBG = 'bundle_game://audio/mygamebg',
-    QingBg = 'bundle_game://audio/qingbg',
 }
