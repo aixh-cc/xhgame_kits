@@ -21,12 +21,18 @@ export class SettingViewSystem extends System {
 export class SettingViewComp extends BaseModelComp {
     compName: string = 'SettingViewComp'
     initBySystems: (typeof System)[] = [SettingViewSystem]
-    vm: ISettingViewVM = null
+    vm: ISettingViewVM = {
+        music_open: false,
+        effect_open: false,
+    }
     actions = {
 
     }
     reset() {
-        this.vm = null
+        this.vm = {
+            music_open: false,
+            effect_open: false,
+        }
     }
     onDetach() {
         xhgame.gui.removeUI(xhgame.gui.enums.Setting)

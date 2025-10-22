@@ -3,6 +3,7 @@ import { xhgame } from "../../xhgame"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { PlayerModelComp } from "../models/PlayerModelComp"
 import { SettingViewComp } from "../common/SettingViewComp"
+import { GateGroupMissionViewComp } from "./GateGroupMissionViewComp"
 
 export class GateViewComp extends BaseModelComp {
     compName: string = 'GateViewComp'
@@ -56,7 +57,7 @@ export class GateViewSystem extends System {
     }
 
     static openGateGroupMission(comp: GateViewComp) {
-        // xhgame.gameEntity.attachComponent(GateGroupMissionComp)
+        xhgame.gameEntity.attachComponent(GateGroupMissionViewComp)
     }
 
     static openSettingDialog(comp: GateViewComp) {

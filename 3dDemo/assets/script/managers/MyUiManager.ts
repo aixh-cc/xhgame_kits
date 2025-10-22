@@ -30,7 +30,7 @@ enum UIEnums {
     /** 入口 */
 
     Gate_Index = 'bundle_gate://gui/gate/gate_index',
-    GateGroupMission = 'bundle_gate://gui/gate/dialog/gate_group_mission',
+    GateGroupMission = 'bundle_gate://gui/dialog/gate_group_mission',
     GateStorePanel = 'bundle_gate://gui/gate/dialog/gate_store_panel',
     GatePackagePanel = 'bundle_gate://gui/gate/dialog/gate_package_panel',
     GateDYYJPanel = 'bundle_gate://gui/gate/dialog/dy_yjrk',
