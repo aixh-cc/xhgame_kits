@@ -113,12 +113,9 @@ export class CocosUiDrive extends Component implements IUiDrive {
     /** 横屏设计尺寸 */
     private landscapeDrz: math.Size = null!;
 
-    onLoad() {
-        this.init();
-    }
-
     /** 初始化引擎 */
-    protected init() {
+    init(root_node: Node) {
+        this.node = root_node
         this.transform = this.getComponent(UITransform)!;
         // this.camera = this.getComponentInChildren(Camera)!;
 

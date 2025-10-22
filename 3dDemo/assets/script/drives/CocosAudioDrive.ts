@@ -12,7 +12,8 @@ export class CocosAudioDrive extends Component implements IAudioDrive {
     private effect!: AudioEffect;
     private music!: AudioMusic;
 
-    protected onLoad(): void {
+    init(root_node: Node): void {
+        this.node = root_node
         var node = new Node("AudioManagerNode");
         director.addPersistRootNode(node);
         var effect = new Node("EffectNode");

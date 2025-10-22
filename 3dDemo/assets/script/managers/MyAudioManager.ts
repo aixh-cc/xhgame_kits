@@ -1,6 +1,6 @@
 import { AudioManager, DI, IAudioDrive } from "@aixh-cc/xhgame_ec_framework"
 
-export class MyAudioManager extends AudioManager<IAudioDrive> {
+export class MyAudioManager<T extends IAudioDrive> extends AudioManager<T> {
     constructor() {
         super(DI.make('IAudioDrive'))
     }

@@ -1,8 +1,13 @@
-import { AssetManager, DI, IAssetDrive } from "@aixh-cc/xhgame_ec_framework"
+import { AssetManager, DI, IAssetDrive, IBundle } from "@aixh-cc/xhgame_ec_framework"
+import { assetManager } from "cc"
 
 export class MyAssetManager<T extends IAssetDrive> extends AssetManager<T> {
     constructor() {
-        super(DI.make('IAssetDrive'))
+        super(null)
+        // super(DI.make('IAssetDrive'))
+    }
+    loadBundle<T extends IBundle>(nameOrUrl: string, onComplete?: (err: Error, data: T) => void): void {
+        assetManager.loadBundle(nameOrUrl, onComplete)
     }
     // get enums() {
 

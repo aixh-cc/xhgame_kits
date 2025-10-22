@@ -2,7 +2,7 @@ import { GameEntity } from "./GameEntity";
 import { xhgame } from "db://assets/script/xhgame";
 import { BYTEDANCE, DEBUG, WECHAT } from "cc/env";
 import { DI, Entity, IGame, Platform, TimeSystem } from "@aixh-cc/xhgame_ec_framework";
-import { Game, Component, game, director, profiler, _decorator } from "cc";
+import { Game, Component, game, director, profiler, _decorator, assetManager } from "cc";
 import { IConfigTableItem } from "./managers/myTable/tables/ConfigTable";
 import { CocosGameManagers } from "./CocosGameManagers";
 import { CocosDrives } from "./CocosDrives";

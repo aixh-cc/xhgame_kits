@@ -1,4 +1,4 @@
-import { AssetManager, Node, sys } from "cc";
+import { AssetManager, Component, Node, sys } from "cc";
 import { CryptoEmpty, CryptoManager, DI, FetchHttp, IManagers, INode, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
 import { MyUiManager } from "./managers/MyUiManager";
 import { MyAudioManager } from "./managers/MyAudioManager";
@@ -9,6 +9,7 @@ import { MyEventManager } from "./managers/MyEventManager";
 import { CocosUiDrive } from "./drives/CocosUiDrive";
 import { MyAssetManager } from "./managers/MyAssetManager";
 import { CocosAssetDrive } from "./drives/CocosAssetDrive";
+import { CocosAudioDrive } from "./drives/CocosAudioDrive";
 
 export class CocosGameManagers implements IManagers {
     node: Node
@@ -44,6 +45,8 @@ export class CocosGameManagers implements IManagers {
     guiManager: MyUiManager<CocosUiDrive, Node>
     setGuiManager(guiManager: MyUiManager<CocosUiDrive, Node>) {
         this.guiManager = guiManager
+        // 需要将cocos的驱动挂到root的node下
+        this.guiManager.getDrive().init(this.node.getChildByName('UICanvas'))
     }
     getGuiManager(): MyUiManager<CocosUiDrive, Node> {
         return this.guiManager
@@ -55,11 +58,13 @@ export class CocosGameManagers implements IManagers {
     getCryptoManager(): CryptoManager<CryptoEmpty> {
         return this.cryptoManager
     }
-    audioManager: MyAudioManager
-    setAudioManager(audioManager: MyAudioManager) {
+    audioManager: MyAudioManager<CocosAudioDrive>
+    setAudioManager(audioManager: MyAudioManager<CocosAudioDrive>) {
         this.audioManager = audioManager
+        // 需要将cocos的驱动挂到root的node下
+        this.audioManager.getDrive().init(this.node)
     }
-    getAudioManager(): MyAudioManager {
+    getAudioManager(): MyAudioManager<CocosAudioDrive> {
         return this.audioManager
     }
     // table

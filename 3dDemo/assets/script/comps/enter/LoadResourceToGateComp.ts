@@ -50,6 +50,7 @@ export class LoadResourceToGateSystem extends System {
                 }
                 comp.vm.resValue = 1;
                 comp.vm.isLoadResFinished = false;
+                console.log('json加载资源成功', assets);
                 resolve(true)
             });
         })

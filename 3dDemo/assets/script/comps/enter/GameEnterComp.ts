@@ -25,7 +25,6 @@ export class GameEnterSystem extends System {
         await xhgame.gameEntity.attachComponent(SdkComp).done()
         console.log('SdkComp done')
         xhgame.gameEntity.attachComponent(PlayerModelComp)
-
         await Promise.all([
             await xhgame.gameEntity.attachComponent(GateSenceComp).done(),
             await xhgame.gameEntity.attachComponent(PlayerLoginComp).done(),

@@ -107,11 +107,11 @@ export class GateView extends CocosBaseView implements IGateViewVM {
 
     protected onEnable(): void {
         this.showStartBtn()
-        if (BYTEDANCE) {
-            this.node.getChildByPath('top/dy_rkyj').active = true
-        } else {
-            this.node.getChildByPath('top/dy_rkyj').active = false
-        }
+        // if (BYTEDANCE) {
+        //     this.node.getChildByPath('top/dy_rkyj').active = true
+        // } else {
+        //     this.node.getChildByPath('top/dy_rkyj').active = false
+        // }
     }
 
     protected onDisable(): void {
