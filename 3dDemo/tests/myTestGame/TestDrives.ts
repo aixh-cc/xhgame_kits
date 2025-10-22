@@ -6,12 +6,12 @@ import { TestAssetDrive } from "./test/drive/TestAssetDrive";
 
 export class TestDrives {
     constructor() {
+        DI.bindSingleton<TestAssetDrive>('IAssetDrive', TestAssetDrive)
         DI.bindSingleton<TestUiDrive>('IUiDrive', TestUiDrive)
         DI.bindSingleton<TestAudioDrive>('IAudioDrive', TestAudioDrive)
-        DI.bindSingleton<TestAssetDrive>('IAssetDrive', TestAssetDrive)
         DI.bindSingleton<FetchHttp>('IHttp', FetchHttp)
         DI.bindSingleton<Websocket>('ISocket', Websocket)
-        DI.bindSingleton<MyTestFactoryConfig>('IFactoryDrive', MyTestFactoryConfig)
+        DI.bindSingleton<MyTestFactoryConfig>('IFactoryConfig', MyTestFactoryConfig)
     }
 }
 

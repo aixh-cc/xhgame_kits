@@ -1527,21 +1527,15 @@
       "__expectedType__": "cc.TextureCube"
     },
     "_envmapLDR": null,
-    "_diffuseMapHDR": {
-      "__uuid__": "3d243c8d-0e90-46e1-886b-51e691dc98aa@b47c0",
-      "__expectedType__": "cc.TextureCube"
-    },
+    "_diffuseMapHDR": null,
     "_diffuseMapLDR": null,
-    "_enabled": false,
-    "_useHDR": true,
+    "_enabled": true,
+    "_useHDR": false,
     "_editableMaterial": {
       "__uuid__": "d3c7820c-2a98-4429-8bc7-b8453bc9ac41",
       "__expectedType__": "cc.Material"
     },
-    "_reflectionHDR": {
-      "__uuid__": "a8b3b76d-0473-4825-87cd-0e1fe75e656e@b47c0",
-      "__expectedType__": "cc.TextureCube"
-    },
+    "_reflectionHDR": null,
     "_reflectionLDR": null,
     "_rotationAngle": 77
   },

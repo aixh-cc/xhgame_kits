@@ -22,7 +22,7 @@ enum UIEnums {
     Help_Chat = 'bundle_game://gui/common/help/help_chat',
     Help_Guide = 'bundle_game://gui/common/help/help_guide',
     Help_Pic = 'bundle_game://gui/common/help/help_pic',
-    Setting = 'bundle_game://gui/common/setting',
+
     See_Video_Get = 'bundle_game://gui/common/see_video_get',
     /**
      * gateui
@@ -35,6 +35,8 @@ enum UIEnums {
     GatePackagePanel = 'bundle_gate://gui/gate/dialog/gate_package_panel',
     GateDYYJPanel = 'bundle_gate://gui/gate/dialog/dy_yjrk',
     Loading = 'bundle_gate://gui/gate/loading',
+    //
+    Setting = 'bundle_gate://gui/dialog/setting',
     /** 
      * 战役ui
      */

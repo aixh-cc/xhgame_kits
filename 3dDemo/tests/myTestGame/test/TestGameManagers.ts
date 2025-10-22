@@ -32,11 +32,9 @@ export class TestGameManagers implements IManagers {
         this.setStorageManager(new StorageManager('xhgame', getLocalStorage()))
         // // this.setCameraManager(new CameraManager(new UICamera(), new UICamera()))
         // this.setCryptoManager(new CryptoManager('s', new CryptoEmpty()))
-        this.setAudioManager(new MyAudioManager())
+        this.setAudioManager(new MyAudioManager<TestAudioDrive>())
         this.setAssetManager(new MyAssetManager<TestAssetDrive>())
         console.log('构建完成')
-        // let mm = DI.make('mm')
-        // console.log('mm', mm, mm.getDdd())
     }
     guiManager: MyUiManager<TestUiDrive, TestNode>
     setGuiManager(guiManager) {
@@ -52,11 +50,11 @@ export class TestGameManagers implements IManagers {
     getCryptoManager(): CryptoManager<CryptoEmpty> {
         return this.cryptoManager
     }
-    audioManager: MyAudioManager
-    setAudioManager(audioManager: MyAudioManager) {
+    audioManager: MyAudioManager<TestAudioDrive>
+    setAudioManager(audioManager: MyAudioManager<TestAudioDrive>) {
         this.audioManager = audioManager
     }
-    getAudioManager(): MyAudioManager {
+    getAudioManager(): MyAudioManager<TestAudioDrive> {
         return this.audioManager
     }
     tableManager: MyTableManager

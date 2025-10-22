@@ -4,7 +4,7 @@ import { CCString } from 'cc';
 import { xhgame } from 'db://assets/script/xhgame';
 import { BYTEDANCE } from 'cc/env';
 import { CocosBaseView } from 'db://xhgame_plugin/Ui/CocosBaseView';
-import { GateSenceComp } from '../../comps/gate/GateSenceComp';
+import { GateViewComp } from '../../comps/gate/GateViewComp';
 
 const { ccclass, property } = _decorator;
 
@@ -30,7 +30,7 @@ export class GateView extends CocosBaseView implements IGateViewVM {
     set ps(val) {
         this._ps = val
         if (val != null) {
-            this.node.getChildByPath('top/value').getComponent(Label).string = val.toString()
+            this.node.getChildByPath('top/ps/value').getComponent(Label).string = val.toString()
         }
     }
 
@@ -119,12 +119,12 @@ export class GateView extends CocosBaseView implements IGateViewVM {
     }
 
     enterGame() {
-        let comp = this.viewModelComp as GateSenceComp
+        let comp = this.viewModelComp as GateViewComp
         comp.actions.startBattle()
     }
 
     openGateGroupMission() {
-        let comp = this.viewModelComp as GateSenceComp
+        let comp = this.viewModelComp as GateViewComp
         comp.actions.openGateGroupMission()
     }
 
@@ -132,25 +132,9 @@ export class GateView extends CocosBaseView implements IGateViewVM {
         this.node.getChildByName('bottom').getChildByName('startGame').active = true
     }
 
-    showStorePanel() {
-        let comp = this.viewModelComp as GateSenceComp
-        comp.actions.showStorePanel()
-
-    }
-    dyRukouyoujiang() {
-        const comp = this.viewModelComp as GateSenceComp
-        comp.actions.dyRukouyoujiang()
-    }
-
     openSettingDialog() {
-        let comp = this.viewModelComp as GateSenceComp
+        let comp = this.viewModelComp as GateViewComp
         comp.actions.openSettingDialog()
     }
-
-    showPackagePanel() {
-        let comp = this.viewModelComp as GateSenceComp
-        comp.actions.showPackagePanel()
-    }
-
 
 }

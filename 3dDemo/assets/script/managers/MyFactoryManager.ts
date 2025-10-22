@@ -5,7 +5,7 @@ import { MyFactoryActions } from "./myFactory/MyFactoryActions"
 export class MyFactoryManager extends FactoryManager<IFactoryConfig> {
 
     constructor() {
-        super(DI.make('IFactoryDrive'))
+        super(DI.make('IFactoryConfig'))
     }
     /** 快速操作 */
     private _myFactoryActions: MyFactoryActions = null

@@ -11,7 +11,7 @@ export class CocosDrives {
         DI.bindSingleton<CocosAudioDrive>('IAudioDrive', CocosAudioDrive)
         DI.bindSingleton<FetchHttp>('IHttp', FetchHttp)
         DI.bindSingleton<Websocket>('ISocket', Websocket)
-        DI.bindSingleton<MyCocosFactoryConfig>('IFactoryDrive', MyCocosFactoryConfig)
+        DI.bindSingleton<MyCocosFactoryConfig>('IFactoryConfig', MyCocosFactoryConfig)
 
         // let ss = DI.make('IAssetDrive')
         // console.log('ss', ss)

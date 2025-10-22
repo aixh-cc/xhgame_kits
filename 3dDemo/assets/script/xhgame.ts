@@ -1,16 +1,17 @@
 
-import { DI, IManagers, TimeSystem } from "@aixh-cc/xhgame_ec_framework";
+import { DI, TimeSystem } from "@aixh-cc/xhgame_ec_framework";
 import { CocosGameManagers } from "./CocosGameManagers";
 import { CocosGame } from "./CocosGame";
 import { TestGameManagers } from "../../tests/myTestGame/test/TestGameManagers";
 import { TestGame } from "../../tests/myTestGame/TestGame";
+// 总门面
 export class xhgame {
     /**
     * test 时,打开下面的注释 
     * ==== test start ====
     */
     // static getManagers() {
-    //     return DI.make<IManagers>('IManagers') as TestGameManagers;
+    //     return DI.make<TestGameManagers>('IManagers') as TestGameManagers;
     // }
     // static getGame() {
     //     return DI.make<TestGame>('IGame') as TestGame;
