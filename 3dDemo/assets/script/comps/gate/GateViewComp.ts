@@ -56,23 +56,10 @@ export class GateViewSystem extends System {
     }
 
     static openGateGroupMission(comp: GateViewComp) {
-        // return xhgame.gameEntity.attachComponent(GateGroupMissionComp).done() as Promise<GateGroupMissionComp>
+        // xhgame.gameEntity.attachComponent(GateGroupMissionComp)
     }
 
     static openSettingDialog(comp: GateViewComp) {
         xhgame.gameEntity.attachComponent(SettingViewComp)
     }
-
-    static showStorePanel(comp: GateViewComp) {
-        // xhgame.gameEntity.attachComponent(GateStorePanelComp)
-    }
-
-    static dyRukouyoujiang(comp: GateViewComp) {
-        // xhgame.gameEntity.attachComponent(GateDYYJViewComp)
-    }
-
-    static showPackagePanel(comp: GateViewComp) {
-        // xhgame.gameEntity.attachComponent(GatePackagePanelComp).setup({ curPackageType: PackageType.Skill, curShap: 'O' })
-    }
-
 }
