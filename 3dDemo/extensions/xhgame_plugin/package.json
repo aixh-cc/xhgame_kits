@@ -69,6 +69,31 @@
                 "methods": [
                     "installFromAssets"
                 ]
+            },
+            "get-installed-components": {
+                "methods": [
+                    "getInstalledComponents"
+                ]
+            },
+            "remove-installed-component": {
+                "methods": [
+                    "removeInstalledComponent"
+                ]
+            },
+            "uninstall-component": {
+                "methods": [
+                    "uninstallComponent"
+                ]
+            },
+            "get-local-components": {
+                "methods": [
+                    "getLocalComponents"
+                ]
+            },
+            "install-local-component": {
+                "methods": [
+                    "installLocalComponent"
+                ]
             }
         }
     },

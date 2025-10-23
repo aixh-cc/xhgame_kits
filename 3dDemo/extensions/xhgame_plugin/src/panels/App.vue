@@ -11,6 +11,16 @@ import { state } from './pina';
 import { keyAppRoot, keyMessage } from './provide-inject';
 import cocosEditorBridge from './cocos-bridge';
 
+// 定义已安装组件的类型
+interface InstalledComponent {
+  componentName: string;
+  componentId: string;
+  componentCode: string;
+  version: string;
+  installedAt: string;
+  copiedFiles: string[];
+}
+
 const appRootDom = inject(keyAppRoot);
 const message = inject(keyMessage)!;
 
@@ -19,6 +29,20 @@ const activeTab = ref('components');
 
 // Cocos 编辑器连接状态
 const editorConnected = ref(false);
+
+// 已安装组件列表
+const installedComponents = ref<InstalledComponent[]>([]);
+const loadingInstalled = ref(false);
+
+// 卸载组件相关状态
+const uninstallingComponents = ref(new Set<string>());
+const uninstallDialogVisible = ref(false);
+const currentUninstallComponent = ref<InstalledComponent | null>(null);
+
+// 本地组件库相关状态
+const localComponents = ref<any[]>([]);
+const loadingLocal = ref(false);
+const installingLocalComponents = ref(new Set<string>());
 
 const open = () => {
     ElMessage({
@@ -37,6 +61,169 @@ async function showVersion() {
         message({ message: `编辑器版本: ${version}` });
     } catch (error) {
         message({ message: '获取版本失败: ' + error, type: 'error' });
+    }
+}
+
+// 获取已安装组件列表
+async function loadInstalledComponents() {
+    loadingInstalled.value = true;
+    try {
+        const result = await cocosEditorBridge.getInstalledComponents();
+        if (result.success) {
+            installedComponents.value = result.components;
+            message({ 
+                message: `已加载 ${result.components.length} 个已安装组件`, 
+                type: 'success' 
+            });
+        } else {
+            message({ 
+                message: '获取已安装组件列表失败: ' + result.error, 
+                type: 'error' 
+            });
+        }
+    } catch (error) {
+        message({ 
+            message: '获取已安装组件列表失败: ' + error, 
+            type: 'error' 
+        });
+    } finally {
+        loadingInstalled.value = false;
+    }
+}
+
+// 移除已安装组件记录
+async function removeInstalledComponent(componentCode: string) {
+    try {
+        const result = await cocosEditorBridge.removeInstalledComponent({ componentCode });
+        if (result.success) {
+            message({ 
+                message: result.message, 
+                type: 'success' 
+            });
+            // 重新加载列表
+            await loadInstalledComponents();
+        } else {
+            message({ 
+                message: '移除组件记录失败: ' + result.error, 
+                type: 'error' 
+            });
+        }
+    } catch (error) {
+        message({ 
+            message: '移除组件记录失败: ' + error, 
+            type: 'error' 
+        });
+    }
+}
+
+// 显示卸载确认对话框
+function showUninstallDialog(component: InstalledComponent) {
+    currentUninstallComponent.value = component;
+    uninstallDialogVisible.value = true;
+}
+
+// 确认卸载组件
+async function confirmUninstallComponent() {
+    if (!currentUninstallComponent.value) return;
+    
+    const componentCode = currentUninstallComponent.value.componentCode;
+    const componentName = currentUninstallComponent.value.componentName;
+    
+    try {
+        uninstallingComponents.value.add(componentCode);
+        uninstallDialogVisible.value = false;
+        
+        const result = await cocosEditorBridge.uninstallComponent({ componentCode });
+        
+        if (result.success) {
+            message({ 
+                message: result.message || `组件 ${componentName} 卸载成功！`, 
+                type: 'success',
+                duration: 5000
+            });
+            
+            // 刷新已安装组件列表
+            await loadInstalledComponents();
+        } else {
+            message({ 
+                message: result.message || `组件 ${componentName} 卸载失败`, 
+                type: 'error' 
+            });
+        }
+    } catch (error) {
+        message({ 
+            message: `卸载组件失败: ${error}`, 
+            type: 'error' 
+        });
+    } finally {
+        uninstallingComponents.value.delete(componentCode);
+        currentUninstallComponent.value = null;
+    }
+}
+
+// 取消卸载
+function cancelUninstall() {
+    uninstallDialogVisible.value = false;
+    currentUninstallComponent.value = null;
+}
+
+// 获取本地组件库列表
+async function loadLocalComponents() {
+    loadingLocal.value = true;
+    try {
+        const result = await cocosEditorBridge.getLocalComponents();
+        if (result.success) {
+            localComponents.value = result.components;
+            message({ 
+                message: `已加载 ${result.components.length} 个本地组件`, 
+                type: 'success' 
+            });
+        } else {
+            message({ 
+                message: '获取本地组件库列表失败: ' + result.error, 
+                type: 'error' 
+            });
+        }
+    } catch (error) {
+        message({ 
+            message: '获取本地组件库列表失败: ' + error, 
+            type: 'error' 
+        });
+    } finally {
+        loadingLocal.value = false;
+    }
+}
+
+// 安装本地组件到项目
+async function installLocalComponent(component: any) {
+    installingLocalComponents.value.add(component.name);
+    try {
+        const result = await cocosEditorBridge.installLocalComponent(
+            component.displayName || component.name,
+            component.name,
+            component.localPath
+        );
+        
+        if (result.success) {
+            message({ 
+                message: result.message || `本地组件 ${component.displayName || component.name} 安装成功！`, 
+                type: 'success' 
+            });
+            // 重新加载已安装组件列表
+            loadInstalledComponents();
+        } else {
+            message({ 
+                message: result.error || '安装本地组件失败', 
+                type: 'error' 
+            });
+        }
+    } catch (error) {
+        message({ 
+            message: `安装本地组件失败: ${error}`, 
+            type: 'error' 
+        });
+    } finally {
+        installingLocalComponents.value.delete(component.name);
     }
 }
 
@@ -111,6 +298,12 @@ onMounted(() => {
         message: editorConnected.value ? '已连接到 Cocos Creator 编辑器' : '开发模式 - 使用模拟编辑器环境',
         type: editorConnected.value ? 'success' : 'warning'
     });
+    
+    // 加载已安装组件列表
+    loadInstalledComponents();
+    
+    // 加载本地组件库列表
+    loadLocalComponents();
 });
 
 onUnmounted(() => {
@@ -155,8 +348,194 @@ onUnmounted(() => {
         </div>
         
         <el-tabs v-model="activeTab" class="main-tabs">
-            <el-tab-pane label="组件库" name="components">
+            <el-tab-pane label="网络组件库" name="components">
                 <CompList />
+            </el-tab-pane>
+            <el-tab-pane label="本地组件库" name="local">
+                <div class="local-components">
+                    <div class="local-header">
+                        <h3>本地组件库</h3>
+                        <el-button 
+                            type="primary" 
+                            @click="loadLocalComponents" 
+                            :loading="loadingLocal"
+                            size="small"
+                        >
+                            刷新列表
+                        </el-button>
+                    </div>
+                    
+                    <div v-if="loadingLocal" class="loading-container">
+                        <el-skeleton :rows="3" animated />
+                    </div>
+                    
+                    <div v-else-if="localComponents.length === 0" class="empty-state">
+                        <el-empty description="暂无本地组件" />
+                    </div>
+                    
+                    <div v-else class="components-list">
+                        <el-card 
+                            v-for="component in localComponents" 
+                            :key="component.name"
+                            class="component-card"
+                            shadow="hover"
+                        >
+                            <template #header>
+                                <div class="card-header">
+                                    <span class="component-name">{{ component.displayName || component.name }}</span>
+                                    <el-tag type="info" size="small">v{{ component.version }}</el-tag>
+                                    <el-tag type="success" size="small" v-if="component.status === 'installed'">本地</el-tag>
+                                </div>
+                            </template>
+                            
+                            <div class="component-info">
+                                <p><strong>组件名称:</strong> {{ component.name }}</p>
+                                <p><strong>描述:</strong> {{ component.description || '暂无描述' }}</p>
+                                <p v-if="component.author"><strong>作者:</strong> {{ component.author }}</p>
+                                <p v-if="component.category"><strong>分类:</strong> {{ component.category }}</p>
+                                <p v-if="component.installDate"><strong>安装时间:</strong> {{ new Date(component.installDate).toLocaleString() }}</p>
+                                <div v-if="component.features && component.features.length > 0">
+                                    <p><strong>功能特性:</strong></p>
+                                    <ul class="feature-list">
+                                        <li v-for="feature in component.features" :key="feature">{{ feature }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <template #footer>
+                                <div class="card-actions">
+                                    <el-button 
+                                        type="primary" 
+                                        size="small" 
+                                        @click="installLocalComponent(component)"
+                                        :loading="installingLocalComponents.has(component.name)"
+                                        v-if="component.status !== 'installed'"
+                                    >
+                                        安装到项目
+                                    </el-button>
+                                    <el-button 
+                                        type="success" 
+                                        size="small" 
+                                        disabled
+                                        v-if="component.status === 'installed'"
+                                    >
+                                        已安装
+                                    </el-button>
+                                </div>
+                            </template>
+                        </el-card>
+                    </div>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="已安装组件" name="installed">
+                <div class="installed-components">
+                    <div class="installed-header">
+                        <h3>已安装的组件</h3>
+                        <el-button 
+                            type="primary" 
+                            @click="loadInstalledComponents" 
+                            :loading="loadingInstalled"
+                            size="small"
+                        >
+                            刷新列表
+                        </el-button>
+                    </div>
+                    
+                    <div v-if="loadingInstalled" class="loading-container">
+                        <el-skeleton :rows="3" animated />
+                    </div>
+                    
+                    <div v-else-if="installedComponents.length === 0" class="empty-state">
+                        <el-empty description="暂无已安装的组件" />
+                    </div>
+                    
+                    <div v-else class="components-list">
+                        <el-card 
+                            v-for="component in installedComponents" 
+                            :key="component.componentCode"
+                            class="component-card"
+                            shadow="hover"
+                        >
+                            <template #header>
+                                <div class="card-header">
+                                    <span class="component-name">{{ component.componentName }}</span>
+                                    <el-tag type="success" size="small">v{{ component.version }}</el-tag>
+                                </div>
+                            </template>
+                            
+                            <div class="component-info">
+                                <p><strong>组件ID:</strong> {{ component.componentId }}</p>
+                                <p><strong>组件代码:</strong> {{ component.componentCode }}</p>
+                                <p><strong>安装时间:</strong> {{ new Date(component.installedAt).toLocaleString() }}</p>
+                                <p><strong>复制的文件:</strong></p>
+                                <ul class="file-list">
+                                    <li v-for="file in component.copiedFiles" :key="file">{{ file }}</li>
+                                </ul>
+                            </div>
+                            
+                            <template #footer>
+                                <div class="card-actions">
+                                    <el-button 
+                                        type="warning" 
+                                        size="small" 
+                                        @click="showUninstallDialog(component)"
+                                        :loading="uninstallingComponents.has(component.componentCode)"
+                                    >
+                                        卸载组件
+                                    </el-button>
+                                    <el-button 
+                                        type="danger" 
+                                        size="small" 
+                                        @click="removeInstalledComponent(component.componentCode)"
+                                    >
+                                        移除记录
+                                    </el-button>
+                                </div>
+                            </template>
+                        </el-card>
+                    </div>
+                    
+                    <!-- 卸载确认对话框 -->
+                    <el-dialog
+                        v-model="uninstallDialogVisible"
+                        title="确认卸载组件"
+                        width="500px"
+                        :before-close="cancelUninstall"
+                    >
+                        <div v-if="currentUninstallComponent">
+                            <p><strong>您确定要卸载以下组件吗？</strong></p>
+                            <div class="uninstall-info">
+                                <p><strong>组件名称:</strong> {{ currentUninstallComponent.componentName }}</p>
+                                <p><strong>组件代码:</strong> {{ currentUninstallComponent.componentCode }}</p>
+                                <p><strong>版本:</strong> v{{ currentUninstallComponent.version }}</p>
+                                <p><strong>安装时间:</strong> {{ new Date(currentUninstallComponent.installedAt).toLocaleString() }}</p>
+                            </div>
+                            <el-alert
+                                title="注意"
+                                type="warning"
+                                :closable="false"
+                                show-icon
+                            >
+                                <p>卸载操作将会：</p>
+                                <ul>
+                                    <li>将组件相关文件备份到 extensions/xhgame_plugin/backup 目录</li>
+                                    <li>从项目中删除组件文件</li>
+                                    <li>从已安装组件列表中移除记录</li>
+                                </ul>
+                                <p><strong>此操作不可逆，请谨慎操作！</strong></p>
+                            </el-alert>
+                        </div>
+                        
+                        <template #footer>
+                            <span class="dialog-footer">
+                                <el-button @click="cancelUninstall">取消</el-button>
+                                <el-button type="danger" @click="confirmUninstallComponent">
+                                    确认卸载
+                                </el-button>
+                            </span>
+                        </template>
+                    </el-dialog>
+                </div>
             </el-tab-pane>
             <el-tab-pane label="示例" name="examples">
                 <HelloWorld msg="Vite + Vue + Cocos Creator + element-plus" />
@@ -216,5 +595,106 @@ onUnmounted(() => {
     flex: 1;
     overflow: auto;
     padding: 0 20px;
+}
+
+.installed-components {
+    padding: 20px;
+}
+
+.installed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.installed-header h3 {
+    margin: 0;
+    color: #303133;
+}
+
+.loading-container {
+    padding: 20px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.components-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.component-card {
+    border-radius: 8px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.component-name {
+    font-weight: bold;
+    font-size: 16px;
+    color: #303133;
+}
+
+.component-info {
+    margin-bottom: 15px;
+}
+
+.component-info p {
+    margin: 8px 0;
+    color: #606266;
+    font-size: 14px;
+}
+
+.component-info strong {
+    color: #303133;
+}
+
+.file-list {
+    margin: 5px 0 0 20px;
+    padding: 0;
+}
+
+.file-list li {
+    margin: 3px 0;
+    color: #909399;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.uninstall-info {
+    background-color: #f5f7fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+}
+
+.uninstall-info p {
+    margin: 8px 0;
+    color: #606266;
+}
+
+.uninstall-info strong {
+    color: #303133;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
 </style>

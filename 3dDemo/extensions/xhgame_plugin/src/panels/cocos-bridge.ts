@@ -28,6 +28,13 @@ export interface CocosEditorAPI {
     selectNode(uuid: string): Promise<void>;
     createNode(name: string, parent?: string): Promise<string>;
     deleteNode(uuid: string): Promise<void>;
+
+    // 插件配置操作
+    getInstalledComponents(): Promise<any>;
+    removeInstalledComponent(param: { componentCode: string }): Promise<any>;
+    uninstallComponent(param: { componentCode: string }): Promise<any>;
+    getLocalComponents(): Promise<any>;
+    installLocalComponent(componentName: string, componentCode: string, localPath: string): Promise<{ success: boolean; message?: string; error?: string; copiedFiles?: string[] }>;
 }
 
 class CocosEditorBridge implements CocosEditorAPI {
@@ -352,6 +359,131 @@ class CocosEditorBridge implements CocosEditorAPI {
             }
         } catch (error) {
             console.warn('Node deletion not supported in current environment:', error);
+        }
+    }
+
+    async getInstalledComponents(): Promise<any> {
+        if (this.isDevMode) {
+            console.log(`🔧 [CocosEditorBridge] Mock get installed components`);
+            // 返回模拟数据
+            return {
+                success: true,
+                components: [
+                    {
+                        componentName: 'Help and Chat',
+                        componentId: 'helpAndChat',
+                        componentCode: 'helpAndChat',
+                        version: '1.0.0',
+                        installedAt: '2024-01-01T00:00:00.000Z',
+                        copiedFiles: ['script/helpAndChat.ts', 'gui/helpAndChat.prefab']
+                    }
+                ]
+            };
+        }
+
+        try {
+            const result = await this.sendMessage('xhgame_plugin', 'get-installed-components');
+            console.log(`🎮 [CocosEditorBridge] Got installed components:`, result);
+            return result;
+        } catch (error) {
+            console.error('❌ [CocosEditorBridge] Failed to get installed components:', error);
+            throw error;
+        }
+    }
+
+    async removeInstalledComponent(param: { componentCode: string }): Promise<any> {
+        if (this.isDevMode) {
+            console.log(`🔧 [CocosEditorBridge] Mock remove installed component: ${param.componentCode}`);
+            return {
+                success: true,
+                message: `组件 ${param.componentCode} 记录已移除`
+            };
+        }
+
+        try {
+            const result = await this.sendMessage('xhgame_plugin', 'remove-installed-component', param);
+            console.log(`🎮 [CocosEditorBridge] Removed installed component:`, result);
+            return result;
+        } catch (error) {
+            console.error('❌ [CocosEditorBridge] Failed to remove installed component:', error);
+            throw error;
+        }
+    }
+
+    async uninstallComponent(param: { componentCode: string }): Promise<any> {
+        if (this.isDevMode) {
+            console.log(`🔧 [CocosEditorBridge] Mock uninstall component: ${param.componentCode}`);
+            return {
+                success: true,
+                message: `组件 ${param.componentCode} 卸载成功！\n备份位置: HelpAndChat_20241201120000`,
+                backupPath: '/mock/backup/path',
+                backedUpFiles: ['script/helpAndChat.ts', 'gui/helpAndChat.prefab'],
+                deletedFiles: ['script/helpAndChat.ts', 'gui/helpAndChat.prefab'],
+                notFoundFiles: []
+            };
+        }
+
+        try {
+            const result = await this.sendMessage('xhgame_plugin', 'uninstall-component', param);
+            console.log(`🎮 [CocosEditorBridge] Uninstalled component:`, result);
+            return result;
+        } catch (error) {
+            console.error('❌ [CocosEditorBridge] Failed to uninstall component:', error);
+            throw error;
+        }
+    }
+
+    async getLocalComponents(): Promise<any> {
+        if (this.isDevMode) {
+            console.log('🔧 [CocosEditorBridge] Mock get local components');
+            return {
+                success: true,
+                components: [
+                    {
+                        name: 'HelpAndChat',
+                        displayName: '帮助与聊天组件',
+                        version: '1.0.0',
+                        description: '提供游戏内帮助系统和聊天功能的组件',
+                        author: 'xhgame',
+                        category: 'UI组件',
+                        isLocal: true,
+                        status: 'installed'
+                    }
+                ]
+            };
+        }
+
+        try {
+            const result = await this.sendMessage('xhgame_plugin', 'get-local-components');
+            console.log('🎮 [CocosEditorBridge] Got local components:', result);
+            return result;
+        } catch (error) {
+            console.error('❌ [CocosEditorBridge] Failed to get local components:', error);
+            throw error;
+        }
+    }
+
+    async installLocalComponent(componentName: string, componentCode: string, localPath: string): Promise<{ success: boolean; message?: string; error?: string; copiedFiles?: string[] }> {
+        if (this.isDevMode) {
+            console.log(`🔧 [CocosEditorBridge] Mock install local component: ${componentName} from ${localPath}`);
+            return {
+                success: true,
+                message: `组件 ${componentName} 安装成功！`,
+                copiedFiles: ['script/component.ts', 'gui/component.prefab']
+            };
+        }
+
+        try {
+            const result = await this.sendMessage('xhgame_plugin', 'install-local-component', {
+                componentName,
+                componentCode,
+                localPath
+            });
+            console.log(`🎮 [CocosEditorBridge] Installed local component:`, result);
+            return result;
+        } catch (error) {
+            console.error('❌ [CocosEditorBridge] Failed to install local component:', error);
+            throw error;
         }
     }
 }
