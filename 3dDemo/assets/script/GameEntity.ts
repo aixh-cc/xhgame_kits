@@ -1,12 +1,14 @@
 import { Entity } from "@aixh-cc/xhgame_ec_framework";
+import { PlayerModelComp } from "./comps/models/PlayerModelComp";
+import { PlayerMissionModelComp } from "./comps/models/PlayerMissionModelComp";
 /**
  * 游戏实体
  */
 export class GameEntity extends Entity {
 
-    models: Models = null
-
+    // 需要在这里挂载注册模型组件
     init(): void {
-        // this.models = new Models()
+        this.attachComponent(PlayerModelComp)
+        this.attachComponent(PlayerMissionModelComp)
     }
 }

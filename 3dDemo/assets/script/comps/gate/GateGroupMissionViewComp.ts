@@ -1,12 +1,12 @@
 
-import { System } from "@aixh-cc/xhgame_ec_framework"
-// import { IMissionItemVM } from "../../cocos/view/itemViews/uiitems/MissionItemView"
-import { GateSenceComp } from "./GateSenceComp"
+import { DI, System } from "@aixh-cc/xhgame_ec_framework"
 import { xhgame } from "../../xhgame"
-// import { IMissionItem } from "../../tsshared/defined/Interface"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { IUiItem } from "../../managers/myFactory/MyFactorys"
+import { PlayerModelComp } from "../models/PlayerModelComp"
+import { IMissionItem, IMissionItemVM, PlayerMissionModelComp } from "../models/PlayerMissionModelComp"
 
+// 临时的
 const itemsPositions: number[][] = [
     [-175, -240],
     [-80, -140],
@@ -24,35 +24,37 @@ export class GateGroupMissionViewSystem extends System {
 
     static async initComp(comp: GateGroupMissionViewComp) {
         await xhgame.gui.openUIAsync(xhgame.gui.enums.GateGroupMission, comp)
-        // const maxBattleId = xhgame.gameEntity.playerModel.playerInfo.maxBattleId
+        const playerModel = DI.make<PlayerModelComp>('PlayerModelComp')
+        const playerMissionModel = DI.make<PlayerMissionModelComp>('PlayerMissionModelComp')
+        const maxBattleId = playerModel.playerInfo.maxBattleId
         // // 显示关卡信息到view上
-        // let group = 0
-        // const curGroupMissionInfo = await xhgame.gameEntity.playerMissionModel.actions.getGroupMissionInfo(group)
-        // let missionItems: IMissionItem[] = curGroupMissionInfo.missionItems
-        // missionItems.forEach((_iMissionItem: IMissionItem, _index: number) => {
-        //     let missionUiItem = xhgame.factory.actions.createUiItem('mission_item')
-        //     missionUiItem.positions = itemsPositions[_index]
-        //     missionUiItem.itemsIndex = _index
-        //     let vm = missionUiItem.getViewVm<IMissionItemVM>()
-        //     vm.starNum = _iMissionItem.maxStar
-        //     vm.isFight = false
-        //     vm.battleId = _iMissionItem.battleId
-        //     if (_iMissionItem.maxScore == 0) {
-        //         vm.isActive = false
-        //     }
-        //     if (_iMissionItem.battleId <= maxBattleId) {
-        //         vm.isActive = true
-        //     }
-        //     missionUiItem.onClickCallback = () => {
-        //         comp.actions.clickMissionItem(missionUiItem.itemsIndex)
-        //     }
-        //     missionUiItem.toScene()
-        //     comp.uiItems.push(missionUiItem)
-        //     if (xhgame.gameEntity.playerModel.selectedBattleId == _iMissionItem.battleId) {
-        //         comp.selectedIndex = _iMissionItem.index
-        //         vm.isFight = true
-        //     }
-        // })
+        let group = 0
+        const curGroupMissionInfo = await playerMissionModel.actions.getGroupMissionInfo(group)
+        let missionItems: IMissionItem[] = curGroupMissionInfo.missionItems
+        missionItems.forEach((_iMissionItem: IMissionItem, _index: number) => {
+            let missionUiItem = xhgame.factory.actions.createUiItem('mission_item')
+            missionUiItem.positions = itemsPositions[_index]
+            missionUiItem.itemsIndex = _index
+            let vm = missionUiItem.getViewVm<IMissionItemVM>()
+            vm.starNum = _iMissionItem.maxStar
+            vm.isFight = false
+            vm.battleId = _iMissionItem.battleId
+            if (_iMissionItem.maxScore == 0) {
+                vm.isActive = false
+            }
+            if (_iMissionItem.battleId <= maxBattleId) {
+                vm.isActive = true
+            }
+            missionUiItem.onClickCallback = () => {
+                comp.actions.clickMissionItem(missionUiItem.itemsIndex)
+            }
+            missionUiItem.toScene()
+            comp.uiItems.push(missionUiItem)
+            if (playerModel.selectedBattleId == _iMissionItem.battleId) {
+                // comp.selectedIndex = _iMissionItem.index
+                vm.isFight = true
+            }
+        })
     }
 
     static clickMissionItem(comp: GateGroupMissionViewComp, uiItemIndex: number) {

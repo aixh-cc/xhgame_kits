@@ -65,11 +65,11 @@ export class TestGameManagers implements IManagers {
         return this.tableManager
     }
     // factory
-    factoryManager: MyFactoryManager
-    setFactoryManager(factoryManager: MyFactoryManager) {
+    factoryManager: MyFactoryManager<MyTestFactoryConfig>
+    setFactoryManager(factoryManager: MyFactoryManager<MyTestFactoryConfig>) {
         this.factoryManager = factoryManager
     }
-    getFactoryManager(): MyFactoryManager {
+    getFactoryManager(): MyFactoryManager<MyTestFactoryConfig> {
         return this.factoryManager
     }
     // cameraManager: CameraManager<UICamera, UICamera>
@@ -109,8 +109,9 @@ export class TestGameManagers implements IManagers {
     getAssetManager(): MyAssetManager<TestAssetDrive> {
         return this._assetManager
     }
+    // factory
     getFactorys() {
-        let factoryManager = new MyFactoryManager()
+        let factoryManager = new MyFactoryManager<MyTestFactoryConfig>()
         factoryManager.autoRegister()
         return factoryManager
     }

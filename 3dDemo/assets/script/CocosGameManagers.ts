@@ -9,6 +9,7 @@ import { MyEventManager } from "./managers/MyEventManager";
 import { CocosUiDrive } from "./drives/CocosUiDrive";
 import { MyAssetManager } from "./managers/MyAssetManager";
 import { CocosAudioDrive } from "./drives/CocosAudioDrive";
+import { MyCocosFactoryConfig } from "./managers/myFactory/MyCocosFactoryConfig";
 
 export class CocosGameManagers implements IManagers {
     node: Node
@@ -37,7 +38,7 @@ export class CocosGameManagers implements IManagers {
         return tableManager
     }
     getFactorys() {
-        let factoryManager = new MyFactoryManager()
+        let factoryManager = new MyFactoryManager<MyCocosFactoryConfig>()
         factoryManager.autoRegister()
         return factoryManager
     }
@@ -75,11 +76,11 @@ export class CocosGameManagers implements IManagers {
         return this.tableManager
     }
     // factory
-    factoryManager: MyFactoryManager
-    setFactoryManager(factoryManager: MyFactoryManager) {
+    factoryManager: MyFactoryManager<MyCocosFactoryConfig>
+    setFactoryManager(factoryManager: MyFactoryManager<MyCocosFactoryConfig>) {
         this.factoryManager = factoryManager
     }
-    getFactoryManager(): MyFactoryManager {
+    getFactoryManager(): MyFactoryManager<MyCocosFactoryConfig> {
         return this.factoryManager
     }
     netManager: MyNetManager<FetchHttp, Websocket>
