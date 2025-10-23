@@ -2,6 +2,127 @@ import { name } from '../../package.json' with { type: 'json' };
 import * as fs from 'fs';
 import * as path from 'path';
 
+// 配置文件接口定义
+interface PluginConfig {
+    version: string;
+    installedComponents: InstalledComponent[];
+    lastUpdated: string;
+}
+
+interface InstalledComponent {
+    componentName: string;
+    componentId: string;
+    componentCode: string;
+    version: string;
+    installedAt: string;
+    copiedFiles: string[];
+}
+
+// 配置文件管理工具
+class ConfigManager {
+    private static configPath: string;
+
+    static init() {
+        // 配置文件存储在extensions目录下
+        const extensionsPath = path.dirname(path.dirname(Editor.Package.getPath(name) || ''));
+        this.configPath = path.join(extensionsPath, 'xhgame-plugin-config.json');
+        console.log(`[ConfigManager] 配置文件路径: ${this.configPath}`);
+    }
+
+    static async readConfig(): Promise<PluginConfig> {
+        try {
+            if (!fs.existsSync(this.configPath)) {
+                // 如果配置文件不存在，创建默认配置
+                const defaultConfig: PluginConfig = {
+                    version: '1.0.0',
+                    installedComponents: [],
+                    lastUpdated: new Date().toISOString()
+                };
+                await this.writeConfig(defaultConfig);
+                return defaultConfig;
+            }
+
+            const configData = await fs.promises.readFile(this.configPath, 'utf-8');
+            return JSON.parse(configData) as PluginConfig;
+        } catch (error) {
+            console.error('[ConfigManager] 读取配置文件失败:', error);
+            // 返回默认配置
+            return {
+                version: '1.0.0',
+                installedComponents: [],
+                lastUpdated: new Date().toISOString()
+            };
+        }
+    }
+
+    static async writeConfig(config: PluginConfig): Promise<void> {
+        try {
+            config.lastUpdated = new Date().toISOString();
+            const configData = JSON.stringify(config, null, 2);
+            await fs.promises.writeFile(this.configPath, configData, 'utf-8');
+            console.log('[ConfigManager] 配置文件已保存');
+        } catch (error) {
+            console.error('[ConfigManager] 写入配置文件失败:', error);
+            throw error;
+        }
+    }
+
+    static async addInstalledComponent(component: Omit<InstalledComponent, 'installedAt'>): Promise<void> {
+        try {
+            const config = await this.readConfig();
+            
+            // 检查是否已经安装过该组件
+            const existingIndex = config.installedComponents.findIndex(
+                c => c.componentCode === component.componentCode
+            );
+
+            const newComponent: InstalledComponent = {
+                ...component,
+                installedAt: new Date().toISOString()
+            };
+
+            if (existingIndex >= 0) {
+                // 更新已存在的组件信息
+                config.installedComponents[existingIndex] = newComponent;
+                console.log(`[ConfigManager] 更新组件信息: ${component.componentName}`);
+            } else {
+                // 添加新组件
+                config.installedComponents.push(newComponent);
+                console.log(`[ConfigManager] 添加新组件: ${component.componentName}`);
+            }
+
+            await this.writeConfig(config);
+        } catch (error) {
+            console.error('[ConfigManager] 添加已安装组件失败:', error);
+            throw error;
+        }
+    }
+
+    static async getInstalledComponents(): Promise<InstalledComponent[]> {
+        try {
+            const config = await this.readConfig();
+            return config.installedComponents;
+        } catch (error) {
+            console.error('[ConfigManager] 获取已安装组件列表失败:', error);
+            return [];
+        }
+    }
+
+    static async removeInstalledComponent(componentCode: string): Promise<void> {
+        try {
+            const config = await this.readConfig();
+            config.installedComponents = config.installedComponents.filter(
+                c => c.componentCode !== componentCode
+            );
+            await this.writeConfig(config);
+            console.log(`[ConfigManager] 移除组件: ${componentCode}`);
+        } catch (error) {
+            console.error('[ConfigManager] 移除已安装组件失败:', error);
+            throw error;
+        }
+    }
+}
+
 export const methods = {
     async open() {
         return Editor.Panel.open(name);

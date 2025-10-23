@@ -19,7 +19,9 @@ export class GateSenceSystem extends System {
     static async initComp(comp: GateSenceComp) {
         await xhgame.gameEntity.attachComponent(GateViewComp).done()
         // 加载gate场景中可能用到的工厂及资源
+        // uiItemFactory
         await xhgame.factory.actions.getUiItemFactory().preloadItemsResource()
+
     }
 }
 
