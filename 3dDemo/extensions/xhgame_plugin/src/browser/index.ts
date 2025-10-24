@@ -300,8 +300,8 @@ export const methods = {
                     continue;
                 }
 
-                // 查找对应的 .info 文件
-                const infoFilePath = path.join(packagePath, `${item}.info`);
+                // 查找对应的 .json 文件
+                const infoFilePath = path.join(itemPath, `${item}.json`);
 
                 if (fs.existsSync(infoFilePath)) {
                     try {
@@ -338,8 +338,8 @@ export const methods = {
                         });
                     }
                 } else {
-                    console.log(`[xhgame_plugin] 组件 ${item} 缺少 .info 文件`);
-                    // 没有 .info 文件的组件，创建基本信息
+                    console.log(`[xhgame_plugin] 组件 ${item} 缺少 .json 文件`);
+                    // 没有 .json 文件的组件，创建基本信息
                     components.push({
                         name: item,
                         displayName: item,
@@ -407,7 +407,7 @@ export const methods = {
                     const destPath = path.join(destDir, item.name);
                     const relPath = path.join(relativePath, item.name);
 
-                    // 跳过.meta文件
+                    // 跳过所有 .meta 文件和文件夹
                     if (item.name.endsWith('.meta')) {
                         continue;
                     }
@@ -450,10 +450,10 @@ export const methods = {
                     const destPath = path.join(destDir, item.name);
                     const relPath = path.join(relativePath, item.name);
 
-                    // 不跳过.meta文件
-                    // if (item.name.endsWith('.meta')) {
-                    //     continue;
-                    // }
+                    // 跳过所有 .meta 文件和文件夹
+                    if (item.name.endsWith('.meta')) {
+                        continue;
+                    }
 
                     if (item.isDirectory()) {
                         // 创建目录
@@ -509,6 +509,30 @@ export const methods = {
         console.log(`[xhgame_plugin] 安装本地组件请求: ${componentName}, 路径: ${localPath}`);
 
         try {
+            // 读取组件的 .json 文件
+            const infoFilePath = path.join(localPath, `${componentCode}.json`);
+            let componentInfo: any;
+            
+            try {
+                const infoContent = await fs.promises.readFile(infoFilePath, 'utf-8');
+                componentInfo = JSON.parse(infoContent);
+            } catch (error) {
+                console.error(`[xhgame_plugin] 无法读取组件信息文件: ${infoFilePath}`, error);
+                return {
+                    success: false,
+                    message: `安装失败：无法读取组件信息文件 ${componentCode}.info`
+                };
+            }
+
+            // 获取要复制的文件列表
+            const filesToCopy = componentInfo.files || [];
+            if (filesToCopy.length === 0) {
+                return {
+                    success: false,
+                    message: `安装失败：组件信息文件中没有指定要复制的文件`
+                };
+            }
+
             // 获取项目assets目录路径
             const projectPath = Editor.Project.path;
             const targetPath = path.join(projectPath, 'assets');
@@ -518,42 +542,22 @@ export const methods = {
 
             console.log(`[xhgame_plugin] 源路径: ${localPath}`);
             console.log(`[xhgame_plugin] 目标路径: ${targetPath}`);
+            console.log(`[xhgame_plugin] 要复制的文件: ${filesToCopy.join(', ')}`);
 
-            // 复制所有文件到项目assets目录
             const copiedFiles: string[] = [];
             const conflictFiles: string[] = [];
 
-            // 先检查是否有同名文件冲突
-            async function checkConflicts(srcDir: string, destDir: string, relativePath: string = '') {
-                const items = await fs.promises.readdir(srcDir, { withFileTypes: true });
-
-                for (const item of items) {
-                    const destPath = path.join(destDir, item.name);
-                    const relPath = path.join(relativePath, item.name);
-
-                    // 跳过.meta文件和.info文件
-                    if (item.name.endsWith('.meta') || item.name.endsWith('.info')) {
-                        continue;
-                    }
-
-                    if (item.isDirectory()) {
-                        // 检查目录下的文件
-                        const srcSubDir = path.join(srcDir, item.name);
-                        await checkConflicts(srcSubDir, destPath, relPath);
-                    } else {
-                        // 检查文件是否已存在
-                        try {
-                            await fs.promises.access(destPath);
-                            conflictFiles.push(relPath);
-                        } catch (error) {
-                            // 文件不存在，没有冲突
-                        }
-                    }
+            // 检查指定文件的冲突
+            for (const relativeFilePath of filesToCopy) {
+                const targetFilePath = path.join(targetPath, relativeFilePath);
+                
+                try {
+                    await fs.promises.access(targetFilePath);
+                    conflictFiles.push(relativeFilePath);
+                } catch (error) {
+                    // 文件不存在，没有冲突
                 }
             }
-
-            // 先检查冲突
-            await checkConflicts(localPath, targetPath);
 
             // 如果有冲突文件，返回错误
             if (conflictFiles.length > 0) {
@@ -566,33 +570,28 @@ export const methods = {
             }
             console.log(`[xhgame_plugin] 没有冲突文件，开始复制...`);
 
-            async function copyDirectory(srcDir: string, destDir: string, relativePath: string = '') {
-                const items = await fs.promises.readdir(srcDir, { withFileTypes: true });
-
-                for (const item of items) {
-                    const srcPath = path.join(srcDir, item.name);
-                    const destPath = path.join(destDir, item.name);
-                    const relPath = path.join(relativePath, item.name);
-
-                    // 跳过.meta文件和.info文件
-                    if (item.name.endsWith('.meta') || item.name.endsWith('.info')) {
-                        continue;
-                    }
-
-                    if (item.isDirectory()) {
-                        // 创建目录
-                        await fs.promises.mkdir(destPath, { recursive: true });
-                        await copyDirectory(srcPath, destPath, relPath);
-                    } else {
-                        // 复制文件
-                        await Editor.Utils.File.copy(srcPath, destPath);
-                        copiedFiles.push(relPath);
-                        console.log(`[xhgame_plugin] 复制文件: ${relPath}`);
-                    }
+            // 复制指定的文件
+            for (const relativeFilePath of filesToCopy) {
+                const srcFilePath = path.join(localPath, relativeFilePath);
+                const targetFilePath = path.join(targetPath, relativeFilePath);
+                
+                try {
+                    // 确保目标目录存在
+                    const targetDir = path.dirname(targetFilePath);
+                    await fs.promises.mkdir(targetDir, { recursive: true });
+                    
+                    // 复制文件
+                    await Editor.Utils.File.copy(srcFilePath, targetFilePath);
+                    copiedFiles.push(relativeFilePath);
+                    console.log(`[xhgame_plugin] 复制文件: ${relativeFilePath}`);
+                } catch (error) {
+                    console.error(`[xhgame_plugin] 复制文件失败: ${relativeFilePath}`, error);
+                    return {
+                        success: false,
+                        message: `安装失败：复制文件 ${relativeFilePath} 时出错`
+                    };
                 }
             }
-
-            await copyDirectory(localPath, targetPath);
 
             console.log(`[xhgame_plugin] 本地组件安装完成，共复制 ${copiedFiles.length} 个文件`);
 

@@ -1,0 +1,38 @@
+{
+  "componentName": "uiItem的body组件",
+  "componentId": "MissionItem",
+  "componentCode": "MissionItem",
+  "version": "1.0.0",
+  "originalInstallTime": "2025-10-24T15:07:00.740Z",
+  "uninstallTime": "2025-10-24T15:10:24.414Z",
+  "backedUpFiles": [
+    "script/views/item_bodys/MissionItemView.ts",
+    "script/views/item_bodys/MissionItemView.ts.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item.prefab",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item.prefab.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.plist",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.plist.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png.meta",
+    "script/views/item_bodys.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems.meta"
+  ],
+  "deletedFiles": [
+    "script/views/item_bodys/MissionItemView.ts",
+    "script/views/item_bodys/MissionItemView.ts.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item.prefab",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item.prefab.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.plist",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.plist.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png.meta",
+    "script/views/item_bodys.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems.meta"
+  ],
+  "notFoundFiles": [
+    "script/views/item_bodys/MissionItemView.ts.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item.prefab.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.plist.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png.meta"
+  ]
+}
