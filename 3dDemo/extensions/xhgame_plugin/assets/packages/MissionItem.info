@@ -10,13 +10,13 @@
     "script/views/item_bodys/MissionItemView.ts",
     "bundle_factory/prefabs/item_bodys/uiItems/mission_item.prefab",
     "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.plist",
-    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png"
   ],
   "dependencies": [
     "@aixh-cc/xhgame_ec_framework"
   ],
   "features": [
-    "item而已",
+    "item而已"
   ],
   "usage": {
     "import": "import { HelpComp, HelpSystem } from './HelpComp'",
