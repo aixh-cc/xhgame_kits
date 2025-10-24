@@ -48,6 +48,54 @@ const installingLocalComponents = ref(new Set<string>());
 const componentBackups = ref<Map<string, any>>(new Map());
 const restoringBackups = ref(new Set<string>());
 
+// 辅助函数：获取资源类型图标
+const getResourceTypeIcon = (type: string) => {
+    const iconMap: Record<string, string> = {
+        'script': 'el-icon-document',
+        'texture': 'el-icon-picture-outline',
+        'audio': 'el-icon-headset',
+        'plist': 'el-icon-files',
+        'prefab': 'el-icon-s-grid',
+        'config': 'el-icon-setting',
+        'other': 'el-icon-more'
+    };
+    return iconMap[type] || 'el-icon-more';
+};
+
+// 辅助函数：获取资源类型名称
+const getResourceTypeName = (type: string) => {
+    const nameMap: Record<string, string> = {
+        'script': '脚本',
+        'texture': '纹理',
+        'audio': '音频',
+        'plist': '图集',
+        'prefab': '预制体',
+        'config': '配置',
+        'other': '其他'
+    };
+    return nameMap[type] || '其他';
+};
+
+// 辅助函数：处理组件资源数据
+const processComponentResources = (component: any) => {
+    // 如果组件没有资源信息，尝试从文件列表推断
+    if (!component.resources && component.copiedFiles) {
+        const resources: any = {};
+        component.copiedFiles.forEach((file: string) => {
+            const ext = file.split('.').pop()?.toLowerCase();
+            if (ext === 'ts' || ext === 'js') {
+                resources.script = (resources.script || 0) + 1;
+            } else if (ext === 'png' || ext === 'jpg' || ext === 'jpeg') {
+                resources.texture = (resources.texture || 0) + 1;
+            } else if (ext === 'prefab') {
+                resources.prefab = (resources.prefab || 0) + 1;
+            }
+        });
+        return resources;
+    }
+    return component.resources || {};
+};
+
 const open = () => {
     ElMessage({
         message: 'show message',
@@ -481,67 +529,93 @@ onUnmounted(() => {
                         <el-empty description="暂无本地组件" />
                     </div>
                     
-                    <div v-else class="components-list">
-                        <el-card 
+                    <div v-else class="components-grid">
+                        <div 
                             v-for="component in localComponents" 
                             :key="component.name"
                             class="component-card"
-                            shadow="hover"
                         >
-                            <template #header>
-                                <div class="card-header">
-                                    <span class="component-name">{{ component.displayName || component.name }}</span>
-                                    <el-tag type="info" size="small">v{{ component.version }}</el-tag>
-                                    <el-tag type="success" size="small" v-if="component.status === 'installed'">本地</el-tag>
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h4>{{ component.displayName || component.name }}</h4>
+                                    <div class="card-meta">
+                                        <span class="version">v{{ component.version }}</span>
+                                        <el-tag type="success" size="small" v-if="component.status === 'installed'">本地</el-tag>
+                                    </div>
                                 </div>
-                            </template>
+                                <div class="author">{{ component.author || '未知作者' }}</div>
+                            </div>
                             
-                            <div class="component-info">
-                                <p><strong>组件名称:</strong> {{ component.name }}</p>
-                                <p><strong>描述:</strong> {{ component.description || '暂无描述' }}</p>
-                                <p v-if="component.author"><strong>作者:</strong> {{ component.author }}</p>
-                                <p v-if="component.category"><strong>分类:</strong> {{ component.category }}</p>
-                                <p v-if="component.installDate"><strong>安装时间:</strong> {{ new Date(component.installDate).toLocaleString() }}</p>
-                                <div v-if="component.features && component.features.length > 0">
-                                    <p><strong>功能特性:</strong></p>
-                                    <ul class="feature-list">
-                                        <li v-for="feature in component.features" :key="feature">{{ feature }}</li>
-                                    </ul>
+                            <div class="card-content">
+                                <div class="description">
+                                    {{ component.description || '暂无描述' }}
+                                </div>
+                                
+                                <div class="meta-info">
+                                    <div class="meta-item" v-if="component.category">
+                                        <span class="label">分类:</span>
+                                        <span class="value">{{ component.category }}</span>
+                                    </div>
+                                    <div class="meta-item" v-if="component.installDate">
+                                        <span class="label">安装时间:</span>
+                                        <span class="value">{{ new Date(component.installDate).toLocaleString() }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="tags" v-if="component.features && component.features.length > 0">
+                                    <el-tag 
+                                        v-for="feature in component.features.slice(0, 3)" 
+                                        :key="feature"
+                                        size="small"
+                                        type="info"
+                                    >
+                                        {{ feature }}
+                                    </el-tag>
+                                    <span v-if="component.features.length > 3" class="more-tags">
+                                        +{{ component.features.length - 3 }}
+                                    </span>
+                                </div>
+                                
+                                <div class="resource-icons">
+                                    <template v-for="(count, type) in processComponentResources(component)" :key="type">
+                                        <div v-if="count > 0" :class="['resource-icon', String(type)]">
+                                            <i :class="getResourceTypeIcon(String(type))"></i>
+                                            <span>{{ count }}</span>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                             
-                            <template #footer>
-                                <div class="card-actions">
-                                    <el-button 
-                                        type="primary" 
-                                        size="small" 
-                                        @click="installLocalComponent(component)"
-                                        :loading="installingLocalComponents.has(component.name)"
-                                        v-if="component.status !== 'installed'"
-                                    >
-                                        安装到项目
-                                    </el-button>
-                                    <el-button 
-                                        type="success" 
-                                        size="small" 
-                                        disabled
-                                        v-if="component.status === 'installed'"
-                                    >
-                                        已安装
-                                    </el-button>
+                            <div class="actions">
+                                <el-button 
+                                    type="primary" 
+                                    size="small" 
+                                    @click="installLocalComponent(component)"
+                                    :loading="installingLocalComponents.has(component.name)"
+                                    v-if="component.status !== 'installed'"
+                                >
+                                    安装到项目
+                                </el-button>
+                                <el-button 
+                                    type="success" 
+                                    size="small" 
+                                    disabled
+                                    v-if="component.status === 'installed'"
+                                >
+                                    已安装
+                                </el-button>
 
-                                    <el-button 
-                                        type="warning" 
-                                        size="small" 
-                                        @click="restoreComponentFromBackup(component)"
-                                        :loading="restoringBackups.has(component.name)"
-                                        v-if="componentBackups.has(component.name) && componentBackups.get(component.name)?.exists"
-                                    >
-                                        回撤备份到项目
-                                    </el-button>
-                                </div>
-                            </template>
-                        </el-card>
+                                <el-button 
+                                    type="warning" 
+                                    size="small" 
+                                    @click="restoreComponentFromBackup(component)"
+                                    :loading="restoringBackups.has(component.name)"
+                                    v-if="componentBackups.has(component.name) && componentBackups.get(component.name)?.exists"
+                                >
+                                    回撤备份
+                                </el-button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </el-tab-pane>
@@ -665,14 +739,17 @@ onUnmounted(() => {
 
 <style scoped>
 .container {
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    background-color: #1a1a1a;
+    color: #e4e7ed;
 }
 
 .header {
     padding: 10px 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #2c2c2c;
+    background-color: #262626;
 }
 
 .logos {
@@ -713,16 +790,19 @@ onUnmounted(() => {
     flex: 1;
     overflow: auto;
     padding: 0 20px;
+    background-color: #1a1a1a;
 }
 
 .installed-components {
     padding: 20px;
+    background-color: #1a1a1a;
 }
 
 .local-components {
     padding: 20px;
     height: 100%;
     overflow-y: auto;
+    background-color: #1a1a1a;
 }
 
 .local-header {
@@ -734,7 +814,8 @@ onUnmounted(() => {
 
 .local-header h3 {
     margin: 0;
-    color: #303133;
+    color: #e4e7ed;
+    font-weight: 600;
 }
 
 .installed-header {
@@ -746,7 +827,8 @@ onUnmounted(() => {
 
 .installed-header h3 {
     margin: 0;
-    color: #303133;
+    color: #e4e7ed;
+    font-weight: 600;
 }
 
 .loading-container {
@@ -773,47 +855,7 @@ onUnmounted(() => {
     grid-column: 1 / -1;
 }
 
-.component-card {
-    border-radius: 8px;
-}
-
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.component-name {
-    font-weight: bold;
-    font-size: 16px;
-    color: #303133;
-}
-
-.component-info {
-    margin-bottom: 15px;
-}
-
-.component-info p {
-    margin: 8px 0;
-    color: #606266;
-    font-size: 14px;
-}
-
-.component-info strong {
-    color: #303133;
-}
-
-.file-list {
-    margin: 5px 0 0 20px;
-    padding: 0;
-}
-
-.file-list li {
-    margin: 3px 0;
-    color: #909399;
-    font-size: 12px;
-    font-family: monospace;
-}
+/* 旧样式已移除，避免与新的组件卡片样式冲突 */
 
 .card-actions {
     display: flex;
@@ -822,7 +864,7 @@ onUnmounted(() => {
 }
 
 .uninstall-info {
-    background-color: #f5f7fa;
+    background-color: #2c2c2c;
     padding: 15px;
     border-radius: 6px;
     margin: 15px 0;
@@ -830,16 +872,211 @@ onUnmounted(() => {
 
 .uninstall-info p {
     margin: 8px 0;
-    color: #606266;
+    color: #909399;
 }
 
 .uninstall-info strong {
-    color: #303133;
+    color: #e4e7ed;
 }
 
 .dialog-footer {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
+}
+
+/* Element Plus 标签页暗色主题 */
+.main-tabs :deep(.el-tabs__header) {
+    background-color: #262626;
+    border-bottom: 1px solid #404040;
+}
+
+.main-tabs :deep(.el-tabs__nav-wrap) {
+    background-color: #262626;
+}
+
+.main-tabs :deep(.el-tabs__item) {
+     color: #909399;
+     background-color: transparent;
+ }
+
+/* 新的组件网格布局 */
+.components-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+/* 重新设计的组件卡片 */
+.component-card {
+    background-color: #262626;
+    border: 1px solid #404040;
+    border-radius: 12px;
+    padding: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.component-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border-color: #606266;
+}
+
+/* 卡片头部 */
+.card-header {
+    background: linear-gradient(135deg, #2c2c2c 0%, #333333 100%);
+    padding: 16px 20px;
+    border-bottom: 1px solid #404040;
+}
+
+.card-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.card-title h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #e4e7ed;
+    line-height: 1.3;
+}
+
+.card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.version {
+    background-color: #409eff;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.author {
+    font-size: 13px;
+    color: #909399;
+    font-weight: 500;
+}
+
+/* 卡片内容 */
+.card-content {
+    padding: 20px;
+}
+
+.description {
+    color: #c0c4cc;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.meta-info {
+    margin-bottom: 16px;
+}
+
+.meta-item {
+    display: flex;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.meta-item .label {
+    color: #909399;
+    min-width: 80px;
+    font-weight: 500;
+}
+
+.meta-item .value {
+    color: #c0c4cc;
+    flex: 1;
+}
+
+/* 标签 */
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.more-tags {
+    color: #909399;
+    font-size: 12px;
+    padding: 2px 6px;
+    background-color: #3a3a3a;
+    border-radius: 10px;
+}
+
+/* 资源图标 */
+.resource-icons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.resource-icon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background-color: #3a3a3a;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #c0c4cc;
+}
+
+.resource-icon.script {
+    background-color: rgba(103, 194, 58, 0.1);
+    color: #67c23a;
+}
+
+.resource-icon.texture {
+    background-color: rgba(230, 162, 60, 0.1);
+    color: #e6a23c;
+}
+
+.resource-icon.prefab {
+    background-color: rgba(64, 158, 255, 0.1);
+    color: #409eff;
+}
+
+.resource-icon i {
+    font-size: 14px;
+}
+
+/* 操作按钮 */
+.actions {
+    padding: 16px 20px;
+    background-color: #2c2c2c;
+    border-top: 1px solid #404040;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.main-tabs :deep(.el-tabs__item.is-active) {
+    color: #409eff;
+}
+
+.main-tabs :deep(.el-tabs__item:hover) {
+    color: #409eff;
+}
+
+.main-tabs :deep(.el-tabs__active-bar) {
+    background-color: #409eff;
 }
 </style>
