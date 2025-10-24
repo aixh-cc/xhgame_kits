@@ -142,8 +142,9 @@ async function confirmUninstallComponent() {
                 duration: 5000
             });
             
-            // 刷新已安装组件列表
+            // 刷新已安装组件列表和本地组件列表
             await loadInstalledComponents();
+            await loadLocalComponents();
         } else {
             message({ 
                 message: result.message || `组件 ${componentName} 卸载失败`, 
@@ -210,8 +211,9 @@ async function installLocalComponent(component: any) {
                 message: result.message || `本地组件 ${component.displayName || component.name} 安装成功！`, 
                 type: 'success' 
             });
-            // 重新加载已安装组件列表
+            // 重新加载已安装组件列表和本地组件列表
             loadInstalledComponents();
+            loadLocalComponents();
         } else {
             message({ 
                 message: result.error || '安装本地组件失败', 
