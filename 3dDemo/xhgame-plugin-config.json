@@ -1,25 +1,10 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-10-24T02:48:36.160Z",
+  "lastUpdated": "2025-10-24T02:52:21.193Z",
   "localComponents": {
     "HelpAndChat": {
-      "status": "installed",
-      "installDate": "2025-10-24T02:48:36.159Z",
-      "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
+      "status": "available"
     }
   },
-  "installedComponents": [
-    {
-      "componentName": "帮助与聊天组件",
-      "componentId": "HelpAndChat",
-      "componentCode": "HelpAndChat",
-      "version": "1.0.0",
-      "copiedFiles": [
-        "script/comps/third/HelpAndChat/HelpChatViewComp.ts",
-        "script/comps/third/HelpAndChat/HelpComp.ts",
-        "script/comps/third/HelpAndChat/HelpGuideComp.ts"
-      ],
-      "installedAt": "2025-10-24T02:48:36.155Z"
-    }
-  ]
+  "installedComponents": []
 }
