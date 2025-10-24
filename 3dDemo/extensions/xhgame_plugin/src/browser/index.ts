@@ -70,7 +70,7 @@ class ConfigManager {
     static async addInstalledComponent(component: Omit<InstalledComponent, 'installedAt'>): Promise<void> {
         try {
             const config = await this.readConfig();
-            
+
             // 检查是否已经安装过该组件
             const existingIndex = config.installedComponents.findIndex(
                 c => c.componentCode === component.componentCode
@@ -130,7 +130,7 @@ export const methods = {
     getVersion() {
         return Editor.App.version;
     },
-    
+
     // 获取已安装的组件列表
     async getInstalledComponents() {
         try {
@@ -149,18 +149,18 @@ export const methods = {
             };
         }
     },
-    
+
     // 移除已安装的组件记录
     async removeInstalledComponent(param: any) {
         const { componentCode } = param;
-        
+
         if (!componentCode) {
             return {
                 success: false,
                 error: '组件代码不能为空'
             };
         }
-        
+
         try {
             await ConfigManager.removeInstalledComponent(componentCode);
             console.log(`[xhgame_plugin] 已移除组件记录: ${componentCode}`);
@@ -176,13 +176,13 @@ export const methods = {
             };
         }
     },
-    
+
     // 获取本地组件库列表
     async getLocalComponents() {
         try {
             const packagePath = path.join(Editor.Package.getPath(name) || '', 'assets', 'packages');
             console.log(`[xhgame_plugin] 扫描本地组件库路径: ${packagePath}`);
-            
+
             if (!fs.existsSync(packagePath)) {
                 console.log(`[xhgame_plugin] 本地组件库路径不存在: ${packagePath}`);
                 return {
@@ -190,31 +190,31 @@ export const methods = {
                     components: []
                 };
             }
-            
+
             const components = [];
             const items = await fs.promises.readdir(packagePath);
-            
+
             for (const item of items) {
                 const itemPath = path.join(packagePath, item);
                 const stat = await fs.promises.stat(itemPath);
-                
+
                 // 跳过文件，只处理目录
                 if (!stat.isDirectory()) {
                     continue;
                 }
-                
+
                 // 查找对应的 .info 文件
                 const infoFilePath = path.join(packagePath, `${item}.info`);
-                
+
                 if (fs.existsSync(infoFilePath)) {
                     try {
                         const infoContent = await fs.promises.readFile(infoFilePath, 'utf-8');
                         const componentInfo = JSON.parse(infoContent);
-                        
+
                         // 添加本地组件标识
                         componentInfo.isLocal = true;
                         componentInfo.localPath = itemPath;
-                        
+
                         components.push(componentInfo);
                         console.log(`[xhgame_plugin] 发现本地组件: ${item}`);
                     } catch (error) {
@@ -244,7 +244,7 @@ export const methods = {
                     });
                 }
             }
-            
+
             console.log(`[xhgame_plugin] 获取本地组件库列表，共 ${components.length} 个组件`);
             return {
                 success: true,
@@ -259,7 +259,7 @@ export const methods = {
             };
         }
     },
-    
+
     // 从插件assets安装组件的消息处理器
     async installFromAssets(param: any) {
 
@@ -550,12 +550,12 @@ export const methods = {
             // 生成备份文件夹名称：组件名+日期时间
             const now = new Date();
             const dateStr = now.getFullYear().toString() +
-                          (now.getMonth() + 1).toString().padStart(2, '0') +
-                          now.getDate().toString().padStart(2, '0') +
-                          now.getHours().toString().padStart(2, '0') +
-                          now.getMinutes().toString().padStart(2, '0') +
-                          now.getSeconds().toString().padStart(2, '0');
-            
+                (now.getMonth() + 1).toString().padStart(2, '0') +
+                now.getDate().toString().padStart(2, '0') +
+                now.getHours().toString().padStart(2, '0') +
+                now.getMinutes().toString().padStart(2, '0') +
+                now.getSeconds().toString().padStart(2, '0');
+
             const backupFolderName = `${component.componentName}_${dateStr}`;
             const componentBackupDir = path.join(backupDir, backupFolderName);
             await fs.promises.mkdir(componentBackupDir, { recursive: true });
@@ -569,26 +569,26 @@ export const methods = {
 
             for (const relativeFilePath of component.copiedFiles) {
                 const fullFilePath = path.join(assetsPath, relativeFilePath);
-                
+
                 try {
                     // 检查文件是否存在
                     await fs.promises.access(fullFilePath);
-                    
+
                     // 创建备份文件的目录结构
                     const backupFilePath = path.join(componentBackupDir, relativeFilePath);
                     const backupFileDir = path.dirname(backupFilePath);
                     await fs.promises.mkdir(backupFileDir, { recursive: true });
-                    
+
                     // 备份文件
                     await Editor.Utils.File.copy(fullFilePath, backupFilePath);
                     backedUpFiles.push(relativeFilePath);
                     console.log(`[xhgame_plugin] 备份文件: ${relativeFilePath}`);
-                    
+
                     // 删除原文件
                     await fs.promises.unlink(fullFilePath);
                     deletedFiles.push(relativeFilePath);
                     console.log(`[xhgame_plugin] 删除文件: ${relativeFilePath}`);
-                    
+
                 } catch (error) {
                     console.warn(`[xhgame_plugin] 文件不存在或处理失败: ${relativeFilePath}`, error);
                     notFoundFiles.push(relativeFilePath);
@@ -599,7 +599,7 @@ export const methods = {
             const cleanupEmptyDirs = async (dirPath: string) => {
                 try {
                     const items = await fs.promises.readdir(dirPath);
-                    
+
                     // 递归清理子目录
                     for (const item of items) {
                         const itemPath = path.join(dirPath, item);
@@ -608,7 +608,7 @@ export const methods = {
                             await cleanupEmptyDirs(itemPath);
                         }
                     }
-                    
+
                     // 检查目录是否为空
                     const remainingItems = await fs.promises.readdir(dirPath);
                     if (remainingItems.length === 0) {
