@@ -136,7 +136,7 @@ export class CocosUiItemFactoryDrive extends Component implements IItemProduceDr
         console.log('CocosUiItemFactoryDrive preloadItemsResource 44')
         return new Promise((resolve, reject) => {
             xhgame.asset.loadBundle('bundle_factory', (err, bundle) => {
-                bundle.load<Prefab>('prefabs/cocosItems/cocosUiItem', (errp, prefab: Prefab) => {
+                bundle.load<Prefab>('prefabs/item_templates/cocosUiItem', (errp, prefab: Prefab) => {
                     if (errp) {
                         console.error(errp)
                         reject(false)
@@ -144,7 +144,7 @@ export class CocosUiItemFactoryDrive extends Component implements IItemProduceDr
                     }
                     this._prefab = prefab
                     // console.log('this.prefab', this._prefab)
-                    bundle.loadDir<Prefab>('prefabs/modelViews/uiItems', (errp, prefabs: Prefab[]) => {
+                    bundle.loadDir<Prefab>('prefabs/item_bodys/uiItems', (errp, prefabs: Prefab[]) => {
                         if (errp) {
                             console.error(errp)
                             reject(false)

@@ -1,0 +1,37 @@
+{
+  "package_version": 2,
+  "version": "1.0.0",
+  "name": "tp-for-editor",
+  "description": "i18n:tp-for-editor.description",
+  "main": "./dist/main.js",
+  "devDependencies": {
+    "@types/node": "^16.0.1",
+    "typescript": "^4.3.4"
+  },
+  "author": "zhujun.guan@163.com",
+  "editor": ">=3.5",
+  "scripts": {
+    "build": "tsc -b",
+    "watch": "tsc -w"
+  },
+  "contributions": {
+    "inspector": {
+      "section": {
+        "asset": {
+          "sprite-atlas": "./dist/contributions/inspector/assets-sprite-atlas.js"
+        }
+      }
+    },
+    "assets": {
+      "menu": {
+        "methods": "./dist/assets-menu.js",
+        "assetMenu": "onAssetMenu"
+      }
+    }
+  },
+  "dependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "fs-extra": "^11.2.0"
+  },
+  "_storeId": "4f3e32994c07806d6f59be36719bea86"
+}
