@@ -1,0 +1,25 @@
+{
+  "name": "MissionItem",
+  "displayName": "uiItem的body组件",
+  "version": "1.0.0",
+  "description": "视图组件",
+  "author": "xhgame",
+  "category": "UI组件",
+  "tags": ["uiItem"],
+  "files": [
+    "script/views/item_bodys/MissionItemView.ts",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item.prefab",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.plist",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png",
+  ],
+  "dependencies": [
+    "@aixh-cc/xhgame_ec_framework"
+  ],
+  "features": [
+    "item而已",
+  ],
+  "usage": {
+    "import": "import { HelpComp, HelpSystem } from './HelpComp'",
+    "example": "xhgame.gameEntity.attachComponent(HelpComp)"
+  }
+}
