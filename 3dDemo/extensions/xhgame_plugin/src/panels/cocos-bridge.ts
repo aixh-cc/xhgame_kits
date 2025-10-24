@@ -35,6 +35,10 @@ export interface CocosEditorAPI {
     uninstallComponent(param: { componentCode: string }): Promise<any>;
     getLocalComponents(): Promise<any>;
     installLocalComponent(componentName: string, componentCode: string, localPath: string): Promise<{ success: boolean; message?: string; error?: string; copiedFiles?: string[] }>;
+    
+    // 备份文件操作
+    checkBackupExists(componentCode: string): Promise<{ exists: boolean; backupPath?: string; backupInfo?: any }>;
+    restoreFromBackup(componentCode: string, backupPath: string): Promise<{ success: boolean; message?: string; error?: string; restoredFiles?: string[] }>;
 }
 
 class CocosEditorBridge implements CocosEditorAPI {
@@ -484,6 +488,67 @@ class CocosEditorBridge implements CocosEditorAPI {
         } catch (error) {
             console.error('❌ [CocosEditorBridge] Failed to install local component:', error);
             throw error;
+        }
+    }
+
+    async checkBackupExists(componentCode: string): Promise<{ exists: boolean; backupPath?: string; backupInfo?: any }> {
+        if (this.isDevMode) {
+            console.log(`🔧 [CocosEditorBridge] Mock check backup exists: ${componentCode}`);
+            // 模拟有备份文件的情况
+            return {
+                exists: true,
+                backupPath: '/mock/backup/path/HelpAndChat_20241201120000',
+                backupInfo: {
+                    componentName: '帮助与聊天组件',
+                    componentCode: componentCode,
+                    version: '1.0.0',
+                    uninstallTime: '2024-12-01T12:00:00.000Z',
+                    backedUpFiles: ['script/component.ts', 'gui/component.prefab']
+                }
+            };
+        }
+
+        try {
+            const result = await this.sendMessage('xhgame_plugin', 'checkBackupExists', { componentCode });
+            console.log(`🎮 [CocosEditorBridge] Checked backup exists:`, result);
+            return {
+                exists: result.hasBackup || false,
+                backupPath: result.backupPath,
+                backupInfo: result.backupInfo
+            };
+        } catch (error) {
+            console.error('❌ [CocosEditorBridge] Failed to check backup exists:', error);
+            return {
+                exists: false
+            };
+        }
+    }
+
+    async restoreFromBackup(componentCode: string, backupPath: string): Promise<{ success: boolean; message?: string; error?: string; restoredFiles?: string[] }> {
+        if (this.isDevMode) {
+            console.log(`🔧 [CocosEditorBridge] Mock restore from backup: ${componentCode} from ${backupPath}`);
+            return {
+                success: true,
+                message: `组件 ${componentCode} 从备份恢复成功！`,
+                restoredFiles: ['script/component.ts', 'gui/component.prefab']
+            };
+        }
+
+        try {
+            const result = await this.sendMessage('xhgame_plugin', 'restoreFromBackup', { componentCode });
+            console.log(`🎮 [CocosEditorBridge] Restored from backup:`, result);
+            return {
+                success: result.success || false,
+                message: result.message,
+                error: result.error,
+                restoredFiles: result.restoredFiles
+            };
+        } catch (error) {
+            console.error('❌ [CocosEditorBridge] Failed to restore from backup:', error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : '恢复组件时发生未知错误'
+            };
         }
     }
 }

@@ -44,6 +44,10 @@ const localComponents = ref<any[]>([]);
 const loadingLocal = ref(false);
 const installingLocalComponents = ref(new Set<string>());
 
+// 备份文件相关状态
+const componentBackups = ref<Map<string, any>>(new Map());
+const restoringBackups = ref(new Set<string>());
+
 const open = () => {
     ElMessage({
         message: 'show message',
@@ -180,6 +184,9 @@ async function loadLocalComponents() {
                 message: `已加载 ${result.components.length} 个本地组件`, 
                 type: 'success' 
             });
+            
+            // 加载完本地组件后检查备份状态
+            await checkAllComponentBackups();
         } else {
             message({ 
                 message: '获取本地组件库列表失败: ' + result.error, 
@@ -227,6 +234,90 @@ async function installLocalComponent(component: any) {
         });
     } finally {
         installingLocalComponents.value.delete(component.name);
+    }
+}
+
+// 检测组件是否有备份文件
+async function checkComponentBackup(componentCode: string) {
+    console.log(`[xhgame_plugin] 检测组件备份: ${componentCode}`);
+    try {
+        const result = await cocosEditorBridge.checkBackupExists(componentCode);
+        console.log(`[xhgame_plugin] 组件备份检测结果: ${componentCode}`, result);
+        console.log(`[xhgame_plugin] result.exists: ${result.exists}, result.backupInfo:`, result.backupInfo);
+        
+        if (result.exists) {
+            // 确保存储的对象包含exists字段
+            const backupData = {
+                ...result.backupInfo,
+                exists: true,
+                backupPath: result.backupPath
+            };
+            componentBackups.value.set(componentCode, backupData);
+            console.log(`[xhgame_plugin] 已添加到componentBackups: ${componentCode}`, componentBackups.value.get(componentCode));
+        } else {
+            componentBackups.value.delete(componentCode);
+            console.log(`[xhgame_plugin] 从componentBackups中删除: ${componentCode}`);
+        }
+        
+        // 打印当前所有备份状态
+        console.log(`[xhgame_plugin] 当前componentBackups状态:`, Array.from(componentBackups.value.entries()));
+        
+        return result;
+    } catch (error) {
+        console.error(`检测组件备份失败: ${componentCode}`, error);
+        componentBackups.value.delete(componentCode);
+        return { exists: false };
+    }
+}
+
+// 批量检测所有本地组件的备份文件
+async function checkAllComponentBackups() {
+    for (const component of localComponents.value) {
+        await checkComponentBackup(component.name);
+    }
+}
+
+// 从备份恢复组件
+async function restoreComponentFromBackup(component: any) {
+    const componentCode = component.name;
+    const backup = componentBackups.value.get(componentCode);
+    
+    if (!backup || !backup.exists) {
+        message({ 
+            message: `组件 ${component.displayName || component.name} 没有找到备份文件`, 
+            type: 'error' 
+        });
+        return;
+    }
+    
+    restoringBackups.value.add(componentCode);
+    try {
+        const result = await cocosEditorBridge.restoreFromBackup(componentCode, '');
+        
+        if (result.success) {
+            message({ 
+                message: result.message || `组件 ${component.displayName || component.name} 从备份恢复成功！`, 
+                type: 'success',
+                duration: 5000
+            });
+            
+            // 重新加载已安装组件列表和本地组件列表
+            await loadInstalledComponents();
+            await loadLocalComponents();
+            await checkAllComponentBackups();
+        } else {
+            message({ 
+                message: result.error || `组件 ${component.displayName || component.name} 恢复失败`, 
+                type: 'error' 
+            });
+        }
+    } catch (error) {
+        message({ 
+            message: `恢复组件失败: ${error}`, 
+            type: 'error' 
+        });
+    } finally {
+        restoringBackups.value.delete(componentCode);
     }
 }
 
@@ -306,7 +397,21 @@ onMounted(() => {
     loadInstalledComponents();
     
     // 加载本地组件库列表
-    loadLocalComponents();
+    loadLocalComponents().then(() => {
+        // 加载完本地组件后检测备份文件
+        checkAllComponentBackups();
+    });
+});
+
+// 监听标签页切换
+watch(activeTab, (newTab, oldTab) => {
+    console.log(`[xhgame_plugin] 标签页切换: ${oldTab} -> ${newTab}`);
+    
+    // 当切换到本地组件标签页时，重新检查备份状态
+    if (newTab === 'local') {
+        console.log('[xhgame_plugin] 切换到本地组件标签页，重新检查备份状态');
+        checkAllComponentBackups();
+    }
 });
 
 onUnmounted(() => {
@@ -423,6 +528,16 @@ onUnmounted(() => {
                                         v-if="component.status === 'installed'"
                                     >
                                         已安装
+                                    </el-button>
+
+                                    <el-button 
+                                        type="warning" 
+                                        size="small" 
+                                        @click="restoreComponentFromBackup(component)"
+                                        :loading="restoringBackups.has(component.name)"
+                                        v-if="componentBackups.has(component.name) && componentBackups.get(component.name)?.exists"
+                                    >
+                                        回撤备份到项目
                                     </el-button>
                                 </div>
                             </template>

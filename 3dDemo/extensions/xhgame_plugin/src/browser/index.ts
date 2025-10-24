@@ -672,17 +672,16 @@ export const methods = {
             const backupDir = path.join(extensionPath, 'backup');
             await fs.promises.mkdir(backupDir, { recursive: true });
 
-            // 生成备份文件夹名称：组件名+日期时间
-            const now = new Date();
-            const dateStr = now.getFullYear().toString() +
-                (now.getMonth() + 1).toString().padStart(2, '0') +
-                now.getDate().toString().padStart(2, '0') +
-                now.getHours().toString().padStart(2, '0') +
-                now.getMinutes().toString().padStart(2, '0') +
-                now.getSeconds().toString().padStart(2, '0');
-
-            const backupFolderName = `${componentCode}_${dateStr}`;
+            // 使用组件名作为备份文件夹名称（简化版本，只保留一个备份）
+            const backupFolderName = componentCode;
             const componentBackupDir = path.join(backupDir, backupFolderName);
+            
+            // 如果已存在旧备份，先删除
+            if (fs.existsSync(componentBackupDir)) {
+                await fs.promises.rm(componentBackupDir, { recursive: true });
+                console.log(`[xhgame_plugin] 删除旧备份目录: ${componentBackupDir}`);
+            }
+            
             await fs.promises.mkdir(componentBackupDir, { recursive: true });
 
             console.log(`[xhgame_plugin] 备份目录: ${componentBackupDir}`);
@@ -863,6 +862,218 @@ export const methods = {
 
         } catch (error) {
             console.error(`[xhgame_plugin] 卸载组件失败: `, error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+    },
+
+    // 检查组件是否有备份文件
+    async checkBackupExists(param: any) {
+        const { componentCode } = param;
+
+        if (!componentCode) {
+            return {
+                success: false,
+                error: '组件代码不能为空'
+            };
+        }
+
+        try {
+            const extensionPath = Editor.Package.getPath(name);
+            if (!extensionPath) {
+                throw new Error('无法获取插件路径');
+            }
+
+            const backupDir = path.join(extensionPath, 'backup');
+            
+            if (!fs.existsSync(backupDir)) {
+                return {
+                    success: true,
+                    hasBackup: false,
+                    exists: false
+                };
+            }
+
+            // 直接检查组件名目录
+            const componentBackupDir = componentCode;
+            const componentBackupPath = path.join(backupDir, componentBackupDir);
+            
+            if (!fs.existsSync(componentBackupPath)) {
+                return {
+                    success: true,
+                    hasBackup: false,
+                    exists: false
+                };
+            }
+
+            // 检查备份信息文件是否存在
+            const backupInfoPath = path.join(componentBackupPath, 'backup-info.json');
+            const hasBackupInfo = fs.existsSync(backupInfoPath);
+
+            if (hasBackupInfo) {
+                const backupInfo = JSON.parse(await fs.promises.readFile(backupInfoPath, 'utf-8'));
+                return {
+                    success: true,
+                    hasBackup: true,
+                    exists: true,
+                    backupInfo: backupInfo,
+                    backupPath: componentBackupPath
+                };
+            } else {
+                return {
+                    success: true,
+                    hasBackup: false,
+                    exists: false
+                };
+            }
+
+        } catch (error) {
+            console.error(`[xhgame_plugin] 检查备份文件失败:`, error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : String(error),
+                hasBackup: false,
+                exists: false
+            };
+        }
+    },
+
+    // 从备份恢复组件
+    async restoreFromBackup(param: any) {
+        const { componentCode } = param;
+
+        if (!componentCode) {
+            return {
+                success: false,
+                error: '组件代码不能为空'
+            };
+        }
+
+        try {
+            const extensionPath = Editor.Package.getPath(name);
+            if (!extensionPath) {
+                throw new Error('无法获取插件路径');
+            }
+
+            const backupDir = path.join(extensionPath, 'backup');
+            
+            if (!fs.existsSync(backupDir)) {
+                return {
+                    success: false,
+                    error: '备份目录不存在'
+                };
+            }
+
+            // 直接使用组件名目录
+            const componentBackupDir = componentCode;
+            const backupPath = path.join(backupDir, componentBackupDir);
+            
+            if (!fs.existsSync(backupPath)) {
+                return {
+                    success: false,
+                    error: '未找到该组件的备份文件'
+                };
+            }
+            const backupInfoPath = path.join(backupPath, 'backup-info.json');
+
+            if (!fs.existsSync(backupInfoPath)) {
+                return {
+                    success: false,
+                    error: '备份信息文件不存在'
+                };
+            }
+
+            // 读取备份信息
+            const backupInfo = JSON.parse(await fs.promises.readFile(backupInfoPath, 'utf-8'));
+            console.log(`[xhgame_plugin] 开始恢复组件: ${backupInfo.componentName}`);
+
+            // 获取项目路径
+            const projectPath = Editor.Project.path;
+            const assetsPath = path.join(projectPath, 'assets');
+
+            // 恢复文件
+            const restoredFiles: string[] = [];
+            const failedFiles: string[] = [];
+
+            for (const relativeFilePath of backupInfo.backedUpFiles) {
+                try {
+                    const backupFilePath = path.join(backupPath, relativeFilePath);
+                    const targetFilePath = path.join(assetsPath, relativeFilePath);
+                    
+                    // 确保目标目录存在
+                    const targetDir = path.dirname(targetFilePath);
+                    await fs.promises.mkdir(targetDir, { recursive: true });
+
+                    // 复制文件
+                    await fs.promises.copyFile(backupFilePath, targetFilePath);
+                    restoredFiles.push(relativeFilePath);
+                    console.log(`[xhgame_plugin] 恢复文件: ${relativeFilePath}`);
+
+                    // 如果有对应的.meta文件也恢复
+                    const backupMetaPath = backupFilePath + '.meta';
+                    const targetMetaPath = targetFilePath + '.meta';
+                    if (fs.existsSync(backupMetaPath)) {
+                        await fs.promises.copyFile(backupMetaPath, targetMetaPath);
+                        console.log(`[xhgame_plugin] 恢复meta文件: ${relativeFilePath}.meta`);
+                    }
+
+                } catch (error) {
+                    console.error(`[xhgame_plugin] 恢复文件失败 ${relativeFilePath}:`, error);
+                    failedFiles.push(relativeFilePath);
+                }
+            }
+
+            // 重新添加到已安装组件列表
+            try {
+                await ConfigManager.addInstalledComponent({
+                    componentName: backupInfo.componentName,
+                    componentId: backupInfo.componentId,
+                    componentCode: backupInfo.componentCode,
+                    version: backupInfo.version,
+                    copiedFiles: restoredFiles
+                });
+                console.log(`[xhgame_plugin] 组件恢复信息已记录到配置文件`);
+            } catch (configError) {
+                console.warn(`[xhgame_plugin] 记录恢复信息失败，但文件恢复成功:`, configError);
+            }
+
+            // 更新本地组件配置文件中的状态
+            try {
+                const localComponentsConfig = await ConfigManager.readLocalComponentsConfig();
+                localComponentsConfig[componentCode] = {
+                    status: 'installed',
+                    installDate: new Date().toISOString(),
+                    installPath: assetsPath
+                };
+                await ConfigManager.writeLocalComponentsConfig(localComponentsConfig);
+                console.log(`[xhgame_plugin] 本地组件状态已更新为已安装: ${componentCode}`);
+            } catch (statusError) {
+                console.warn(`[xhgame_plugin] 更新本地组件状态失败:`, statusError);
+            }
+
+            // 删除已使用的备份目录
+            try {
+                await fs.promises.rm(backupPath, { recursive: true });
+                console.log(`[xhgame_plugin] 已删除使用过的备份目录: ${backupPath}`);
+            } catch (deleteError) {
+                console.warn(`[xhgame_plugin] 删除备份目录失败，但不影响恢复结果:`, deleteError);
+            }
+
+            console.log(`[xhgame_plugin] 组件恢复完成: ${backupInfo.componentName}`);
+            console.log(`[xhgame_plugin] 恢复文件数: ${restoredFiles.length}, 失败文件数: ${failedFiles.length}`);
+
+            return {
+                success: true,
+                message: `组件 ${backupInfo.componentName} 恢复成功！`,
+                restoredFiles: restoredFiles,
+                failedFiles: failedFiles,
+                componentInfo: backupInfo
+            };
+
+        } catch (error) {
+            console.error(`[xhgame_plugin] 恢复组件失败:`, error);
             return {
                 success: false,
                 error: error instanceof Error ? error.message : String(error)

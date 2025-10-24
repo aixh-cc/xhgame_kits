@@ -94,6 +94,16 @@
                 "methods": [
                     "installLocalComponent"
                 ]
+            },
+            "checkBackupExists": {
+                "methods": [
+                    "checkBackupExists"
+                ]
+            },
+            "restoreFromBackup": {
+                "methods": [
+                    "restoreFromBackup"
+                ]
             }
         }
     },
