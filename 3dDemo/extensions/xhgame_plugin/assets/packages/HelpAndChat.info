@@ -6,8 +6,6 @@
   "author": "xhgame",
   "category": "UI组件",
   "tags": ["帮助", "聊天", "引导", "UI"],
-  "installDate": "2024-01-15T10:30:00.000Z",
-  "installPath": "extensions/xhgame_plugin/assets/packages/HelpAndChat",
   "files": [
     "script/comps/third/HelpAndChat/HelpComp.ts",
     "script/comps/third/HelpAndChat/HelpChatViewComp.ts",
@@ -25,7 +23,5 @@
   "usage": {
     "import": "import { HelpComp, HelpSystem } from './HelpComp'",
     "example": "xhgame.gameEntity.attachComponent(HelpComp)"
-  },
-  "isLocal": true,
-  "status": "installed"
+  }
 }

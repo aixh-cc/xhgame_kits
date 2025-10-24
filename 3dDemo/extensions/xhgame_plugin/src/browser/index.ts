@@ -23,14 +23,49 @@ class ConfigManager {
     private static configPath: string;
 
     static init() {
-        // 配置文件存储在extensions目录下
-        const extensionsPath = path.dirname(path.dirname(Editor.Package.getPath(name) || ''));
-        this.configPath = path.join(extensionsPath, 'xhgame-plugin-config.json');
-        console.log(`[ConfigManager] 配置文件路径: ${this.configPath}`);
+        this.ensureConfigPath();
+    }
+
+    private static ensureConfigPath() {
+        if (this.configPath) {
+            return; // 已经初始化过了
+        }
+
+        // 尝试通过Editor.Package.getPath获取路径
+        const packagePath = Editor.Package.getPath(name);
+        console.log('[ConfigManager] Editor.Package.getPath', packagePath);
+        
+        if (packagePath) {
+            // 如果能获取到包路径，使用标准方式
+            const extensionsPath = path.dirname(path.dirname(packagePath));
+            this.configPath = path.join(extensionsPath, 'xhgame-plugin-config.json');
+            console.log(`[ConfigManager] 使用标准路径: ${this.configPath}`);
+        } else {
+            // 如果获取不到，使用备用方案：通过Editor.Project.path构建
+            const projectPath = Editor.Project.path;
+            if (projectPath) {
+                this.configPath = path.join(projectPath, 'xhgame-plugin-config.json');
+                console.log(`[ConfigManager] 使用备用路径: ${this.configPath}`);
+            } else {
+                console.error('[ConfigManager] 无法确定配置文件路径，Editor API可能未就绪');
+                // 设置一个临时路径，稍后重试
+                this.configPath = '';
+            }
+        }
     }
 
     static async readConfig(): Promise<PluginConfig> {
         try {
+            this.ensureConfigPath();
+            if (!this.configPath) {
+                console.error('[ConfigManager] 配置文件路径未初始化');
+                return {
+                    version: '1.0.0',
+                    installedComponents: [],
+                    lastUpdated: new Date().toISOString()
+                };
+            }
+
             if (!fs.existsSync(this.configPath)) {
                 // 如果配置文件不存在，创建默认配置
                 const defaultConfig: PluginConfig = {
@@ -57,6 +92,11 @@ class ConfigManager {
 
     static async writeConfig(config: PluginConfig): Promise<void> {
         try {
+            this.ensureConfigPath();
+            if (!this.configPath) {
+                throw new Error('配置文件路径未初始化');
+            }
+
             config.lastUpdated = new Date().toISOString();
             const configData = JSON.stringify(config, null, 2);
             await fs.promises.writeFile(this.configPath, configData, 'utf-8');
@@ -118,6 +158,58 @@ class ConfigManager {
             console.log(`[ConfigManager] 移除组件: ${componentCode}`);
         } catch (error) {
             console.error('[ConfigManager] 移除已安装组件失败:', error);
+            throw error;
+        }
+    }
+
+    // 本地组件配置管理
+    static async readLocalComponentsConfig(): Promise<{ [key: string]: any }> {
+        try {
+            this.ensureConfigPath();
+            if (!this.configPath) {
+                console.error('[ConfigManager] 配置文件路径未初始化');
+                return {};
+            }
+
+            // 直接使用this.configPath，因为它已经指向正确的配置文件
+            console.log(`[ConfigManager] 读取本地组件配置文件: ${this.configPath}`);
+
+            if (!fs.existsSync(this.configPath)) {
+                console.log(`[ConfigManager] 本地组件配置文件不存在: ${this.configPath}`);
+                return {};
+            }
+
+            const configContent = await fs.promises.readFile(this.configPath, 'utf-8');
+            const config = JSON.parse(configContent);
+            return config.localComponents || {};
+        } catch (error) {
+            console.error(`[ConfigManager] 读取本地组件配置文件失败:`, error);
+            return {};
+        }
+    }
+
+    static async writeLocalComponentsConfig(localComponents: { [key: string]: any }): Promise<void> {
+        try {
+            this.ensureConfigPath();
+            if (!this.configPath) {
+                throw new Error('配置文件路径未初始化');
+            }
+
+            console.log(`[ConfigManager] 写入本地组件配置文件: ${this.configPath}`);
+
+            let config: any = {};
+            if (fs.existsSync(this.configPath)) {
+                const configContent = await fs.promises.readFile(this.configPath, 'utf-8');
+                config = JSON.parse(configContent);
+            }
+
+            config.localComponents = localComponents;
+            config.lastUpdated = new Date().toISOString();
+
+            await fs.promises.writeFile(this.configPath, JSON.stringify(config, null, 2), 'utf-8');
+            console.log(`[ConfigManager] 写入本地组件配置成功: ${this.configPath}`);
+        } catch (error) {
+            console.error(`[ConfigManager] 写入本地组件配置文件失败:`, error);
             throw error;
         }
     }
@@ -192,6 +284,10 @@ export const methods = {
                 };
             }
 
+            // 读取本地组件配置文件
+            const localComponentsConfig = await ConfigManager.readLocalComponentsConfig();
+            console.log(`[xhgame_plugin] 读取本地组件配置: ${Object.keys(localComponentsConfig).length} 个组件`);
+
             const components = [];
             const items = await fs.promises.readdir(packagePath);
 
@@ -212,12 +308,22 @@ export const methods = {
                         const infoContent = await fs.promises.readFile(infoFilePath, 'utf-8');
                         const componentInfo = JSON.parse(infoContent);
 
-                        // 添加本地组件标识
+                        // 添加本地组件标识和路径
                         componentInfo.isLocal = true;
                         componentInfo.localPath = itemPath;
 
+                        // 从配置文件获取安装状态
+                        const componentConfig = localComponentsConfig[item];
+                        if (componentConfig) {
+                            componentInfo.status = componentConfig.status;
+                            componentInfo.installDate = componentConfig.installDate;
+                            componentInfo.installPath = componentConfig.installPath;
+                        } else {
+                            componentInfo.status = 'available';
+                        }
+
                         components.push(componentInfo);
-                        console.log(`[xhgame_plugin] 发现本地组件: ${item}`);
+                        console.log(`[xhgame_plugin] 发现本地组件: ${item}, 状态: ${componentInfo.status}`);
                     } catch (error) {
                         console.error(`[xhgame_plugin] 解析组件信息文件失败 ${infoFilePath}:`, error);
                         // 如果解析失败，创建基本信息
@@ -248,7 +354,7 @@ export const methods = {
 
             console.log(`[xhgame_plugin] 获取本地组件库列表，共 ${components.length} 个组件`);
             console.log('components', JSON.stringify(components));
-            
+
             return {
                 success: true,
                 components: components,
