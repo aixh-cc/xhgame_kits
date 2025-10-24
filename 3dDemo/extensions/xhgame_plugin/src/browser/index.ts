@@ -34,7 +34,7 @@ class ConfigManager {
         // 尝试通过Editor.Package.getPath获取路径
         const packagePath = Editor.Package.getPath(name);
         console.log('[ConfigManager] Editor.Package.getPath', packagePath);
-        
+
         if (packagePath) {
             // 如果能获取到包路径，使用标准方式
             const extensionsPath = path.dirname(path.dirname(packagePath));
@@ -450,10 +450,10 @@ export const methods = {
                     const destPath = path.join(destDir, item.name);
                     const relPath = path.join(relativePath, item.name);
 
-                    // 跳过.meta文件
-                    if (item.name.endsWith('.meta')) {
-                        continue;
-                    }
+                    // 不跳过.meta文件
+                    // if (item.name.endsWith('.meta')) {
+                    //     continue;
+                    // }
 
                     if (item.isDirectory()) {
                         // 创建目录
@@ -485,24 +485,6 @@ export const methods = {
             } catch (configError) {
                 console.warn(`[xhgame_plugin] 记录安装信息失败，但组件安装成功:`, configError);
                 // 不影响安装结果，只是记录失败
-            }
-
-            // 逐个刷新安装的文件
-            try {
-                console.log(`[xhgame_plugin] 开始刷新 ${copiedFiles.length} 个安装文件的资源列表`);
-                for (const filePath of copiedFiles) {
-                    try {
-                        await Editor.Message.request('asset-db', 'refresh-asset', filePath);
-                        console.log(`[xhgame_plugin] 刷新文件成功: ${filePath}`);
-                    } catch (fileRefreshError) {
-                        console.warn(`[xhgame_plugin] 刷新文件失败: ${filePath}`, fileRefreshError);
-                        // 继续刷新其他文件
-                    }
-                }
-                console.log(`[xhgame_plugin] 资源列表刷新完成`);
-            } catch (refreshError) {
-                console.warn(`[xhgame_plugin] 刷新资源列表失败:`, refreshError);
-                // 不影响安装结果，只是刷新失败
             }
 
             return {
@@ -644,24 +626,6 @@ export const methods = {
                 // 不影响安装结果，只是状态更新失败
             }
 
-            // 逐个刷新安装的文件
-            try {
-                console.log(`[xhgame_plugin] 开始刷新 ${copiedFiles.length} 个安装文件的资源列表`);
-                for (const filePath of copiedFiles) {
-                    try {
-                        await Editor.Message.request('asset-db', 'refresh-asset', filePath);
-                        console.log(`[xhgame_plugin] 刷新文件成功: ${filePath}`);
-                    } catch (fileRefreshError) {
-                        console.warn(`[xhgame_plugin] 刷新文件失败: ${filePath}`, fileRefreshError);
-                        // 继续刷新其他文件
-                    }
-                }
-                console.log(`[xhgame_plugin] 资源列表刷新完成`);
-            } catch (refreshError) {
-                console.warn(`[xhgame_plugin] 刷新资源列表失败:`, refreshError);
-                // 不影响安装结果，只是刷新失败
-            }
-
             return {
                 success: true,
                 message: `本地组件 ${componentName} 安装成功！`,
@@ -711,13 +675,13 @@ export const methods = {
             // 使用组件名作为备份文件夹名称（简化版本，只保留一个备份）
             const backupFolderName = componentCode;
             const componentBackupDir = path.join(backupDir, backupFolderName);
-            
+
             // 如果已存在旧备份，先删除
             if (fs.existsSync(componentBackupDir)) {
                 await fs.promises.rm(componentBackupDir, { recursive: true });
                 console.log(`[xhgame_plugin] 删除旧备份目录: ${componentBackupDir}`);
             }
-            
+
             await fs.promises.mkdir(componentBackupDir, { recursive: true });
 
             console.log(`[xhgame_plugin] 备份目录: ${componentBackupDir}`);
@@ -786,7 +750,7 @@ export const methods = {
             const processedDirs = new Set<string>();
             for (const relativeFilePath of component.copiedFiles) {
                 const dirPath = path.dirname(relativeFilePath);
-                
+
                 // 避免重复处理同一个目录
                 if (processedDirs.has(dirPath)) {
                     continue;
@@ -887,23 +851,6 @@ export const methods = {
             console.log(`[xhgame_plugin] 组件卸载完成: ${component.componentName}`);
             console.log(`[xhgame_plugin] 备份文件数: ${backedUpFiles.length}, 删除文件数: ${deletedFiles.length}, 未找到文件数: ${notFoundFiles.length}`);
 
-            // 逐个刷新删除的文件路径
-            try {
-                console.log(`[xhgame_plugin] 开始刷新 ${deletedFiles.length} 个删除文件的资源列表`);
-                for (const filePath of deletedFiles) {
-                    try {
-                        await Editor.Message.request('asset-db', 'refresh-asset', filePath);
-                        console.log(`[xhgame_plugin] 刷新文件成功: ${filePath}`);
-                    } catch (fileRefreshError) {
-                        console.warn(`[xhgame_plugin] 刷新文件失败: ${filePath}`, fileRefreshError);
-                        // 继续刷新其他文件
-                    }
-                }
-                console.log(`[xhgame_plugin] 资源列表刷新完成`);
-            } catch (refreshError) {
-                console.warn(`[xhgame_plugin] 刷新资源列表失败:`, refreshError);
-                // 不影响卸载结果，只是刷新失败
-            }
 
             return {
                 success: true,
@@ -941,7 +888,7 @@ export const methods = {
             }
 
             const backupDir = path.join(extensionPath, 'backup');
-            
+
             if (!fs.existsSync(backupDir)) {
                 return {
                     success: true,
@@ -953,7 +900,7 @@ export const methods = {
             // 直接检查组件名目录
             const componentBackupDir = componentCode;
             const componentBackupPath = path.join(backupDir, componentBackupDir);
-            
+
             if (!fs.existsSync(componentBackupPath)) {
                 return {
                     success: true,
@@ -1012,7 +959,7 @@ export const methods = {
             }
 
             const backupDir = path.join(extensionPath, 'backup');
-            
+
             if (!fs.existsSync(backupDir)) {
                 return {
                     success: false,
@@ -1023,7 +970,7 @@ export const methods = {
             // 直接使用组件名目录
             const componentBackupDir = componentCode;
             const backupPath = path.join(backupDir, componentBackupDir);
-            
+
             if (!fs.existsSync(backupPath)) {
                 return {
                     success: false,
@@ -1055,7 +1002,7 @@ export const methods = {
                 try {
                     const backupFilePath = path.join(backupPath, relativeFilePath);
                     const targetFilePath = path.join(assetsPath, relativeFilePath);
-                    
+
                     // 确保目标目录存在
                     const targetDir = path.dirname(targetFilePath);
                     await fs.promises.mkdir(targetDir, { recursive: true });
@@ -1117,24 +1064,6 @@ export const methods = {
 
             console.log(`[xhgame_plugin] 组件恢复完成: ${backupInfo.componentName}`);
             console.log(`[xhgame_plugin] 恢复文件数: ${restoredFiles.length}, 失败文件数: ${failedFiles.length}`);
-
-            // 逐个刷新恢复的文件
-            try {
-                console.log(`[xhgame_plugin] 开始刷新 ${restoredFiles.length} 个恢复文件的资源列表`);
-                for (const filePath of restoredFiles) {
-                    try {
-                        await Editor.Message.request('asset-db', 'refresh-asset', filePath);
-                        console.log(`[xhgame_plugin] 刷新文件成功: ${filePath}`);
-                    } catch (fileRefreshError) {
-                        console.warn(`[xhgame_plugin] 刷新文件失败: ${filePath}`, fileRefreshError);
-                        // 继续刷新其他文件
-                    }
-                }
-                console.log(`[xhgame_plugin] 资源列表刷新完成`);
-            } catch (refreshError) {
-                console.warn(`[xhgame_plugin] 刷新资源列表失败:`, refreshError);
-                // 不影响恢复结果，只是刷新失败
-            }
 
             return {
                 success: true,

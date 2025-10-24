@@ -271,7 +271,7 @@ async function installLocalComponent(component: any) {
             loadLocalComponents();
         } else {
             message({ 
-                message: result.error || '安装本地组件失败', 
+                message: result.error || '安装本地组件失败,具体到控制板日志查看', 
                 type: 'error' 
             });
         }

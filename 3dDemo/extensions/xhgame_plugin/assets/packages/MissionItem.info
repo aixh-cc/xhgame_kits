@@ -8,9 +8,13 @@
   "tags": ["uiItem"],
   "files": [
     "script/views/item_bodys/MissionItemView.ts",
+    "script/views/item_bodys/MissionItemView.ts.meta",
     "bundle_factory/prefabs/item_bodys/uiItems/mission_item.prefab",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item.prefab.meta",
     "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.plist",
-    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png"
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.plist.meta",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png",
+    "bundle_factory/prefabs/item_bodys/uiItems/mission_item_plist.png.meta"
   ],
   "dependencies": [
     "@aixh-cc/xhgame_ec_framework"
