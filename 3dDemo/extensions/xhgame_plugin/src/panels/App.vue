@@ -424,7 +424,7 @@ onUnmounted(() => {
 <template>
     <div class="container">
         <div class="header">
-            <div class="logos">
+            <!-- <div class="logos">
                 <a href="https://vitejs.dev" target="_blank">
                     <img src="./assets/vite.svg" class="logo" alt="Vite logo" />
                 </a>
@@ -437,22 +437,22 @@ onUnmounted(() => {
                 <a href="https://element-plus.org/zh-CN/" target="_blank">
                     <img src="./assets/element-plus-logo.svg" class="logo element" alt="element-plus logo" />
                 </a>
-            </div>
+            </div> -->
             
-            <div class="actions">
+            <!-- <div class="actions">
                 <el-button type="primary" @click="open">show message</el-button>
                 <el-button type="danger" @click="open2">show inject message</el-button>
                 <el-button type="default" @click="showVersion">get creator version</el-button>
                 <el-button type="success" @click="testEditorCommunication">测试编辑器通信</el-button>
                 <el-button type="warning" @click="simulateAssetChange" v-if="!editorConnected">模拟资源变化</el-button>
                 <el-button type="info" @click="simulateNodeSelection" v-if="!editorConnected">模拟节点选择</el-button>
-            </div>
-            
+            </div> -->
+<!--             
             <div class="status-bar">
                 <el-tag :type="editorConnected ? 'success' : 'warning'">
                     {{ editorConnected ? '已连接编辑器' : '开发模式' }}
                 </el-tag>
-            </div>
+            </div> -->
         </div>
         
         <el-tabs v-model="activeTab" class="main-tabs">
@@ -711,26 +711,12 @@ onUnmounted(() => {
 
 .main-tabs {
     flex: 1;
-    overflow: hidden;
+    overflow: auto;
     padding: 0 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.main-tabs :deep(.el-tabs__content) {
-    flex: 1;
-    overflow: hidden;
-}
-
-.main-tabs :deep(.el-tab-pane) {
-    height: 100%;
-    overflow: hidden;
 }
 
 .installed-components {
     padding: 20px;
-    height: 100%;
-    overflow-y: auto;
 }
 
 .local-components {
