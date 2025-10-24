@@ -793,16 +793,80 @@ onUnmounted(() => {
     background-color: #1a1a1a;
 }
 
+/* 主标签页滚动条样式 */
+.main-tabs::-webkit-scrollbar {
+    width: 8px;
+}
+
+.main-tabs::-webkit-scrollbar-track {
+    background: #2c2c2c;
+    border-radius: 4px;
+}
+
+.main-tabs::-webkit-scrollbar-thumb {
+    background: #606266;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.main-tabs::-webkit-scrollbar-thumb:hover {
+    background: #909399;
+}
+
 .installed-components {
     padding: 20px;
+    height: calc(100vh - 120px); /* 减去头部和标签页的高度 */
+    overflow-y: auto;
     background-color: #1a1a1a;
+    box-sizing: border-box;
+}
+
+/* 已安装组件滚动条样式 */
+.installed-components::-webkit-scrollbar {
+    width: 8px;
+}
+
+.installed-components::-webkit-scrollbar-track {
+    background: #2c2c2c;
+    border-radius: 4px;
+}
+
+.installed-components::-webkit-scrollbar-thumb {
+    background: #606266;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.installed-components::-webkit-scrollbar-thumb:hover {
+    background: #909399;
 }
 
 .local-components {
     padding: 20px;
-    height: 100%;
+    height: calc(100vh - 120px); /* 减去头部和标签页的高度 */
     overflow-y: auto;
     background-color: #1a1a1a;
+    box-sizing: border-box;
+}
+
+/* 自定义滚动条样式 */
+.local-components::-webkit-scrollbar {
+    width: 8px;
+}
+
+.local-components::-webkit-scrollbar-track {
+    background: #2c2c2c;
+    border-radius: 4px;
+}
+
+.local-components::-webkit-scrollbar-thumb {
+    background: #606266;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.local-components::-webkit-scrollbar-thumb:hover {
+    background: #909399;
 }
 
 .local-header {
@@ -1078,5 +1142,29 @@ onUnmounted(() => {
 
 .main-tabs :deep(.el-tabs__active-bar) {
     background-color: #409eff;
+}
+
+/* 自定义滚动条样式 */
+.local-components::-webkit-scrollbar,
+.installed-components::-webkit-scrollbar {
+    width: 8px;
+}
+
+.local-components::-webkit-scrollbar-track,
+.installed-components::-webkit-scrollbar-track {
+    background-color: #2c2c2c;
+    border-radius: 4px;
+}
+
+.local-components::-webkit-scrollbar-thumb,
+.installed-components::-webkit-scrollbar-thumb {
+    background-color: #606266;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.local-components::-webkit-scrollbar-thumb:hover,
+.installed-components::-webkit-scrollbar-thumb:hover {
+    background-color: #909399;
 }
 </style>
