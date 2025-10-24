@@ -487,6 +487,24 @@ export const methods = {
                 // 不影响安装结果，只是记录失败
             }
 
+            // 逐个刷新安装的文件
+            try {
+                console.log(`[xhgame_plugin] 开始刷新 ${copiedFiles.length} 个安装文件的资源列表`);
+                for (const filePath of copiedFiles) {
+                    try {
+                        await Editor.Message.request('asset-db', 'refresh-asset', filePath);
+                        console.log(`[xhgame_plugin] 刷新文件成功: ${filePath}`);
+                    } catch (fileRefreshError) {
+                        console.warn(`[xhgame_plugin] 刷新文件失败: ${filePath}`, fileRefreshError);
+                        // 继续刷新其他文件
+                    }
+                }
+                console.log(`[xhgame_plugin] 资源列表刷新完成`);
+            } catch (refreshError) {
+                console.warn(`[xhgame_plugin] 刷新资源列表失败:`, refreshError);
+                // 不影响安装结果，只是刷新失败
+            }
+
             return {
                 success: true,
                 message: `组件 ${componentName} 从内置资源安装成功！`,
@@ -624,6 +642,24 @@ export const methods = {
             } catch (statusError) {
                 console.warn(`[xhgame_plugin] 更新本地组件状态失败:`, statusError);
                 // 不影响安装结果，只是状态更新失败
+            }
+
+            // 逐个刷新安装的文件
+            try {
+                console.log(`[xhgame_plugin] 开始刷新 ${copiedFiles.length} 个安装文件的资源列表`);
+                for (const filePath of copiedFiles) {
+                    try {
+                        await Editor.Message.request('asset-db', 'refresh-asset', filePath);
+                        console.log(`[xhgame_plugin] 刷新文件成功: ${filePath}`);
+                    } catch (fileRefreshError) {
+                        console.warn(`[xhgame_plugin] 刷新文件失败: ${filePath}`, fileRefreshError);
+                        // 继续刷新其他文件
+                    }
+                }
+                console.log(`[xhgame_plugin] 资源列表刷新完成`);
+            } catch (refreshError) {
+                console.warn(`[xhgame_plugin] 刷新资源列表失败:`, refreshError);
+                // 不影响安装结果，只是刷新失败
             }
 
             return {
@@ -851,6 +887,24 @@ export const methods = {
             console.log(`[xhgame_plugin] 组件卸载完成: ${component.componentName}`);
             console.log(`[xhgame_plugin] 备份文件数: ${backedUpFiles.length}, 删除文件数: ${deletedFiles.length}, 未找到文件数: ${notFoundFiles.length}`);
 
+            // 逐个刷新删除的文件路径
+            try {
+                console.log(`[xhgame_plugin] 开始刷新 ${deletedFiles.length} 个删除文件的资源列表`);
+                for (const filePath of deletedFiles) {
+                    try {
+                        await Editor.Message.request('asset-db', 'refresh-asset', filePath);
+                        console.log(`[xhgame_plugin] 刷新文件成功: ${filePath}`);
+                    } catch (fileRefreshError) {
+                        console.warn(`[xhgame_plugin] 刷新文件失败: ${filePath}`, fileRefreshError);
+                        // 继续刷新其他文件
+                    }
+                }
+                console.log(`[xhgame_plugin] 资源列表刷新完成`);
+            } catch (refreshError) {
+                console.warn(`[xhgame_plugin] 刷新资源列表失败:`, refreshError);
+                // 不影响卸载结果，只是刷新失败
+            }
+
             return {
                 success: true,
                 message: `组件 ${component.componentName} 卸载成功！\n备份位置: ${backupFolderName}`,
@@ -1063,6 +1117,24 @@ export const methods = {
 
             console.log(`[xhgame_plugin] 组件恢复完成: ${backupInfo.componentName}`);
             console.log(`[xhgame_plugin] 恢复文件数: ${restoredFiles.length}, 失败文件数: ${failedFiles.length}`);
+
+            // 逐个刷新恢复的文件
+            try {
+                console.log(`[xhgame_plugin] 开始刷新 ${restoredFiles.length} 个恢复文件的资源列表`);
+                for (const filePath of restoredFiles) {
+                    try {
+                        await Editor.Message.request('asset-db', 'refresh-asset', filePath);
+                        console.log(`[xhgame_plugin] 刷新文件成功: ${filePath}`);
+                    } catch (fileRefreshError) {
+                        console.warn(`[xhgame_plugin] 刷新文件失败: ${filePath}`, fileRefreshError);
+                        // 继续刷新其他文件
+                    }
+                }
+                console.log(`[xhgame_plugin] 资源列表刷新完成`);
+            } catch (refreshError) {
+                console.warn(`[xhgame_plugin] 刷新资源列表失败:`, refreshError);
+                // 不影响恢复结果，只是刷新失败
+            }
 
             return {
                 success: true,
