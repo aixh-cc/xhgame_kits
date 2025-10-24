@@ -187,7 +187,8 @@ export const methods = {
                 console.log(`[xhgame_plugin] 本地组件库路径不存在: ${packagePath}`);
                 return {
                     success: true,
-                    components: []
+                    components: [],
+                    error: ''
                 };
             }
 
@@ -246,16 +247,19 @@ export const methods = {
             }
 
             console.log(`[xhgame_plugin] 获取本地组件库列表，共 ${components.length} 个组件`);
+            console.log('components', JSON.stringify(components));
+            
             return {
                 success: true,
-                components: components
+                components: components,
+                error: ''
             };
         } catch (error) {
             console.error(`[xhgame_plugin] 获取本地组件库列表失败:`, error);
             return {
                 success: false,
-                error: error instanceof Error ? error.message : String(error),
-                components: []
+                components: [],
+                error: error instanceof Error ? error.message : String(error)
             };
         }
     },

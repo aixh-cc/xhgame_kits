@@ -102,7 +102,7 @@ class CocosEditorBridge implements CocosEditorAPI {
         }
 
         if ((window as any).Editor && (window as any).Editor.Message) {
-            return (window as any).Editor.Message.send(target, method, ...args);
+            return (window as any).Editor.Message.request(target, method, ...args);
         }
 
         throw new Error('Editor API not available');

@@ -172,6 +172,7 @@ async function loadLocalComponents() {
     loadingLocal.value = true;
     try {
         const result = await cocosEditorBridge.getLocalComponents();
+        console.log('result',result)
         if (result.success) {
             localComponents.value = result.components;
             message({ 
