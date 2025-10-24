@@ -1,11 +1,14 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-10-24T06:12:03.458Z",
+  "lastUpdated": "2025-10-24T15:10:24.412Z",
   "localComponents": {
     "HelpAndChat": {
       "status": "installed",
       "installDate": "2025-10-24T06:12:03.457Z",
       "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
+    },
+    "MissionItem": {
+      "status": "available"
     }
   },
   "installedComponents": [
