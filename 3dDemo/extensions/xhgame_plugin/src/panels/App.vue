@@ -711,12 +711,44 @@ onUnmounted(() => {
 
 .main-tabs {
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-tabs :deep(.el-tabs__content) {
+    flex: 1;
+    overflow: hidden;
+}
+
+.main-tabs :deep(.el-tab-pane) {
+    height: 100%;
+    overflow: hidden;
 }
 
 .installed-components {
     padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.local-components {
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.local-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.local-header h3 {
+    margin: 0;
+    color: #303133;
 }
 
 .installed-header {
@@ -744,6 +776,15 @@ onUnmounted(() => {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 20px;
+    margin-bottom: 150px; /* 添加大量底部边距确保最后一个组件完全可见 */
+}
+
+/* 添加一个空白元素在列表底部 */
+.components-list::after {
+    content: "";
+    display: block;
+    height: 200px; /* 确保有足够的空间 */
+    grid-column: 1 / -1;
 }
 
 .component-card {
