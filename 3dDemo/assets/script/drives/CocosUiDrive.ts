@@ -30,7 +30,7 @@ export class CocosUiDrive extends Component implements IUiDrive {
         }
     };
     toast(msg: string) {
-        let item = xhgame.factory.actions.createTextUiItem('toast')
+        let item = xhgame.factory.actions.createTextUiItem('toast_item')
         item.content = msg
         item.playTime = 1
         item.toScene()

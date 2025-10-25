@@ -50,7 +50,7 @@ export class CocosTextUiItem extends BaseCocosItem implements ITextUiItem {
     }
 }
 export class CocosTextUiItemFactoryDrive extends Component implements IItemProduceDrive {
-    private _prefab: Prefab
+    private _prefab: Prefab = null
     private _modelPrefabsMap: Map<string, Prefab> = new Map();
     // protected onLoad(): void {
     //     this.preloadItemsResource()
@@ -63,14 +63,14 @@ export class CocosTextUiItemFactoryDrive extends Component implements IItemProdu
     async preloadItemsResource(): Promise<boolean> {
         console.log('CocosTextUiItemFactoryDrive preloadItemsResource 22')
         return new Promise((resolve, reject) => {
-            xhgame.asset.loadBundle('bundle_game', (err, bundle) => {
-                bundle.load<Prefab>('prefabs/cocosItems/cocosTextUiItem', (errp, prefab: Prefab) => {
+            xhgame.asset.loadBundle('bundle_factory', (err, bundle) => {
+                bundle.load<Prefab>('prefabs/item_templates/cocosTextUiItem', (errp, prefab: Prefab) => {
                     if (errp) {
                         console.error(errp)
                     }
                     this._prefab = prefab
-                    // console.log('this._prefab', this._prefab)
-                    bundle.loadDir<Prefab>('prefabs/modelViews/textUiItems', (errp, prefabs: Prefab[]) => {
+                    console.log('this._prefab', this._prefab)
+                    bundle.loadDir<Prefab>('prefabs/item_bodys/textUiItems', (errp, prefabs: Prefab[]) => {
                         if (errp) {
                             console.error(errp)
                             reject(false)
@@ -88,17 +88,25 @@ export class CocosTextUiItemFactoryDrive extends Component implements IItemProdu
     }
 
     createItem(itemNo: string, itemId: number) {
-        let node = instantiate(this._prefab);
-        let prefab_path = this._modelPrefabsMap.get(itemNo)
-        if (!prefab_path) {
-            console.error('未找到prefab_path,itemNo=' + itemNo)
-            // 如果找不到对应的prefab，则使用map中的第一个prefab
-            prefab_path = Array.from(this._modelPrefabsMap.values())[0]
+        if (!this._prefab) {
+            console.error('工厂未提前preloadItemsResource,未获取到itemNo=' + itemNo)
         }
-        let modelNode = instantiate(prefab_path)
-        node.getChildByName('modelBody').addChild(modelNode)
-        // console.log('【====真实创建====】.prefab node', node)
-        return node.getComponent(CocosTextUiItem)
+        try {
+            let node = instantiate(this._prefab);
+            let prefab_path = this._modelPrefabsMap.get(itemNo)
+            if (!prefab_path) {
+                console.error('未找到prefab_path,itemNo=' + itemNo)
+                // 如果找不到对应的prefab，则使用map中的第一个prefab
+                prefab_path = Array.from(this._modelPrefabsMap.values())[0]
+            }
+            let modelNode = instantiate(prefab_path)
+            node.getChildByName('modelBody').addChild(modelNode)
+            // console.log('【====真实创建====】.prefab node', node)
+            return node.getComponent(CocosTextUiItem)
+        } catch (err) {
+            console.error('是否忘记添加' + this._prefab.name, err)
+        }
+
     }
     removeItem(item: CocosTextUiItem) {
         // console.log('removeItem(item: CocosTextUiItem)')

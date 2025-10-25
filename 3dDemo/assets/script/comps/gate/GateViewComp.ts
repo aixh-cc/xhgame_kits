@@ -5,36 +5,13 @@ import { PlayerModelComp } from "../models/PlayerModelComp"
 import { SettingViewComp } from "../common/SettingViewComp"
 import { GateGroupMissionViewComp } from "./GateGroupMissionViewComp"
 
-export class GateViewComp extends BaseModelComp {
-    compName: string = 'GateViewComp'
-    initBySystems = [GateViewSystem]
-    reset() {
-
-    }
-    // 在gate场景,玩家的操作
-    actions = {
-        /** 开始游戏 */
-        startBattle: () => {
-            return GateViewSystem.startBattle(this)
-        },
-        /** 打开关卡 */
-        openGateGroupMission: () => {
-            return GateViewSystem.openGateGroupMission(this)
-        },
-        /** 打开设置 */
-        openSettingDialog: () => {
-            GateViewSystem.openSettingDialog(this)
-        },
-    }
-
-    onDetach() {
-        xhgame.gui.removeUI(xhgame.gui.enums.Gate_Index)
-    }
-}
 export class GateViewSystem extends System {
 
     static async initComp(comp: GateViewComp) {
         await xhgame.gui.openUIAsync(xhgame.gui.enums.Gate_Index, comp)
+        // 为了调试，加入调试界面
+        await xhgame.gui.openUIAsync(xhgame.gui.enums.Dev_Index, comp)
+
         xhgame.audio.playMusic(xhgame.audio.enums.QingBg)
     }
 
@@ -62,5 +39,33 @@ export class GateViewSystem extends System {
 
     static openSettingDialog(comp: GateViewComp) {
         xhgame.gameEntity.attachComponent(SettingViewComp)
+    }
+}
+
+
+export class GateViewComp extends BaseModelComp {
+    compName: string = 'GateViewComp'
+    initBySystems = [GateViewSystem]
+    reset() {
+
+    }
+    // 在gate场景,玩家的操作
+    actions = {
+        /** 开始游戏 */
+        startBattle: () => {
+            return GateViewSystem.startBattle(this)
+        },
+        /** 打开关卡 */
+        openGateGroupMission: () => {
+            return GateViewSystem.openGateGroupMission(this)
+        },
+        /** 打开设置 */
+        openSettingDialog: () => {
+            GateViewSystem.openSettingDialog(this)
+        },
+    }
+
+    onDetach() {
+        xhgame.gui.removeUI(xhgame.gui.enums.Gate_Index)
     }
 }

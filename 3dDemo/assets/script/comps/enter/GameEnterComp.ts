@@ -5,7 +5,17 @@ import { SdkComp } from "../common/SdkComp"
 import { HelpComp } from "../common/HelpComp"
 import { GateSenceComp } from "../gate/GateSenceComp"
 import { PlayerLoginComp } from "../player/PlayerLoginComp"
-import { PlayerModelComp } from "../models/PlayerModelComp"
+
+export class GameEnterSystem extends System {
+    static async initComp(comp: GameEnterComp) {
+        await xhgame.gameEntity.attachComponent(SdkComp).done()
+        await Promise.all([
+            await xhgame.gameEntity.attachComponent(GateSenceComp).done(),
+            await xhgame.gameEntity.attachComponent(PlayerLoginComp).done(),
+            await xhgame.gameEntity.attachComponent(HelpComp).done()
+        ])
+    }
+}
 
 export class GameEnterComp extends BaseModelComp {
     compName: string = 'GameEnterComp'
@@ -20,15 +30,4 @@ export class GameEnterComp extends BaseModelComp {
     }
 }
 
-export class GameEnterSystem extends System {
-    static async initComp(comp: GameEnterComp) {
-        await xhgame.gameEntity.attachComponent(SdkComp).done()
-        console.log('SdkComp done')
-        await Promise.all([
-            await xhgame.gameEntity.attachComponent(GateSenceComp).done(),
-            await xhgame.gameEntity.attachComponent(PlayerLoginComp).done(),
-            await xhgame.gameEntity.attachComponent(HelpComp).done()
-        ])
-    }
-}
 

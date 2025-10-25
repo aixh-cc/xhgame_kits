@@ -12,6 +12,9 @@ export class MyUiManager<T extends IUiDrive, NT extends INode> extends UiManager
 }
 
 enum UIEnums {
+    // dev
+    Dev_Index = 'bundle_gate://gui/dev/dev_index',
+
     LoadResource = 'gui/common/loading',
     /**
      * 通用ui

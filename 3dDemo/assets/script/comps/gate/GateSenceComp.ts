@@ -21,6 +21,7 @@ export class GateSenceSystem extends System {
         // 加载gate场景中可能用到的工厂及资源
         // uiItemFactory
         await xhgame.factory.actions.getUiItemFactory().preloadItemsResource()
+        await xhgame.factory.actions.getTextUiItemFactory().preloadItemsResource()
 
     }
 }
