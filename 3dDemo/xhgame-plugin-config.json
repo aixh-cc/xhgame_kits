@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-10-25T11:29:32.084Z",
+  "lastUpdated": "2025-10-25T11:33:54.907Z",
   "localComponents": {
     "HelpAndChat": {
       "status": "installed",
@@ -8,7 +8,9 @@
       "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
     },
     "MissionItem": {
-      "status": "available"
+      "status": "installed",
+      "installDate": "2025-10-25T11:33:54.906Z",
+      "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
     }
   },
   "installedComponents": [
@@ -23,6 +25,23 @@
         "script/comps/third/HelpAndChat/HelpGuideComp.ts"
       ],
       "installedAt": "2025-10-24T06:12:03.452Z"
+    },
+    {
+      "componentName": "uiItem的body组件",
+      "componentId": "MissionItem",
+      "componentCode": "MissionItem",
+      "version": "1.0.0",
+      "copiedFiles": [
+        "script/views/item_bodys/MissionItemView.ts",
+        "script/views/item_bodys/MissionItemView.ts.meta",
+        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab",
+        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab.meta",
+        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist",
+        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist.meta",
+        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png",
+        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png.meta"
+      ],
+      "installedAt": "2025-10-25T11:33:54.901Z"
     }
   ]
 }
