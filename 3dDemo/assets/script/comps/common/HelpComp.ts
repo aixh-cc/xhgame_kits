@@ -84,6 +84,19 @@ export class HelpSystem extends System {
 
 
     static tmpGetHelpItems(comp: HelpComp) {
+
+        let helpChatItem000: IHelpItem = {
+            eventName: 'wait_player_play',
+            chatItems: [
+                { content: '主人！您终于醒了！！！', leftAvatarNo: 'jianling256', rightAvatarNo: '', picNo: '' },
+                { content: '我是怎么了？我现在在哪？', leftAvatarNo: '', rightAvatarNo: 'ren256', picNo: '' },
+            ],
+            guideItems: [],
+            param: {}
+        }
+        comp.helpItems.push(helpChatItem000)
+
+        // 
         let helpChatItem001: IHelpItem = {
             eventName: 'beforShowTarget',
             chatItems: [

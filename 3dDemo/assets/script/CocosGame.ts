@@ -45,6 +45,7 @@ export class CocosGame extends Component implements IGame {
         await this.init()
         await this.play()
         console.log('等待玩家操作')
+        xhgame.event.emit('wait_player_play', {})
     }
 
     async init() {
