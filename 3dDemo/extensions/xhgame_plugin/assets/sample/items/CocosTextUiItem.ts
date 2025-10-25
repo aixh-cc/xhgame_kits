@@ -78,9 +78,11 @@ export class CocosTextUiItemFactoryDrive extends Component implements IItemProdu
                             return
                         }
                         prefabs.forEach((_prefab: Prefab) => {
-                            this._modelPrefabsMap.set(_prefab.name, _prefab)
+                            if (_prefab instanceof Prefab) {
+                                this._modelPrefabsMap.set(_prefab.name, _prefab)
+                            }
                         })
-                        // console.log('this._modelPrefabsMap', this._modelPrefabsMap)
+                        console.log('this._modelPrefabsMap', this._modelPrefabsMap)
                         resolve(true)
                     })
                 })
