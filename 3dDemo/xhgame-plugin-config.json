@@ -6,44 +6,18 @@
       "status": "installed",
       "installDate": "2025-10-24T06:12:03.457Z",
       "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
-    },
-    "MissionItem": {
-      "status": "installed",
-      "installDate": "2025-10-25T11:38:18.061Z",
-      "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
     }
   },
-  "installedComponents": [
-    {
-      "componentName": "帮助与聊天组件",
-      "componentId": "HelpAndChat",
-      "componentCode": "HelpAndChat",
-      "version": "1.0.0",
-      "copiedFiles": [
-        "script/comps/third/HelpAndChat/HelpChatViewComp.ts",
-        "script/comps/third/HelpAndChat/HelpComp.ts",
-        "script/comps/third/HelpAndChat/HelpGuideComp.ts"
-      ],
-      "installedAt": "2025-10-24T06:12:03.452Z"
-    },
-    {
-      "componentName": "uiItem的body组件",
-      "componentId": "MissionItem",
-      "componentCode": "MissionItem",
-      "version": "1.0.0",
-      "copiedFiles": [
-        "script/views/item_bodys/MissionItemView.ts",
-        "script/views/item_bodys/MissionItemView.ts.meta",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab.meta",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist.meta",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png.meta",
-        "script/views/item_bodys.meta",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item.meta"
-      ],
-      "installedAt": "2025-10-25T11:38:18.056Z"
-    }
-  ]
+  "installedComponents": [{
+    "componentName": "帮助与聊天组件",
+    "componentId": "HelpAndChat",
+    "componentCode": "HelpAndChat",
+    "version": "1.0.0",
+    "copiedFiles": [
+      "script/comps/third/HelpAndChat/HelpChatViewComp.ts",
+      "script/comps/third/HelpAndChat/HelpComp.ts",
+      "script/comps/third/HelpAndChat/HelpGuideComp.ts"
+    ],
+    "installedAt": "2025-10-24T06:12:03.452Z"
+  }]
 }
