@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-10-25T11:33:54.907Z",
+  "lastUpdated": "2025-10-25T11:38:18.062Z",
   "localComponents": {
     "HelpAndChat": {
       "status": "installed",
@@ -9,7 +9,7 @@
     },
     "MissionItem": {
       "status": "installed",
-      "installDate": "2025-10-25T11:33:54.906Z",
+      "installDate": "2025-10-25T11:38:18.061Z",
       "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
     }
   },
@@ -39,9 +39,11 @@
         "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist",
         "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist.meta",
         "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png.meta"
+        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png.meta",
+        "script/views/item_bodys.meta",
+        "bundle_factory/prefabs/item_bodys/uiItems/mission_item.meta"
       ],
-      "installedAt": "2025-10-25T11:33:54.901Z"
+      "installedAt": "2025-10-25T11:38:18.056Z"
     }
   ]
 }
