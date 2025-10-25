@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.AnimationClip",
-    "_name": "tipsItem",
+    "_name": "toast_item_anim",
     "_objFlags": 0,
     "__editorExtras__": {
       "embeddedPlayerGroups": []
@@ -70,7 +70,7 @@
     "__type__": "cc.RealCurve",
     "_times": [
       0,
-      0.6666666666666666,
+      0.6666666865348816,
       1
     ],
     "_values": [
@@ -130,7 +130,7 @@
     "__type__": "cc.RealCurve",
     "_times": [
       0,
-      0.6666666666666666,
+      0.6666666865348816,
       1
     ],
     "_values": [
@@ -190,7 +190,7 @@
     "__type__": "cc.RealCurve",
     "_times": [
       0,
-      0.6666666666666666,
+      0.6666666865348816,
       1
     ],
     "_values": [

@@ -37,12 +37,14 @@ export class CocosTextUiItem extends BaseCocosItem implements ITextUiItem {
         gui_root.addChild(this.node)
         requestAnimationFrame(() => {
             let _anim = this.node.getChildByName('modelBody').getComponentInChildren(Animation)
-            _anim.play(this.itemNo);
-            xhgame.timer.scheduleOnce(() => {
-                this.playEndCallback && this.playEndCallback()
-                _anim.stop();
-                this.toPool()
-            }, this.playTime * 1000)
+            if (_anim) {
+                _anim.play(_anim.clips[0].name);
+                xhgame.timer.scheduleOnce(() => {
+                    this.playEndCallback && this.playEndCallback()
+                    _anim.stop();
+                    this.toPool()
+                }, this.playTime * 1000)
+            }
         })
     }
     toPool(): void {
@@ -52,11 +54,10 @@ export class CocosTextUiItem extends BaseCocosItem implements ITextUiItem {
 export class CocosTextUiItemFactoryDrive extends Component implements IItemProduceDrive {
     private _prefab: Prefab = null
     private _modelPrefabsMap: Map<string, Prefab> = new Map();
-    // protected onLoad(): void {
-    //     this.preloadItemsResource()
-    // }
+
     releaseItemsResource(itemNos?: string[]): Promise<boolean> {
         return new Promise((resolve, reject) => {
+            // todo 释放逻辑
             resolve(true)
         })
     }
@@ -90,6 +91,7 @@ export class CocosTextUiItemFactoryDrive extends Component implements IItemProdu
     createItem(itemNo: string, itemId: number) {
         if (!this._prefab) {
             console.error('工厂未提前preloadItemsResource,未获取到itemNo=' + itemNo)
+            return
         }
         try {
             let node = instantiate(this._prefab);
