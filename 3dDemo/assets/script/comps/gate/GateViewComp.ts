@@ -20,6 +20,7 @@ export class GateViewSystem extends System {
         const playerModel = DI.make<PlayerModelComp>('PlayerModelComp')
         let battleId = playerModel.selectedBattleId
 
+        console.log('startBattle battleId=' + battleId)
         // 
         // const curBattle = xhgame.table.getTable(xhgame.table.enums.battle).getInfo(battleId)
         // if (curBattle == undefined) {

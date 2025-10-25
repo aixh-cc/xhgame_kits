@@ -5,6 +5,8 @@ import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { IUiItem } from "../../managers/myFactory/MyFactorys"
 import { PlayerModelComp } from "../models/PlayerModelComp"
 import { IMissionItem, IMissionItemVM, PlayerMissionModelComp } from "../models/PlayerMissionModelComp"
+import { GateSenceComp } from "./GateSenceComp"
+import { GateViewComp } from "./GateViewComp"
 
 // 临时的
 const itemsPositions: number[][] = [
@@ -51,20 +53,27 @@ export class GateGroupMissionViewSystem extends System {
             missionUiItem.toScene()
             comp.uiItems.push(missionUiItem)
             if (playerModel.selectedBattleId == _iMissionItem.battleId) {
-                // comp.selectedIndex = _iMissionItem.index
+                comp.selectedIndex = _iMissionItem.index
                 vm.isFight = true
             }
         })
     }
 
     static clickMissionItem(comp: GateGroupMissionViewComp, uiItemIndex: number) {
-        // let uiItem = comp.uiItems[uiItemIndex]
-        // const maxBattleId = xhgame.gameEntity.playerModel.playerInfo.maxBattleId
-        // let vm = uiItem.getViewVm<IMissionItemVM>()
-        // if (vm.battleId > maxBattleId) {
-        //     console.log('vm.battleId > maxBattleId')
-        //     return // 不能点击
-        // }
+        let uiItem = comp.uiItems[uiItemIndex]
+        const playerModel = DI.make<PlayerModelComp>('PlayerModelComp')
+        const maxBattleId = playerModel.playerInfo.maxBattleId
+        let vm = uiItem.getViewVm<IMissionItemVM>()
+        if (vm.battleId > maxBattleId) {
+            console.log('vm.battleId > maxBattleId')
+            return // 不能点击
+        }
+        vm.isFight = true
+        let pre_uiItem = comp.uiItems[comp.selectedIndex]
+        let pre_vm = pre_uiItem.getViewVm<IMissionItemVM>()
+        pre_vm.isFight = false
+        // 
+        comp.selectedIndex = uiItemIndex
         // console.log('clickMissionItem 11111', vm)
         // comp.selectedIndex = uiItem.itemsIndex
         // xhgame.gameEntity.playerModel.selectedBattleId = vm.battleId
@@ -72,11 +81,14 @@ export class GateGroupMissionViewSystem extends System {
     }
 
     static chooseSelectedToPlay(comp: GateGroupMissionViewComp) {
-        // let selectUiItem = comp.uiItems[comp.selectedIndex]
-        // const gateSenceComp = xhgame.gameEntity.getComponent(GateSenceComp)
-        // let battleId = selectUiItem.getViewVm<IMissionItemVM>().battleId
-        // gateSenceComp.actions.startBattle(battleId)
-        // comp.detach()// 当前页面可以关闭了
+        let selectUiItem = comp.uiItems[comp.selectedIndex]
+        const playerModel = DI.make<PlayerModelComp>('PlayerModelComp')
+        const gateViewComp = xhgame.gameEntity.getComponent(GateViewComp)
+        let battleId = selectUiItem.getViewVm<IMissionItemVM>().battleId
+        playerModel.selectedBattleId = battleId
+        playerModel.notify()
+        gateViewComp.actions.startBattle()
+        comp.detach()// 当前页面可以关闭了
     }
 
 }
@@ -85,7 +97,7 @@ export class GateGroupMissionViewComp extends BaseModelComp {
     compName: string = 'GateGroupMissionViewComp'
     initBySystems: (typeof System)[] = [GateGroupMissionViewSystem]
 
-    // _selectedIndex: number = -1
+    selectedIndex: number = -1
     // get selectedIndex() {
     //     return this._selectedIndex
     // }
