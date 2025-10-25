@@ -92,7 +92,7 @@ export class HelpSystem extends System {
                 { content: '我是怎么了？我现在在哪？', leftAvatarNo: '', rightAvatarNo: 'ren256', picNo: '' },
             ],
             guideItems: [],
-            param: { maxBattleId: 1 }
+            param: { maxBattleId: 8 } // todo 改为1 
         }
         comp.helpItems.push(helpChatItem000)
 

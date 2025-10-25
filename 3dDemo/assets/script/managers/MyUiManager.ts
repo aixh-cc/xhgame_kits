@@ -14,14 +14,18 @@ export class MyUiManager<T extends IUiDrive, NT extends INode> extends UiManager
 enum UIEnums {
     // dev
     Dev_Index = 'bundle_gate://gui/dev/dev_index',
+    // gate
+    Gate_Index = 'bundle_gate://gui/gate/gate_index',
+    GateGroupMission = 'bundle_gate://gui/dialog/gate_group_mission',
+    // common/help
+    Help_Chat = 'bundle_gate://gui/common/help/help_chat',
 
     LoadResource = 'gui/common/loading',
     /**
      * 通用ui
      */
     Unloading = 'bundle_game://gui/common/unloading',
-    // common/help
-    Help_Chat = 'bundle_game://gui/common/help/help_chat',
+
     Help_Guide = 'bundle_game://gui/common/help/help_guide',
     Help_Pic = 'bundle_game://gui/common/help/help_pic',
 
@@ -31,8 +35,7 @@ enum UIEnums {
      */
     /** 入口 */
 
-    Gate_Index = 'bundle_gate://gui/gate/gate_index',
-    GateGroupMission = 'bundle_gate://gui/dialog/gate_group_mission',
+
     GateStorePanel = 'bundle_gate://gui/gate/dialog/gate_store_panel',
     GatePackagePanel = 'bundle_gate://gui/gate/dialog/gate_package_panel',
     GateDYYJPanel = 'bundle_gate://gui/gate/dialog/dy_yjrk',
