@@ -8,6 +8,7 @@ import { CocosGameManagers } from "./CocosGameManagers";
 import { CocosDrives } from "./CocosDrives";
 import { LoadResourceToGateComp } from "./comps/enter/LoadResourceToGateComp";
 import { GameEnterComp } from "./comps/enter/GameEnterComp";
+import { PlayerModelComp } from "./comps/models/PlayerModelComp";
 
 const { ccclass, property } = _decorator;
 @ccclass('CocosGame')
@@ -44,8 +45,10 @@ export class CocosGame extends Component implements IGame {
         managers.init(this.node)
         await this.init()
         await this.play()
-        console.log('等待玩家操作')
-        xhgame.event.emit('wait_player_play', {})
+
+        const playerModelComp = DI.make<PlayerModelComp>('PlayerModelComp')
+        console.log('等待玩家操作', playerModelComp)
+        xhgame.event.emit('wait_player_play', { maxBattleId: playerModelComp.playerInfo.maxBattleId })
     }
 
     async init() {
