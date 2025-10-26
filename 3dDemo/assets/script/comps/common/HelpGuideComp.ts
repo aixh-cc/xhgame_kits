@@ -1,16 +1,8 @@
 
 import { System } from "@aixh-cc/xhgame_ec_framework"
-import { xhgame } from "../../xhgame"
+import { xhgame } from "db://assets/script/xhgame"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
-
-export interface IHelpGuideViewVM {
-    group: string,
-    targetNodePath: string,
-    text: string,
-    text_size: string,
-    text_pos_index: number,
-    delay_time: number // 毫秒
-}
+import { IHelpGuideViewVM } from "db://assets/script/managers/myTable/tables/HelpTable"
 
 export class HelpGuideSystem extends System {
 

@@ -1,17 +1,9 @@
 import { CCString, CCInteger, _decorator, debug, find, Label, math, Node, UITransform, v3, Vec3 } from "cc";
 import { CocosBaseView } from "db://xhgame_plugin/Ui/CocosBaseView";
 import { xhgame } from "../../xhgame";
+import { IHelpGuideViewVM } from "../../managers/myTable/tables/HelpTable";
 
 const { ccclass, property, executeInEditMode } = _decorator;
-
-export interface IHelpGuideViewVM {
-    group: string,
-    targetNodePath: string,
-    text: string,
-    text_size: string,
-    text_pos_index: number,
-    delay_time: number // 毫秒
-}
 
 @ccclass('HelpGuideView')
 @executeInEditMode(true)

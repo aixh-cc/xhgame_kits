@@ -6,12 +6,12 @@ import { xhgame } from "db://assets/script/xhgame";
 
 const { ccclass, property } = _decorator;
 
-export interface IHelpChatView {
-    content: string
-    rightAvatarNo: string
-    leftAvatarNo: string
-    picNo: string
-}
+// export interface IHelpChatView {
+//     content: string
+//     rightAvatarNo: string
+//     leftAvatarNo: string
+//     picNo: string
+// }
 
 @ccclass('HelpChatView')
 export class HelpChatView extends CocosBaseView implements IHelpChatView {

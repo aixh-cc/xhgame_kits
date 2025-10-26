@@ -2,13 +2,14 @@
 import { System } from "@aixh-cc/xhgame_ec_framework"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { xhgame } from "../../xhgame"
+import { IHelpChatView } from "../../managers/myTable/tables/HelpTable"
 
-export interface IHelpChatView {
-    content: string
-    rightAvatarNo: string
-    leftAvatarNo: string
-    picNo: string
-}
+// export interface IHelpChatView {
+//     content: string
+//     rightAvatarNo: string
+//     leftAvatarNo: string
+//     picNo: string
+// }
 export class HelpChatViewSystem extends System {
 
     static async initComp(comp: HelpChatViewComp) {
