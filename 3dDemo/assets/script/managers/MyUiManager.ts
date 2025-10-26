@@ -19,6 +19,7 @@ enum UIEnums {
     GateGroupMission = 'bundle_gate://gui/dialog/gate_group_mission',
     // common/help
     Help_Chat = 'bundle_gate://gui/common/help/help_chat',
+    Help_Guide = 'bundle_gate://gui/common/help/help_guide',
 
     LoadResource = 'gui/common/loading',
     /**
@@ -26,7 +27,6 @@ enum UIEnums {
      */
     Unloading = 'bundle_game://gui/common/unloading',
 
-    Help_Guide = 'bundle_game://gui/common/help/help_guide',
     Help_Pic = 'bundle_game://gui/common/help/help_pic',
 
     See_Video_Get = 'bundle_game://gui/common/see_video_get',

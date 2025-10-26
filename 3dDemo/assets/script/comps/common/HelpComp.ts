@@ -91,7 +91,16 @@ export class HelpSystem extends System {
                 { content: '主人！您终于醒了！！！', leftAvatarNo: 'jianling256', rightAvatarNo: '', picNo: '' },
                 { content: '我是怎么了？我现在在哪？', leftAvatarNo: '', rightAvatarNo: 'ren256', picNo: '' },
             ],
-            guideItems: [],
+            guideItems: [
+                {
+                    group: 'wait_player_play',
+                    targetNodePath: "root/UICanvas/gate_index/bottom/startGame",
+                    text: "点击“开始游戏”",
+                    text_size: '200,200',
+                    text_pos_index: 5,
+                    delay_time: 0,
+                },
+            ],
             param: { maxBattleId: 8 } // todo 改为1 
         }
         comp.helpItems.push(helpChatItem000)
