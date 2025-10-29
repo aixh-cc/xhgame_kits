@@ -4,6 +4,8 @@ import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { PlayerModelComp } from "../models/PlayerModelComp"
 import { SettingViewComp } from "../common/SettingViewComp"
 import { GateGroupMissionViewComp } from "./GateGroupMissionViewComp"
+import { BattleModelComp } from "../models/BattleModelComp"
+import { GateToBattleComp } from "./GateToBattleComp"
 
 export class GateViewSystem extends System {
 
@@ -17,21 +19,25 @@ export class GateViewSystem extends System {
 
     /** 从gate进入战役 */
     static async startBattle(comp: GateViewComp) {
+        if (comp.isClickStart) {
+            return console.log('已点击请勿重复点击')
+        }
         const playerModel = DI.make<PlayerModelComp>('PlayerModelComp')
         let battleId = playerModel.selectedBattleId
-
         console.log('startBattle battleId=' + battleId)
         // 
-        // const curBattle = xhgame.table.getTable(xhgame.table.enums.battle).getInfo(battleId)
-        // if (curBattle == undefined) {
-        //     xhgame.gui.toast('未找到该关卡信息，敬请期待')
-        //     return
-        // }
-        // xhgame.gameEntity.battleModel.reset()
-        // xhgame.gameEntity.battleModel.curBattleTableItem = JSON.parse(JSON.stringify(curBattle))
+        const curBattle = xhgame.table.getTable(xhgame.table.enums.battle).getInfo(battleId)
+        if (curBattle == undefined) {
+            xhgame.gui.toast('未找到该关卡信息，敬请期待')
+            return
+        }
+        comp.isClickStart = true
+        const battleModelComp = xhgame.gameEntity.getComponentSafe(BattleModelComp)
+        battleModelComp.reset()
+        battleModelComp.curBattleTableItem = JSON.parse(JSON.stringify(curBattle))
         // console.log('GateToBattleComp')
-        // await xhgame.gameEntity.attachComponent(GateToBattleComp).setup({ battleId: battleId }).done()
-        // xhgame.gameEntity.detachComponent(GateToBattleComp)
+        await xhgame.gameEntity.attachComponent(GateToBattleComp).setup({ battleId: battleId }).done()
+        xhgame.gameEntity.detachComponent(GateToBattleComp)
     }
 
     static openGateGroupMission(comp: GateViewComp) {
@@ -47,8 +53,9 @@ export class GateViewSystem extends System {
 export class GateViewComp extends BaseModelComp {
     compName: string = 'GateViewComp'
     initBySystems = [GateViewSystem]
+    isClickStart: boolean = false
     reset() {
-
+        this.isClickStart = false
     }
     // 在gate场景,玩家的操作
     actions = {

@@ -55,6 +55,7 @@ export class CocosUiDrive extends Component implements IUiDrive {
     }
 
     openUIAsyncByDrive(uiid: string, comp: BaseModelComp) {
+        console.log('openUIAsyncByDrive uiid', uiid)
         return new Promise<boolean>((resolve, reject) => {
             let get_uuid_compname = this.uuidCompNameMap.get(uiid)
             if (!get_uuid_compname) {
@@ -83,12 +84,14 @@ export class CocosUiDrive extends Component implements IUiDrive {
                         let node = instantiate(prefab);
                         node.active = true
                         let ccview = node.getComponent(CocosBaseView)
-                        // console.log('ccview', ccview)
+                        console.log('ccview', ccview)
                         ccview.setViewComp(comp)
                         this.nodeMap.set(uiid, node)
                         if (xhgame.gui.gui_root.children[xhgame.gui.gui_root.children.length - 1].name == 'loading') {
+                            console.log('xhgame.gui.gui_root.insertChild', node, xhgame.gui.gui_root.children.length - 2)
                             xhgame.gui.gui_root.insertChild(node, xhgame.gui.gui_root.children.length - 2)
                         } else {
+                            console.log('xhgame.gui.gui_root.addChild(node)', xhgame.gui.gui_root, node)
                             xhgame.gui.gui_root.addChild(node) // 按先后add
                         }
                         resolve(true)

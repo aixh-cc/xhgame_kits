@@ -10,21 +10,21 @@ export class xhgame {
     * test 时,打开下面的注释 
     * ==== test start ====
     */
-    static getManagers() {
-        return DI.make<TestGameManagers>('IManagers') as TestGameManagers;
-    }
-    static getGame() {
-        return DI.make<TestGame>('IGame') as TestGame;
-    }
+    // static getManagers() {
+    //     return DI.make<TestGameManagers>('IManagers') as TestGameManagers;
+    // }
+    // static getGame() {
+    //     return DI.make<TestGame>('IGame') as TestGame;
+    // }
     // ==== test end ====
 
     // cocos 时,打开下面的注释  ==== cocos start ====
-    // static getManagers() {
-    //     return DI.make<CocosGameManagers>('IManagers') as CocosGameManagers;
-    // }
-    // static getGame() {
-    //     return DI.make<CocosGame>('IGame') as CocosGame;
-    // }
+    static getManagers() {
+        return DI.make<CocosGameManagers>('IManagers') as CocosGameManagers;
+    }
+    static getGame() {
+        return DI.make<CocosGame>('IGame') as CocosGame;
+    }
     // ==== cocos end ====
     static get game() {
         return this.getGame();
