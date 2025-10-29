@@ -19,9 +19,9 @@ export class GateViewSystem extends System {
 
     /** 从gate进入战役 */
     static async startBattle(comp: GateViewComp) {
-        if (comp.isClickStart) {
-            return console.log('已点击请勿重复点击')
-        }
+        // if (comp.isClickStart) {
+        //     return console.log('已点击请勿重复点击')
+        // }
         const playerModel = DI.make<PlayerModelComp>('PlayerModelComp')
         let battleId = playerModel.selectedBattleId
         console.log('startBattle battleId=' + battleId)

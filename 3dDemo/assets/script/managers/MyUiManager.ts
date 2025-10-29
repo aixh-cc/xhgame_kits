@@ -39,7 +39,7 @@ enum UIEnums {
     GateStorePanel = 'bundle_gate://gui/gate/dialog/gate_store_panel',
     GatePackagePanel = 'bundle_gate://gui/gate/dialog/gate_package_panel',
     GateDYYJPanel = 'bundle_gate://gui/gate/dialog/dy_yjrk',
-    Loading = 'bundle_gate://gui/gate/loading',
+    Loading = 'bundle_gate://gui/gate/loading_battle',
     //
     Setting = 'bundle_gate://gui/dialog/setting',
     /** 

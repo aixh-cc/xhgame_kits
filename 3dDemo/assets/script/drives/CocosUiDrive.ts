@@ -4,6 +4,7 @@ import { xhgame } from "db://assets/script/xhgame";
 import { IUiItem } from "../managers/myFactory/MyFactorys";
 import { CocosBaseView } from "db://xhgame_plugin/Ui/CocosBaseView";
 import { FirstUiView } from "../views/first_ui/FirstUiView";
+import { find } from "cc";
 
 const { ccclass } = _decorator;
 
@@ -92,7 +93,13 @@ export class CocosUiDrive extends Component implements IUiDrive {
                             xhgame.gui.gui_root.insertChild(node, xhgame.gui.gui_root.children.length - 2)
                         } else {
                             console.log('xhgame.gui.gui_root.addChild(node)', xhgame.gui.gui_root, node)
-                            xhgame.gui.gui_root.addChild(node) // 按先后add
+                            try {
+                                let uidd = find('root/UICanvas')
+                                uidd.addChild(node)
+                                // xhgame.gui.gui_root.addChild(node) // 按先后add
+                            } catch (err) {
+                                console.error(err)
+                            }
                         }
                         resolve(true)
                     });
