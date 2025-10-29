@@ -1,5 +1,5 @@
 
-import { IBundle, System } from "@aixh-cc/xhgame_ec_framework"
+import { IBundle, IView, System } from "@aixh-cc/xhgame_ec_framework"
 import { xhgame } from "../../xhgame"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { TableType } from "../../managers/MyTableManager"
@@ -7,6 +7,8 @@ import { TableType } from "../../managers/MyTableManager"
 export class LoadResourceToGateSystem extends System {
 
     static async initComp(comp: LoadResourceToGateComp) {
+        let firstUIView = xhgame.gui.getFirstUIView()
+        firstUIView.setViewComp(comp, true)
         await this.loadResource(comp)
     }
 
@@ -15,15 +17,17 @@ export class LoadResourceToGateSystem extends System {
             xhgame.asset.loadBundle('bundle_gate', async (err, bundle: any) => {
                 await this.load_gui(comp, bundle)
                 await this.load_json(comp, bundle)
-                comp.vm.resValue = 1;
-                comp.vm.isLoadResFinished = false;
                 resolve(true)
             })
         })
     }
     static async load_gui(comp: LoadResourceToGateComp, bundle: IBundle) {
         return new Promise((resolve, reject) => {
-            bundle.loadDir('gui', (err, assets) => {
+            bundle.loadDir('gui', (finished: number, total: number, item: any) => {
+                comp.vm.resValue = finished / total;
+                comp.vm.isLoadResFinished = false;
+                comp.notify();
+            }, (err, assets) => {
                 if (err) {
                     console.error('加载资源失败', err);
                     return;

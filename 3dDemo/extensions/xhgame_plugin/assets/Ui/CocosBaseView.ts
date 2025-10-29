@@ -4,8 +4,11 @@ import { BaseModelComp, ViewUtil, IView } from '@aixh-cc/xhgame_ec_framework';
 export abstract class CocosBaseView extends Component implements IView {
     abstract reset(): void
     viewModelComp: BaseModelComp = null
-    setViewComp(comp: BaseModelComp) {
+    setViewComp(comp: BaseModelComp, isRebindAttr: boolean = false) {
         this.viewModelComp = comp
+        if (isRebindAttr) {
+            ViewUtil.bindAttr(this, this._bindAttrMap)
+        }
     }
     getViewComp() {
         return this.viewModelComp
@@ -24,8 +27,8 @@ export abstract class CocosBaseView extends Component implements IView {
     }
     setBindAttrMap(val: any) {
         this._bindAttrMap = val
-        if (val) {
-            ViewUtil.bindAttr(this, val)
+        if (this._bindAttrMap) {
+            ViewUtil.bindAttr(this, this._bindAttrMap)
         }
     }
     updateBySubject(modelComp: BaseModelComp) {

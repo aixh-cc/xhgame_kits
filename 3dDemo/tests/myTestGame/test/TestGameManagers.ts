@@ -1,6 +1,6 @@
 import { TestAudioDrive } from "./drive/TestAudioDrive";
 import { TestUiDrive } from "./drive/TestUiDrive";
-import { AssetManager, CryptoEmpty, CryptoManager, DI, EventManager, FetchHttp, IAssetDrive, IBundle, IManagers, INode, NetManager, StorageManager, Websocket } from "@aixh-cc/xhgame_ec_framework";
+import { AssetManager, BaseModelComp, CryptoEmpty, CryptoManager, DI, EventManager, FetchHttp, IAssetDrive, IBundle, IManagers, INode, IView, NetManager, SimpleBaseView, StorageManager, ViewUtil, Websocket } from "@aixh-cc/xhgame_ec_framework";
 import { MyTestFactoryConfig } from "../MyTestFactoryConfig";
 import { MyFactoryActions } from "db://assets/script/managers/myFactory/MyFactoryActions";
 import { MyAudioManager } from "db://assets/script/managers/MyAudioManager";
@@ -17,6 +17,16 @@ export class TestNode implements INode {
     name: string = ''
     constructor(name: string) {
         this.name = name
+    }
+}
+export class TestView extends SimpleBaseView {
+    name: string = ''
+    constructor(name: string) {
+        super()
+        this.name = name
+    }
+    reset(): void {
+
     }
 }
 

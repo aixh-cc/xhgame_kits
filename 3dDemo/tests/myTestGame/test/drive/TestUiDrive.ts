@@ -1,9 +1,9 @@
-import { BaseModelComp, DI, INode, IUiDrive } from "@aixh-cc/xhgame_ec_framework"
-import { TestNode } from "../TestGameManagers"
+import { BaseModelComp, DI, INode, IUiDrive, IView } from "@aixh-cc/xhgame_ec_framework"
+import { TestNode, TestView } from "../TestGameManagers"
 
 
 export class TestUiDrive implements IUiDrive {
-
+    mock_first_ui_view: TestView = new TestView('first_ui')
     mock_gui_root: INode = new TestNode('gui_root')
     mock_world_root: INode = new TestNode('world_root')
     openUIAsyncByDrive(uiid: string, comp: BaseModelComp) {
@@ -25,6 +25,9 @@ export class TestUiDrive implements IUiDrive {
         // console.log('模拟获取world_root')
         return this.mock_world_root
     };
+    getFirstUIView() {
+        return this.mock_first_ui_view
+    }
     getUI(uiid: string) {
         let _ui_node = new TestNode(uiid)
         return _ui_node

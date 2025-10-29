@@ -3,6 +3,7 @@ import { BaseModelComp, DI, IUiDrive, IView } from "@aixh-cc/xhgame_ec_framework
 import { xhgame } from "db://assets/script/xhgame";
 import { IUiItem } from "../managers/myFactory/MyFactorys";
 import { CocosBaseView } from "db://xhgame_plugin/Ui/CocosBaseView";
+import { FirstUiView } from "../views/first_ui/FirstUiView";
 
 const { ccclass } = _decorator;
 
@@ -17,6 +18,9 @@ export class CocosUiDrive extends Component implements IUiDrive {
     }
     getWorldRoot(): Node {
         return this.node!.parent!.getChildByName('3dWorld')!
+    }
+    getFirstUIView(): IView {
+        return this.node.getChildByName('first_ui').getComponent(FirstUiView)
     }
     getUI(uiid: string): Node {
         return this.nodeMap.get(uiid)!
