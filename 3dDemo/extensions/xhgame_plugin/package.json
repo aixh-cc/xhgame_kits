@@ -5,6 +5,7 @@
     "type": "module",
     "main": "./dist/browser.cjs",
     "scripts": {
+        "nodedev": "tsx src/nodejs/main.ts",
         "dev": "vite serve --mode development",
         "dev:build": "npm run build -- --mode development",
         "build": "vue-tsc -b && vite build",
@@ -12,24 +13,31 @@
     },
     "dependencies": {
         "adm-zip": "^0.5.16",
+        "archiver": "^5.3.1",
+        "cors": "^2.8.5",
         "element-plus": "^2.8.6",
+        "express": "^4.18.2",
+        "multer": "^1.4.5-lts.1",
         "tsrpc-browser": "^3.4.1",
         "tsrpc-miniapp": "^3.4.1",
         "vue": "^3.4.37",
-        "express": "^4.18.2",
-        "cors": "^2.8.5",
-        "multer": "^1.4.5-lts.1",
-        "yauzl": "^2.10.0",
-        "archiver": "^5.3.1"
+        "yauzl": "^2.10.0"
     },
     "devDependencies": {
         "@cocos-fe/vite-plugin-cocos-panel": "^1.0.3",
         "@cocos/creator-types": "^3.8.6",
         "@types/adm-zip": "^0.5.7",
+        "@types/archiver": "^5.3.2",
+        "@types/cors": "^2.8.13",
+        "@types/express": "^4.17.17",
+        "@types/multer": "^1.4.7",
         "@types/node": "^22.15.21",
+        "@types/yauzl": "^2.10.0",
         "@vitejs/plugin-vue": "^5.2.2",
         "@vue/tsconfig": "^0.7.0",
         "rollup-plugin-node-externals": "^7.1.3",
+        "ts-node": "^10.9.1",
+        "tsx": "^4.20.6",
         "typescript": "^5.8.2",
         "unplugin-auto-import": "^0.18.6",
         "unplugin-vue-components": "^0.27.5",
@@ -43,7 +51,8 @@
                 "readonly": false
             }
         },
-        "menu": [{
+        "menu": [
+            {
                 "path": "i18n:menu.panel/xhgame_plugin",
                 "label": "i18n:xhgame_plugin.title",
                 "message": "open"
