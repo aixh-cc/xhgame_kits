@@ -1,24 +1,14 @@
-import { Label, _decorator } from 'cc';
-import { CCInteger } from 'cc';
-import { CCString } from 'cc';
-import { xhgame } from 'db://assets/script/xhgame';
-import { BYTEDANCE } from 'cc/env';
+import { CCFloat, ProgressBar, CCBoolean, _decorator } from 'cc';
 import { CocosBaseView } from 'db://xhgame_plugin/Ui/CocosBaseView';
-import { GateViewComp } from '../../comps/gate/GateViewComp';
-import { CCFloat } from 'cc';
-import { ProgressBar } from 'cc';
-import { CCBoolean } from 'cc';
+import { ILoadResourceToGateViewVM } from '../../comps/enter/LoadResourceToGateComp';
 
 const { ccclass, property } = _decorator;
 
-export interface ILoadResourceViewVM {
-    progress: number,
-}
 /**
  * gate界面
  */
 @ccclass('FirstUiView')
-export class FirstUiView extends CocosBaseView implements ILoadResourceViewVM {
+export class FirstUiView extends CocosBaseView implements ILoadResourceToGateViewVM {
 
     /** 加载资源进度 */
     @property
@@ -29,40 +19,30 @@ export class FirstUiView extends CocosBaseView implements ILoadResourceViewVM {
     }
     set progress(val) {
         this._progress = val
-        console.log('set progress val', val)
         this.node.getChildByPath('ProgressBar').getComponent(ProgressBar).progress = val
     }
 
     /** 加载资源进度 */
     @property
-    _isLoadResFinished: boolean = false;
+    _isFinished: boolean = false;
     @property({ type: CCBoolean, visible: true })
-    get isLoadResFinished() {
-        return this._isLoadResFinished
+    get isFinished() {
+        return this._isFinished
     }
-    set isLoadResFinished(val) {
-        this._isLoadResFinished = val
-        // this.node.active = val
+    set isFinished(val) {
+        this._isFinished = val
+        this.node.active = !val // 完成后隐藏
     }
 
-    // private _is_load_resource: boolean = false
-    // set is_load_resource(val: boolean) {
-    //     console.log('is_load_resource', val)
-    //     if (this._is_load_resource == false) {
-    //         this._is_load_resource = val
-    //         this.load_resource()
-    //     }
-    // }
     reset(): void {
         this.progress = 0
-        this.isLoadResFinished = false
-        // this.is_load_resource = false
+        this.isFinished = false
     }
 
     protected onLoad(): void {
         this.setBindAttrMap({
-            "progress": 'LoadResourceToGateComp::vm.resValue',
-            "isLoadResFinished": 'LoadResourceToGateComp::vm.isLoadResFinished',
+            "progress": 'LoadResourceToGateComp::vm.progress',
+            "isFinished": 'LoadResourceToGateComp::vm.isFinished',
         })
     }
 }

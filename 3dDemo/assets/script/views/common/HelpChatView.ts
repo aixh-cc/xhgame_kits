@@ -3,15 +3,9 @@ import { PlistSpriteComponent } from "db://xhgame_plugin/ccComponent/PlistSprite
 import { CocosBaseView } from "db://xhgame_plugin/Ui/CocosBaseView";
 import { HelpChatViewComp } from "../../comps/common/HelpChatViewComp";
 import { xhgame } from "db://assets/script/xhgame";
+import { IHelpChatView } from "db://xhgame_plugin/packages/HelpAndChat/script/comps/third/HelpAndChat/HelpChatViewComp";
 
 const { ccclass, property } = _decorator;
-
-// export interface IHelpChatView {
-//     content: string
-//     rightAvatarNo: string
-//     leftAvatarNo: string
-//     picNo: string
-// }
 
 @ccclass('HelpChatView')
 export class HelpChatView extends CocosBaseView implements IHelpChatView {

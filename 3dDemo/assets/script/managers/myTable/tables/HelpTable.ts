@@ -1,17 +1,19 @@
 import { BaseTable } from "@aixh-cc/xhgame_ec_framework";
 import { TableType } from "../../MyTableManager";
+import { IHelpChatView } from "db://xhgame_plugin/packages/HelpAndChat/script/comps/third/HelpAndChat/HelpChatViewComp";
 
 
 export class HelpTable<T> extends BaseTable<T> {
     name = TableType.help;
 }
 
-export interface IHelpChatView {
-    content: string
-    rightAvatarNo: string
-    leftAvatarNo: string
-    picNo: string
-}
+// 因为这个可能是第三方组件
+// export interface IHelpChatView {
+//     content: string
+//     rightAvatarNo: string
+//     leftAvatarNo: string
+//     picNo: string
+// }
 
 export interface IHelpGuideViewVM {
     // group: string,

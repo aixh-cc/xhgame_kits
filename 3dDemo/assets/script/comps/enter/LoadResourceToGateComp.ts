@@ -4,6 +4,11 @@ import { xhgame } from "../../xhgame"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { TableType } from "../../managers/MyTableManager"
 
+export interface ILoadResourceToGateViewVM {
+    progress: number,
+    isFinished: boolean,
+}
+
 export class LoadResourceToGateSystem extends System {
 
     static async initComp(comp: LoadResourceToGateComp) {
@@ -17,6 +22,7 @@ export class LoadResourceToGateSystem extends System {
             xhgame.asset.loadBundle('bundle_gate', async (err, bundle: any) => {
                 await this.load_gui(comp, bundle)
                 await this.load_json(comp, bundle)
+                comp.vm.isFinished = true;
                 resolve(true)
             })
         })
@@ -24,8 +30,7 @@ export class LoadResourceToGateSystem extends System {
     static async load_gui(comp: LoadResourceToGateComp, bundle: IBundle) {
         return new Promise((resolve, reject) => {
             bundle.loadDir('gui', (finished: number, total: number, item: any) => {
-                comp.vm.resValue = finished / total;
-                comp.vm.isLoadResFinished = false;
+                comp.vm.progress = finished / total;
                 comp.notify();
             }, (err, assets) => {
                 if (err) {
@@ -44,7 +49,6 @@ export class LoadResourceToGateSystem extends System {
                     console.error('加载资源失败', err);
                     return;
                 }
-                // console.log('json加载资源成功', assets);
                 for (let i = 0; i < assets.length; i++) {
                     const _asset = assets[i] as any;
                     let _table = xhgame.table.getTable(_asset.name as TableType)
@@ -52,26 +56,20 @@ export class LoadResourceToGateSystem extends System {
                         _table.init(_asset.json)
                     }
                 }
-                comp.vm.resValue = 1;
-                comp.vm.isLoadResFinished = false;
-                console.log('json加载资源成功', assets);
+                console.log('json加载资源成功,并初始化table', assets);
                 resolve(true)
             });
         })
     }
 }
-export interface ILoadResourceToGateViewVM {
-    resValue: number,
-    isLoadResFinished: boolean,
-}
+
 export class LoadResourceToGateComp extends BaseModelComp {
     compName: string = 'LoadResourceToGateComp'
     initBySystems: (typeof System)[] = [LoadResourceToGateSystem]
     loadFinishedCallback: Function = null
     vm: ILoadResourceToGateViewVM = {
-        resValue: 0,
-        isLoadResFinished: false,
-        // is_load_resource: false
+        progress: 0,
+        isFinished: false,
     }
     reset() {
         this.loadFinishedCallback = null

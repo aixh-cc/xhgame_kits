@@ -18,37 +18,37 @@ export class LoadingViewCompSystem extends System {
         console.log('xhgame.gui.enums.Loading')
         await xhgame.gui.openUIAsync(xhgame.gui.enums.Loading, comp)
         // comp.notify();
-        // comp.time_uuid = xhgame.timer.schedule(() => {
-        //     comp.notify();
-        // }, 1000)
+        comp.time_uuid = xhgame.timer.schedule(() => {
+            comp.notify(); // 每秒钟更新进度
+        }, 1000)
         // // 
-        // comp.total = 5
-        // comp.finished = 0
-        // comp.viewVM.text = '加载环境资源'
-        // await xhgame.factory.actions.getTiledItemFactory().preloadItemsResource()
-        // comp.finished += 1
-        // comp.notify();
-        // comp.viewVM.text = '加载单位资源'
-        // await xhgame.factory.actions.getUnitItemFactory().preloadItemsResource()
-        // await xhgame.factory.actions.getUnitUiItemFactory().preloadItemsResource()
-        // comp.finished += 1
-        // comp.notify();
-        // comp.viewVM.text = '加载特效资源'
-        // await xhgame.factory.actions.getEffectItemFactory().getItemProduceDrive().preloadItemsResource()
-        // comp.finished += 1
-        // comp.notify();
-        // comp.viewVM.text = '加载ui资源'
-        // await xhgame.factory.actions.getUiItemFactory().preloadItemsResource()
-        // await xhgame.factory.actions.getTextUiItemFactory().preloadItemsResource()
-        // comp.finished += 1
-        // comp.notify();
-        // comp.viewVM.text = '开始初始化游戏'
-        // if (comp.otherPromise) {
-        //     await comp.otherPromise()
-        // }
-        // comp.viewVM.text = '初始化完成'
-        // comp.finished += 1
-        // comp.notify();
+        comp.total = 5 // 目前这里手动
+        comp.finished = 0
+        comp.viewVM.text = '加载环境资源'
+        await xhgame.factory.actions.getTiledItemFactory().preloadItemsResource()
+        comp.finished += 1
+        comp.notify();
+        comp.viewVM.text = '加载单位资源'
+        await xhgame.factory.actions.getUnitItemFactory().preloadItemsResource()
+        await xhgame.factory.actions.getUnitUiItemFactory().preloadItemsResource()
+        comp.finished += 1
+        comp.notify();
+        comp.viewVM.text = '加载特效资源'
+        await xhgame.factory.actions.getEffectItemFactory().getItemProduceDrive().preloadItemsResource()
+        comp.finished += 1
+        comp.notify();
+        comp.viewVM.text = '加载ui资源'
+        await xhgame.factory.actions.getUiItemFactory().preloadItemsResource()
+        await xhgame.factory.actions.getTextUiItemFactory().preloadItemsResource()
+        comp.finished += 1
+        comp.notify();
+        comp.viewVM.text = '开始初始化游戏'
+        if (comp.otherPromise) {
+            await comp.otherPromise()
+        }
+        comp.viewVM.text = '初始化完成'
+        comp.finished += 1
+        comp.notify();
         // setTimeout(() => {
         //     callback && callback()
         // }, 100)
@@ -78,8 +78,7 @@ export class LoadingViewComp extends BaseModelComp {
     reset() {
         this.otherPromise = null
         if (this.time_uuid != '') {
-            console.log('xhgame.timer.unschedule(this.time_uuid)', this.time_uuid)
-            xhgame.timer.unschedule(this.time_uuid)
+            xhgame.timer.unschedule(this.time_uuid) // 移除
         }
         this.time_uuid = ''
         this.viewVM = {
