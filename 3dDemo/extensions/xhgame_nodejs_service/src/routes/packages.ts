@@ -30,7 +30,7 @@ interface IPackageInfo {
 
 interface IPackageInfoWithStatus extends IPackageInfo {
     /** 安装状态 */
-    status: string
+    installStatus: string
     /** 备份状态 */
     backupStatus: string
 }
@@ -38,7 +38,7 @@ interface IPackageInfoWithStatus extends IPackageInfo {
 const router = express.Router();
 
 // 获取项目根目录下的 packages 路径
-const getPackagesPath = (pluginName: string) => {
+export const getPackagesPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
     const currentDir = process.cwd();
     const extensionsRoot = path.resolve(currentDir, '../');
@@ -57,7 +57,11 @@ router.get('/', async (req, res) => {
                 path: packagesPath
             });
         }
-
+        // 当前组件安装情况
+        let install = await Util.checkInstallExists({ pluginName: 'xhgame_plugin' })
+        console.log('install', install)
+        let installedLists = install.installInfo?.installedComponents.map((item: any) => item.componentCode) || []
+        console.log('installedLists', installedLists)
         const items = fs.readdirSync(packagesPath);
         const packages = [];
 
@@ -86,16 +90,22 @@ router.get('/', async (req, res) => {
                                 ...metaData.userData,
                             };
                             if (packageInfoWithStatus) {
-                                let sss = Util.checkBackupExists({ componentCode: packageInfoWithStatus.name })
-                                console.log('sss', sss)
+                                // 检查是否已安装
+                                packageInfoWithStatus.installStatus = installedLists.includes(packageInfoWithStatus.name) ? 'has' : 'none';
+                                // 检查备份状态
+                                let backup = await Util.checkBackupExists({ pluginName: 'xhgame_plugin', componentCode: packageInfoWithStatus.name })
+                                console.log('backup', backup)
+                                if (backup) {
+                                    packageInfoWithStatus.backupStatus = backup.backupInfo ? 'has' : 'none';
+                                } else {
+                                    packageInfoWithStatus.backupStatus = 'none';
+                                }
                             }
                         }
                     } catch (error) {
                         console.error(`Error reading meta for ${item}:`, error);
                     }
                 }
-
-
                 packages.push(packageInfoWithStatus);
             }
         }
