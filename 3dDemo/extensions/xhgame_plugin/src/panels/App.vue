@@ -528,6 +528,10 @@ onUnmounted(() => {
         </div>
         
         <el-tabs v-model="activeTab" class="main-tabs">
+            <el-tab-pane label="网络组件库" name="components">
+                <CompList />
+            </el-tab-pane>
+
             <el-tab-pane label="本地组件库" name="local">
                 <div class="local-components">
                     <div class="local-header">

@@ -8,11 +8,11 @@
   "userData": {
     "name": "MissionItem",
     "displayName": "uiItem的body组件",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "视图组件",
     "author": "xhgame",
     "category": "UI组件",
-    "tags": ["uiItem"],
+    "tags": ["UI组件","关卡"],
     "files": [
       "script/views/item_bodys/MissionItemView.ts",
       "script/views/item_bodys/MissionItemView.ts.meta",

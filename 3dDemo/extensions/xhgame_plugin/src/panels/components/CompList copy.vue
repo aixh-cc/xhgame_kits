@@ -1,63 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { inject } from 'vue';
 import { name } from '../../../package.json';
 import { keyAppRoot, keyMessage } from '../provide-inject';
-import { apiService } from '../api-service';
-
-// 包信息接口定义
-interface IPackageInfo {
-  /** 包名,英文字母 */
-  name: string;
-  /** 包显示名,中文字符 */
-  displayName: string;
-  /** 版本号 */
-  version: string;
-  /** 说明 */
-  description: string;
-  /** 作者 */
-  author: string;
-  /** 分类 */
-  category: string;
-  /** 标签 */
-  tags: string[];
-  /** 包所在路径 */
-  path: string;
-  /** 依赖 */
-  dependencies: string[];
-  /** 安装文件 */
-  files: string[];
-  /** 安装状态 */
-  installStatus?: string;
-  /** 备份状态 */
-  backupStatus?: string;
-  /** 是否已安装 */
-  installed?: boolean;
-  /** 是否需要更新 */
-  needsUpdate?: boolean;
-  /** 评分 */
-  stars?: number;
-  /** 评论数量 */
-  reviewCount?: number;
-  /** 资源列表 */
-  resources?: any[];
-  /** 包ID */
-  id?: number;
-  /** 使用方法 */
-  usage?: string;
-  /** 目标安装路径 */
-  targetPaths?: Array<{
-    path: string;
-    description: string;
-  }>;
-  /** 已安装路径 */
-  installedPaths?: Array<{
-    path: string;
-    description: string;
-    type: string;
-  }>;
-}
 
 const appRootDom = inject(keyAppRoot);
 const message = inject(keyMessage)!;
@@ -142,24 +88,138 @@ const getActionButtonText = (comp: any) => {
 };
 
 // 组件列表数据
-let componentList = ref<IPackageInfo[]>([]);
-
-// 获取组件列表的异步函数
-const loadComponents = async () => {
-  try {
-    const response = await apiService.getPackages();
-    componentList.value = response.data.packages || [];
-    console.log('origin response2222', response);
-  } catch (error) {
-    console.error('Failed to load components:', error);
-    ElMessage.error('获取组件列表失败');
+const componentList = ref([
+  {
+    id: 1,
+    name: '3D角色控制器',
+    code: 'CharacterController',
+    description: '基础的3D角色控制器，支持WASD移动和鼠标视角控制',
+    usage: '将组件拖拽到角色对象上，设置相机引用即可使用',
+    downloadUrl: 'https://example.com/components/character-controller.zip',
+    version: '1.2.0',
+    latestVersion: '1.2.0',
+    resources: [
+      { type: ResourceType.SCRIPT, count: 3 },
+      { type: ResourceType.TEXTURE, count: 2 },
+      { type: ResourceType.PREFAB, count: 1 }
+    ],
+    targetPaths: [
+      { path: 'assets/script/components/', description: '主要脚本' },
+      { path: 'assets/prefabs/controllers/', description: '预制体' },
+      { path: 'assets/textures/controllers/', description: '纹理资源' }
+    ],
+    author: '张三',
+    stars: 4.8,
+    reviewCount: 256,
+    installed: true,
+    installedVersion: '1.1.0',
+    needsUpdate: true,
+    installedPaths: [
+      { path: 'assets/script/components/CharacterController.ts', description: '主控制器脚本', type: ResourceType.SCRIPT },
+      { path: 'assets/script/components/InputManager.ts', description: '输入管理脚本', type: ResourceType.SCRIPT },
+      { path: 'assets/script/components/CameraFollow.ts', description: '相机跟随脚本', type: ResourceType.SCRIPT },
+      { path: 'assets/prefabs/controllers/PlayerController.prefab', description: '角色控制器预制体', type: ResourceType.PREFAB },
+      { path: 'assets/textures/controllers/joystick.png', description: '虚拟摇杆纹理', type: ResourceType.TEXTURE },
+      { path: 'assets/textures/controllers/buttons.png', description: '控制按钮纹理', type: ResourceType.TEXTURE }
+    ],
+    tags: ['角色控制', '3D', '移动']
+  },
+  {
+    id: 2,
+    name: 'help组件',
+    code:'HelpAndChat',
+    description: '基于物理引擎的交互系统，支持拾取、投掷和碰撞反馈',
+    usage: '添加到场景中的Manager对象，并配置相关参数',
+    downloadUrl: 'http://hcz.jk-kj.com/xhgame_plugin_comps/HelpComp.zip',
+    version: '2.0.1',
+    latestVersion: '2.0.1',
+    resources: [
+      { type: ResourceType.SCRIPT, count: 4 },
+      { type: ResourceType.PREFAB, count: 2 },
+      { type: ResourceType.AUDIO, count: 3 }
+    ],
+    targetPaths: [
+      { path: 'assets/script/comps/third/HelpComp', description: 'comps脚本' }
+    ],
+    author: '李四',
+    stars: 4.5,
+    reviewCount: 128,
+    installed: false,
+    installedVersion: '',
+    needsUpdate: false,
+    installedPaths: [],
+    tags: ['物理', '交互', '系统']
+  },
+  {
+    id: 3,
+    name: 'UI管理器',
+    code: 'UIManager',
+    description: '完整的UI管理系统，支持界面层级、过渡动画和数据绑定',
+    usage: '在项目中创建UIManager单例，通过API调用打开和关闭界面',
+    downloadUrl: 'https://example.com/components/ui-manager.zip',
+    version: '3.1.2',
+    latestVersion: '3.1.2',
+    resources: [
+      { type: ResourceType.SCRIPT, count: 5 },
+      { type: ResourceType.PREFAB, count: 3 },
+      { type: ResourceType.TEXTURE, count: 8 },
+      { type: ResourceType.PLIST, count: 2 },
+      { type: ResourceType.AUDIO, count: 1 }
+    ],
+    targetPaths: [
+      { path: 'assets/script/ui/', description: 'UI脚本' },
+      { path: 'assets/prefabs/ui/', description: 'UI预制体' },
+      { path: 'assets/resources/ui/', description: 'UI资源' },
+      { path: 'assets/textures/ui/', description: 'UI纹理' }
+    ],
+    author: '王五',
+    stars: 4.9,
+    reviewCount: 312,
+    installed: true,
+    installedVersion: '3.1.2',
+    needsUpdate: false,
+    installedPaths: [
+      { path: 'assets/script/ui/UIManager.ts', description: 'UI管理器脚本', type: ResourceType.SCRIPT },
+      { path: 'assets/script/ui/UIPanel.ts', description: 'UI面板基类', type: ResourceType.SCRIPT },
+      { path: 'assets/script/ui/UIAnimation.ts', description: 'UI动画控制器', type: ResourceType.SCRIPT },
+      { path: 'assets/script/ui/UIDataBinding.ts', description: 'UI数据绑定', type: ResourceType.SCRIPT },
+      { path: 'assets/script/ui/UIFactory.ts', description: 'UI工厂类', type: ResourceType.SCRIPT },
+      { path: 'assets/prefabs/ui/UIRoot.prefab', description: 'UI根节点预制体', type: ResourceType.PREFAB },
+      { path: 'assets/prefabs/ui/CommonPanels.prefab', description: '通用面板预制体', type: ResourceType.PREFAB },
+      { path: 'assets/prefabs/ui/EffectLayers.prefab', description: '特效层预制体', type: ResourceType.PREFAB },
+      { path: 'assets/textures/ui/common_buttons.plist', description: '通用按钮图集', type: ResourceType.PLIST },
+      { path: 'assets/textures/ui/icons.plist', description: '图标图集', type: ResourceType.PLIST },
+      { path: 'assets/audio/ui/ui_click.mp3', description: 'UI点击音效', type: ResourceType.AUDIO }
+    ],
+    tags: ['UI', '界面', '动画']
+  },
+  {
+    id: 4,
+    name: '存档系统',
+    code: 'SaveManager',
+    description: '跨平台存档系统，支持本地和云端存储，自动同步和冲突解决',
+    usage: '初始化SaveManager并配置存储选项，使用API进行数据存取',
+    downloadUrl: 'https://example.com/components/save-system.zip',
+    version: '1.5.0',
+    latestVersion: '1.5.0',
+    resources: [
+      { type: ResourceType.SCRIPT, count: 3 },
+      { type: ResourceType.CONFIG, count: 2 }
+    ],
+    targetPaths: [
+      { path: 'assets/script/systems/', description: '系统脚本' },
+      { path: 'assets/resources/config/', description: '配置文件' }
+    ],
+    author: '赵六',
+    stars: 4.7,
+    reviewCount: 189,
+    installed: false,
+    installedVersion: '',
+    needsUpdate: false,
+    installedPaths: [],
+    tags: ['存档', '数据', '云存储']
   }
-};
-
-// 在组件挂载时获取数据
-onMounted(() => {
-  loadComponents();
-});
+]);
 
 // 评价数据
 const reviews = ref<Record<number, Array<{
@@ -307,12 +367,12 @@ async function installFromAssets(component: any) {
           <el-tag v-for="tag in component.tags" :key="tag" size="small" effect="plain" class="tag">{{ tag }}</el-tag>
         </div>
         
-        <el-collapse v-model="expandedCards[component.id || 0]">
-          <el-collapse-item :name="component.id || 0">
+        <el-collapse v-model="expandedCards[component.id]">
+          <el-collapse-item :name="component.id">
             <template #title>
               <div class="collapse-title">
                 <span class="description-preview">{{ component.description.substring(0, 50) }}{{ component.description.length > 50 ? '...' : '' }}</span>
-                <span class="collapse-hint">{{ isCardExpanded(component.id || 0) ? '收起详情' : '展开详情' }}</span>
+                <span class="collapse-hint">{{ isCardExpanded(component.id) ? '收起详情' : '展开详情' }}</span>
               </div>
             </template>
             
@@ -335,7 +395,7 @@ async function installFromAssets(component: any) {
               </ul>
             </div>
             
-            <div v-if="component.installed && component.installedPaths && component.installedPaths.length > 0" class="installed-paths">
+            <div v-if="component.installed && component.installedPaths.length > 0" class="installed-paths">
               <h4>已安装文件</h4>
               <ul>
                 <li v-for="(installed, index) in component.installedPaths" :key="index">
