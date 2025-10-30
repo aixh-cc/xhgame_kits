@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import yauzl from 'yauzl';
 import archiver from 'archiver';
-import { Util } from '../Util';
+import { Util } from '../../common/Util';
 
 
 const router = express.Router();

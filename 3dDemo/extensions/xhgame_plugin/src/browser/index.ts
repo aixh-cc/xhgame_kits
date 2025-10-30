@@ -2,6 +2,7 @@ import { name } from '../../package.json' with { type: 'json' };
 import * as fs from 'fs';
 import { version } from 'os';
 import * as path from 'path';
+import { IGetVersionRes } from '../common/defined';
 
 // 配置文件接口定义
 interface PluginConfig {
@@ -220,14 +221,12 @@ export const methods = {
     async open() {
         return Editor.Panel.open(name);
     },
-    getVersion() {
+    getVersion(): IGetVersionRes {
         return {
             success: true,
             version: Editor.App.version
         };
-        // return Editor.App.version;
     },
-
     // 获取已安装的组件列表
     async getInstalledComponents() {
         try {

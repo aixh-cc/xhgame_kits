@@ -11,6 +11,7 @@ import { state } from './pina';
 import { keyAppRoot, keyMessage } from './provide-inject';
 import cocosEditorBridge from './cocos-bridge';
 import { apiService } from './api-service';
+import { IGetVersionRes } from '../common/defined';
 
 // 定义已安装组件的类型
 interface InstalledComponent {
@@ -98,7 +99,7 @@ function open2() {
 
 async function showVersion() {
     try {
-        const version_res:{version:string} = await cocosEditorBridge.getVersion();
+        const version_res:IGetVersionRes = await cocosEditorBridge.getVersion();
         console.log('version_res',version_res)
         message({ message: `编辑器版本: ${version_res.version}` });
     } catch (error) {
