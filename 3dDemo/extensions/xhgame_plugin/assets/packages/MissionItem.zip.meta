@@ -1,0 +1,37 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "imported": true,
+  "uuid": "798d311f-767c-4496-b4a5-f1126d266eb1",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "name": "MissionItem",
+    "displayName": "uiItem的body组件",
+    "version": "1.0.0",
+    "description": "视图组件",
+    "author": "xhgame",
+    "category": "UI组件",
+    "tags": ["uiItem"],
+    "files": [
+      "script/views/item_bodys/MissionItemView.ts",
+      "script/views/item_bodys/MissionItemView.ts.meta",
+      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab",
+      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab.meta",
+      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist",
+      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist.meta",
+      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png",
+      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png.meta"
+    ],
+    "dependencies": [
+      "@aixh-cc/xhgame_ec_framework"
+    ],
+    "features": [
+      "item而已"
+    ],
+    "usage": {
+      "import": "import { HelpComp, HelpSystem } from './HelpComp'",
+      "example": "xhgame.gameEntity.attachComponent(HelpComp)"
+    }
+  }
+}

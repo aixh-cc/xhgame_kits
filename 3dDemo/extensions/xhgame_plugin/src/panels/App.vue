@@ -10,6 +10,7 @@ import CompList from './components/CompList.vue';
 import { state } from './pina';
 import { keyAppRoot, keyMessage } from './provide-inject';
 import cocosEditorBridge from './cocos-bridge';
+import { apiService } from './api-service';
 
 // 定义已安装组件的类型
 interface InstalledComponent {
@@ -25,7 +26,7 @@ const appRootDom = inject(keyAppRoot);
 const message = inject(keyMessage)!;
 
 // 当前激活的标签页
-const activeTab = ref('components');
+const activeTab = ref('local');
 
 // Cocos 编辑器连接状态
 const editorConnected = ref(false);
@@ -43,6 +44,7 @@ const currentUninstallComponent = ref<InstalledComponent | null>(null);
 const localComponents = ref<any[]>([]);
 const loadingLocal = ref(false);
 const installingLocalComponents = ref(new Set<string>());
+const useBackendService = ref(false); // 是否使用后端服务
 
 // 备份文件相关状态
 const componentBackups = ref<Map<string, any>>(new Map());
@@ -224,12 +226,34 @@ function cancelUninstall() {
 async function loadLocalComponents() {
     loadingLocal.value = true;
     try {
-        const result = await cocosEditorBridge.getLocalComponents();
-        console.log('result',result)
+        let result;
+        
+        if (useBackendService.value) {
+            // 使用后端服务获取组件列表
+            const response = await apiService.getPackages();
+            console.log('origin response',response)
+            if (response.success) {
+                result = {
+                    success: true,
+                    components: response.data.packages
+                };
+            } else {
+                result = {
+                    success: false,
+                    error: response.error
+                };
+            }
+        } else {
+            // 使用原有的编辑器桥接方式
+            result = await cocosEditorBridge.getLocalComponents();
+        }
+        
+        console.log('result', result);
+        
         if (result.success) {
             localComponents.value = result.components;
             message({ 
-                message: `已加载 ${result.components.length} 个本地组件`, 
+                message: `已加载 ${result.components.length} 个本地组件 (${useBackendService.value ? '后端服务' : '编辑器桥接'})`, 
                 type: 'success' 
             });
             
@@ -504,21 +528,27 @@ onUnmounted(() => {
         </div>
         
         <el-tabs v-model="activeTab" class="main-tabs">
-            <el-tab-pane label="网络组件库" name="components">
-                <CompList />
-            </el-tab-pane>
             <el-tab-pane label="本地组件库" name="local">
                 <div class="local-components">
                     <div class="local-header">
                         <h3>本地组件库</h3>
-                        <el-button 
-                            type="primary" 
-                            @click="loadLocalComponents" 
-                            :loading="loadingLocal"
-                            size="small"
-                        >
-                            刷新列表
-                        </el-button>
+                        <div class="header-controls">
+                            <el-switch
+                                v-model="useBackendService"
+                                active-text="后端服务"
+                                inactive-text="编辑器桥接"
+                                size="small"
+                                style="margin-right: 10px;"
+                            />
+                            <el-button 
+                                type="primary" 
+                                @click="loadLocalComponents" 
+                                :loading="loadingLocal"
+                                size="small"
+                            >
+                                刷新列表
+                            </el-button>
+                        </div>
                     </div>
                     
                     <div v-if="loadingLocal" class="loading-container">
@@ -880,6 +910,12 @@ onUnmounted(() => {
     margin: 0;
     color: #e4e7ed;
     font-weight: 600;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .installed-header {
