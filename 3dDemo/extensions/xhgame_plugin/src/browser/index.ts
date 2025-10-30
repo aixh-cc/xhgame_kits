@@ -1,5 +1,6 @@
 import { name } from '../../package.json' with { type: 'json' };
 import * as fs from 'fs';
+import { version } from 'os';
 import * as path from 'path';
 
 // 配置文件接口定义
@@ -220,7 +221,11 @@ export const methods = {
         return Editor.Panel.open(name);
     },
     getVersion() {
-        return Editor.App.version;
+        return {
+            success: true,
+            version: Editor.App.version
+        };
+        // return Editor.App.version;
     },
 
     // 获取已安装的组件列表
@@ -512,7 +517,7 @@ export const methods = {
             // 读取组件的 .json 文件
             const infoFilePath = path.join(localPath, `${componentCode}.json`);
             let componentInfo: any;
-            
+
             try {
                 const infoContent = await fs.promises.readFile(infoFilePath, 'utf-8');
                 componentInfo = JSON.parse(infoContent);
@@ -550,7 +555,7 @@ export const methods = {
             // 检查指定文件的冲突
             for (const relativeFilePath of filesToCopy) {
                 const targetFilePath = path.join(targetPath, relativeFilePath);
-                
+
                 try {
                     await fs.promises.access(targetFilePath);
                     conflictFiles.push(relativeFilePath);
@@ -574,12 +579,12 @@ export const methods = {
             for (const relativeFilePath of filesToCopy) {
                 const srcFilePath = path.join(localPath, relativeFilePath);
                 const targetFilePath = path.join(targetPath, relativeFilePath);
-                
+
                 try {
                     // 确保目标目录存在
                     const targetDir = path.dirname(targetFilePath);
                     await fs.promises.mkdir(targetDir, { recursive: true });
-                    
+
                     // 复制文件
                     await Editor.Utils.File.copy(srcFilePath, targetFilePath);
                     copiedFiles.push(relativeFilePath);

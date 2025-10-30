@@ -15,7 +15,7 @@ export interface CocosEditorAPI {
     emit(event: string, ...args: any[]): void;
 
     // 编辑器操作
-    getVersion(): Promise<string>;
+    getVersion(): Promise<{ success: boolean, version: string }>;
     getSceneInfo(): Promise<any>;
     openPanel(panelName: string): Promise<void>;
     closePanel(panelName: string): Promise<void>;
@@ -103,9 +103,8 @@ class CocosEditorBridge implements CocosEditorAPI {
     async sendMessage(target: string, method: string, ...args: any[]): Promise<any> {
         if (this.isDevMode) {
             console.log(`📤 [Mock] Send message: ${target}.${method}`, args);
-            return this.mockResponse(method, args);
+            // return this.mockResponse(method, args);
         }
-
         if ((window as any).Editor && (window as any).Editor.Message) {
             return (window as any).Editor.Message.request(target, method, ...args);
         }
@@ -115,43 +114,17 @@ class CocosEditorBridge implements CocosEditorAPI {
 
     async requestMessage(target: string, method: string, ...args: any[]): Promise<any> {
         if (this.isDevMode) {
-            // console.log(`📥 [Mock] Request message: ${target}.${method}`, args);
-            // return this.mockResponse(method, args);
-            return apiService.nodejsMessage(target, method, args)
+            let res = await apiService.nodejsMessage(target, method, ...args)
+            return res.data
         }
-
         if ((window as any).Editor && (window as any).Editor.Message) {
             return (window as any).Editor.Message.request(target, method, ...args);
         }
-
         throw new Error('Editor API not available');
     }
     // async nodejsMessage(target: string, method: string, ...args: any[]): Promise<any> {
     //     return await this.sendMessage(target, method, ...args);
     // }
-
-    private async mockResponse(method: string, args: any[]): Promise<any> {
-        switch (method) {
-            case 'get-version':
-                const response = await apiService.getPackages();
-                return 'Cocos Creator 3.8.6 (Development Mode)';
-            case 'select-asset':
-                return { success: true, uuid: args[0] };
-            case 'create-node':
-                return { success: true, uuid: 'mock-node-' + Date.now(), name: args[0] };
-            case 'get-scene-info':
-                return {
-                    name: 'MockScene',
-                    uuid: 'mock-scene-uuid',
-                    nodes: [
-                        { name: 'Canvas', uuid: 'mock-canvas-uuid' },
-                        { name: 'Camera', uuid: 'mock-camera-uuid' }
-                    ]
-                };
-            default:
-                return { success: true, method, args };
-        }
-    }
 
     on(event: string, callback: Function): void {
         if (!this.eventListeners.has(event)) {
@@ -183,14 +156,8 @@ class CocosEditorBridge implements CocosEditorAPI {
         }
     }
 
-    async getVersion(): Promise<string> {
-        // return await this.requestMessage('xhgame_plugin', 'get-version');
-        // if (this.isDevMode) {
-        //     console.log('开发模式下，返回模拟版本号');
-        //     // return this.mockResponse('get-version', []);
-        //     await this.nodejsMessage
-        // }
-        return await this.requestMessage('xhgame_plugin', 'get-version');
+    async getVersion(): Promise<{ success: boolean, version: string }> {
+        return this.requestMessage('xhgame_plugin', 'get-version');
     }
 
     async getSceneInfo(): Promise<any> {

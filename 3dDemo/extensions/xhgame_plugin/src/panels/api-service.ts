@@ -118,12 +118,12 @@ class ApiService {
         return this.healthCheck();
     }
     async nodejsMessage(target: string, method: string, ...args: any[]): Promise<any> {
-        let param = {
-            target,
-            method,
-            ...args
+        let options = {
+            method: 'POST',
+            body: JSON.stringify(args)
         }
-        return await this.request(method, param);
+        console.log('options', options)
+        return this.request('/' + method, options);
     }
 }
 

@@ -98,8 +98,9 @@ function open2() {
 
 async function showVersion() {
     try {
-        const version = await cocosEditorBridge.getVersion();
-        message({ message: `编辑器版本: ${version}` });
+        const version_res:{version:string} = await cocosEditorBridge.getVersion();
+        console.log('version_res',version_res)
+        message({ message: `编辑器版本: ${version_res.version}` });
     } catch (error) {
         message({ message: '获取版本失败: ' + error, type: 'error' });
     }
@@ -484,14 +485,9 @@ onUnmounted(() => {
                 </a>
             </div> -->
             
-             <!-- <div class="actions">
-                <el-button type="primary" @click="open">show message</el-button>
-                <el-button type="danger" @click="open2">show inject message</el-button>
+            <div class="actions">
                 <el-button type="default" @click="showVersion">get creator version</el-button>
-                <el-button type="success" @click="testEditorCommunication">测试编辑器通信</el-button>
-                <el-button type="warning" @click="simulateAssetChange" v-if="!editorConnected">模拟资源变化</el-button>
-                <el-button type="info" @click="simulateNodeSelection" v-if="!editorConnected">模拟节点选择</el-button>
-            </div>  -->
+            </div> 
 <!--             
             <div class="status-bar">
                 <el-tag :type="editorConnected ? 'success' : 'warning'">

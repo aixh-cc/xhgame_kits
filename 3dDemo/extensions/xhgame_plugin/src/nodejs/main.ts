@@ -3,7 +3,8 @@ import cors from 'cors';
 import path from 'path';
 import { packageRoutes } from './routes/packages';
 import { fileRoutes } from './routes/files';
-
+import { editerRoutes } from './routes/editer';
+import { version } from 'os';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -21,6 +22,15 @@ app.use((req, res, next) => {
 // 路由
 app.use('/api/packages', packageRoutes);
 app.use('/api/files', fileRoutes);
+// app.use('/api/get-version', editerRoutes);
+
+// 健康检查
+app.post('/api/get-version', (req, res) => {
+    res.json({
+        success: true,
+        version: '3.8.1'
+    });
+});
 
 // 健康检查
 app.get('/health', (req, res) => {
