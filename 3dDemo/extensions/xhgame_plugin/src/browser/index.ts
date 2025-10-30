@@ -227,6 +227,16 @@ export const methods = {
             version: Editor.App.version
         };
     },
+
+
+
+
+
+
+
+
+
+    ///
     // 获取已安装的组件列表
     async getInstalledComponents() {
         try {

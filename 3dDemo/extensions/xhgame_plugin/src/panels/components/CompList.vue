@@ -5,42 +5,10 @@ import { inject } from 'vue';
 import { name } from '../../../package.json';
 import { keyAppRoot, keyMessage } from '../provide-inject';
 import { apiService } from '../api-service';
+import { IGetPackagesRes, IPackageInfo } from '../../common/defined';
+import cocosEditorBridge from '../cocos-bridge';
 
-// 包信息接口定义
-interface IPackageInfo {
-  /** 包名,英文字母 */
-  name: string;
-  /** 包显示名,中文字符 */
-  displayName: string;
-  /** 版本号 */
-  version: string;
-  /** 说明 */
-  description: string;
-  /** 作者 */
-  author: string;
-  /** 分类 */
-  category: string;
-  /** 标签 */
-  tags: string[];
-  /** 包所在路径 */
-  path: string;
-  /** 依赖 */
-  dependencies: string[];
-  /** 安装文件 */
-  files: string[];
-  /** 安装状态 */
-  installStatus?: string;
-  /** 备份状态 */
-  backupStatus?: string;
-  /** 是否需要更新 */
-  needsUpdate?: boolean;
-  /** 评分 */
-  stars?: number;
-  /** 包ID */
-  id?: number;
-  /** 使用方法 */
-  usage?: string;
-}
+
 
 const appRootDom = inject(keyAppRoot);
 const message = inject(keyMessage)!;
@@ -83,9 +51,11 @@ let componentList = ref<IPackageInfo[]>([]);
 // 获取组件列表的异步函数
 const loadComponents = async () => {
   try {
-    const response = await apiService.getPackages();
-    componentList.value = response.data.packages || [];
-    console.log('获取组件列表成功', response);
+    //const response = await apiService.getPackages();
+    const package_res:IGetPackagesRes = await cocosEditorBridge.getPackages();
+    console.log('package_res',package_res)
+    componentList.value = package_res.packages || [];
+    console.log('获取组件列表成功', package_res.packages);
   } catch (error) {
     console.error('Failed to load components:', error);
     ElMessage.error('获取组件列表失败');

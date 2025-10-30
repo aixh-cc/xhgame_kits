@@ -1,6 +1,15 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { IGetVersionRes } from './defined';
+import { IGetPackagesRes, IGetVersionRes, IPackageInfoWithStatus } from './defined';
+
+
+// 获取项目根目录下的 packages 路径
+export const getPackagesPath = (pluginName: string) => {
+    // 从当前插件目录向上找到项目根目录
+    const currentDir = process.cwd();
+    const extensionsRoot = path.resolve(currentDir, '../');
+    return path.join(extensionsRoot, pluginName, 'assets', 'packages');
+};
 
 export const getPluginPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
@@ -54,6 +63,87 @@ export class Util {
             success: true,
             version: '未知版本'
         };
+    }
+
+    static async getPackages(): Promise<IGetPackagesRes> {
+        try {
+            const packagesPath = getPackagesPath('xhgame_plugin');
+
+            if (!fs.existsSync(packagesPath)) {
+                console.error('Packages directory not found' + packagesPath)
+                return {
+                    success: false,
+                    error: 'Packages directory not found',
+                    packagesPath: '',
+                    packages: []
+                };
+            }
+            // 当前组件安装情况
+            let install = await Util.checkInstallExists({ pluginName: 'xhgame_plugin' })
+            console.log('install', install)
+            let installedLists = install.installInfo?.installedComponents.map((item: any) => item.componentCode) || []
+            console.log('installedLists', installedLists)
+            const items = fs.readdirSync(packagesPath);
+            const packages = [];
+
+            for (const item of items) {
+                const itemPath = path.join(packagesPath, item);
+                const stats = fs.statSync(itemPath);
+
+                console.log('itemPath', itemPath)
+
+                if (stats.isDirectory()) {
+                    console.error('当前只支持zip')
+                } else if (item.endsWith('.zip')) {
+                    // 处理 .zip 包文件
+                    const zipName = path.basename(item, '.zip');
+                    const metaPath = itemPath + '.meta';
+
+                    // let packageInfoWithStatus: IPackageInfoWithStatus = {
+                    //     name: zipName,
+                    //     version: '',
+                    //     installStatus: 'none',
+                    //     backupStatus: 'none',
+                    // }
+
+                    // 尝试从 .meta 文件读取包信息
+                    if (fs.existsSync(metaPath)) {
+                        try {
+                            const metaContent = fs.readFileSync(metaPath, 'utf-8');
+                            const metaData = JSON.parse(metaContent);
+                            if (metaData.userData && typeof metaData.userData === 'object') {
+                                let packageInfoWithStatus: IPackageInfoWithStatus = metaData.userData
+                                // 检查是否已安装
+                                packageInfoWithStatus.installStatus = installedLists.includes(packageInfoWithStatus.name) ? 'has' : 'none';
+                                // 检查备份状态
+                                let backup = await Util.checkBackupExists({ pluginName: 'xhgame_plugin', componentCode: packageInfoWithStatus.name })
+                                console.log('backup', backup)
+                                if (backup) {
+                                    packageInfoWithStatus.backupStatus = backup.backupInfo ? 'has' : 'none';
+                                } else {
+                                    packageInfoWithStatus.backupStatus = 'none';
+                                }
+                                packages.push(packageInfoWithStatus);
+                            }
+                        } catch (error) {
+                            console.error(`Error reading meta for ${item}:`, error);
+                        }
+                    }
+                }
+            }
+            return {
+                success: true,
+                packagesPath,
+                packages
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: 'Failed to get packages',
+                packagesPath: '',
+                packages: []
+            };
+        }
     }
 
     static async checkInstallExists(param: any): Promise<IInstallResult> {

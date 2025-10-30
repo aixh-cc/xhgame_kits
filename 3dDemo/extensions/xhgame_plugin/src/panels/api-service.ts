@@ -51,10 +51,10 @@ class ApiService {
         }
     }
 
-    // 包管理 API
-    async getPackages() {
-        return this.request('/packages');
-    }
+    // // 包管理 API
+    // async getPackages() {
+    //     return this.request('/get-packages');
+    // }
 
     async getVersion() {
         return this.request('/cocos-editor/version');

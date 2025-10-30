@@ -3,47 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import yauzl from 'yauzl';
 import archiver from 'archiver';
-import { Util } from '../../common/Util';
-
-interface IPackageInfo {
-    /** 包名,英文字母 */
-    name: string
-    /** 包显示名,中文字符 */
-    displayName: string
-    /** 版本号 */
-    version: string
-    /** 说明 */
-    description: string
-    /** 作者 */
-    author: string
-    /** 分类 */
-    category: string
-    /** 标签 */
-    tags: string[]
-    /** 包所在路径 */
-    path: string
-    /** 依赖 */
-    dependencies: string[]
-    /** 安装文件 */
-    files: string[]
-}
-
-interface IPackageInfoWithStatus extends IPackageInfo {
-    /** 安装状态 */
-    installStatus: string
-    /** 备份状态 */
-    backupStatus: string
-}
+import { getPackagesPath, Util } from '../../common/Util';
+import { IPackageInfoWithStatus } from '../../common/defined';
 
 const router = express.Router();
 
-// 获取项目根目录下的 packages 路径
-export const getPackagesPath = (pluginName: string) => {
-    // 从当前插件目录向上找到项目根目录
-    const currentDir = process.cwd();
-    const extensionsRoot = path.resolve(currentDir, '../');
-    return path.join(extensionsRoot, pluginName, 'assets', 'packages');
-};
 
 // 获取所有包列表
 router.get('/', async (req, res) => {

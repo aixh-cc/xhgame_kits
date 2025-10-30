@@ -2,7 +2,7 @@
  * Cocos Creator 编辑器通信桥接模块
  * 提供与 Cocos Creator 编辑器的双向通信功能
  */
-import { IGetVersionRes } from '../common/defined';
+import { IGetPackagesRes, IGetVersionRes } from '../common/defined';
 import { apiService } from './api-service';
 
 export interface CocosEditorAPI {
@@ -157,9 +157,8 @@ class CocosEditorBridge implements CocosEditorAPI {
         }
     }
 
-    async getVersion(): Promise<IGetVersionRes> {
-        return this.requestMessage('xhgame_plugin', 'get-version');
-    }
+
+
 
     async getSceneInfo(): Promise<any> {
         if (this.isDevMode) {
@@ -520,6 +519,15 @@ class CocosEditorBridge implements CocosEditorAPI {
             };
         }
     }
+
+
+    async getVersion(): Promise<IGetVersionRes> {
+        return this.requestMessage('xhgame_plugin', 'get-version');
+    }
+    async getPackages(): Promise<IGetPackagesRes> {
+        return this.requestMessage('xhgame_plugin', 'get-packages');
+    }
+
 }
 
 // 创建全局实例
