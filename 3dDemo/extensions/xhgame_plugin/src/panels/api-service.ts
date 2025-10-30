@@ -14,7 +14,7 @@ interface ApiResponse<T = any> {
 
 class ApiService {
     private async request<T = any>(
-        endpoint: string, 
+        endpoint: string,
         options: RequestInit = {}
     ): Promise<ApiResponse<T>> {
         try {
@@ -28,7 +28,7 @@ class ApiService {
             });
 
             const data = await response.json();
-            
+
             if (!response.ok) {
                 return {
                     success: false,
@@ -54,6 +54,10 @@ class ApiService {
     // 包管理 API
     async getPackages() {
         return this.request('/packages');
+    }
+
+    async getVersion() {
+        return this.request('/cocos-editor/version');
     }
 
     async getPackageDetails(packageName: string) {
@@ -112,6 +116,14 @@ class ApiService {
     // 检查服务是否可用
     async isServiceAvailable(): Promise<boolean> {
         return this.healthCheck();
+    }
+    async nodejsMessage(target: string, method: string, ...args: any[]): Promise<any> {
+        let param = {
+            target,
+            method,
+            ...args
+        }
+        return await this.request(method, param);
     }
 }
 

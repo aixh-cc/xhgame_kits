@@ -2,6 +2,7 @@
  * Cocos Creator 编辑器通信桥接模块
  * 提供与 Cocos Creator 编辑器的双向通信功能
  */
+import { apiService } from './api-service';
 
 export interface CocosEditorAPI {
     // 消息通信
@@ -35,7 +36,7 @@ export interface CocosEditorAPI {
     uninstallComponent(param: { componentCode: string }): Promise<any>;
     getLocalComponents(): Promise<any>;
     installLocalComponent(componentName: string, componentCode: string, localPath: string): Promise<{ success: boolean; message?: string; error?: string; copiedFiles?: string[] }>;
-    
+
     // 备份文件操作
     checkBackupExists(componentCode: string): Promise<{ exists: boolean; backupPath?: string; backupInfo?: any }>;
     restoreFromBackup(componentCode: string, backupPath: string): Promise<{ success: boolean; message?: string; error?: string; restoredFiles?: string[] }>;
@@ -114,8 +115,9 @@ class CocosEditorBridge implements CocosEditorAPI {
 
     async requestMessage(target: string, method: string, ...args: any[]): Promise<any> {
         if (this.isDevMode) {
-            console.log(`📥 [Mock] Request message: ${target}.${method}`, args);
-            return this.mockResponse(method, args);
+            // console.log(`📥 [Mock] Request message: ${target}.${method}`, args);
+            // return this.mockResponse(method, args);
+            return apiService.nodejsMessage(target, method, args)
         }
 
         if ((window as any).Editor && (window as any).Editor.Message) {
@@ -124,10 +126,14 @@ class CocosEditorBridge implements CocosEditorAPI {
 
         throw new Error('Editor API not available');
     }
+    // async nodejsMessage(target: string, method: string, ...args: any[]): Promise<any> {
+    //     return await this.sendMessage(target, method, ...args);
+    // }
 
-    private mockResponse(method: string, args: any[]): any {
+    private async mockResponse(method: string, args: any[]): Promise<any> {
         switch (method) {
             case 'get-version':
+                const response = await apiService.getPackages();
                 return 'Cocos Creator 3.8.6 (Development Mode)';
             case 'select-asset':
                 return { success: true, uuid: args[0] };
@@ -178,18 +184,13 @@ class CocosEditorBridge implements CocosEditorAPI {
     }
 
     async getVersion(): Promise<string> {
-        return await this.requestMessage('xhgame_plugin', 'get-version');
+        // return await this.requestMessage('xhgame_plugin', 'get-version');
         // if (this.isDevMode) {
-        //     return this.mockResponse('get-version', []);
+        //     console.log('开发模式下，返回模拟版本号');
+        //     // return this.mockResponse('get-version', []);
+        //     await this.nodejsMessage
         // }
-
-        // // 在真实的 Cocos Creator 环境中，直接使用 Editor.App.version
-        // if ((window as any).Editor && (window as any).Editor.App) {
-        //     console.log('真实的cocos编辑器环境', (window as any).Editor)
-        //     return (window as any).Editor.App.version;
-        // }
-
-        // throw new Error('Editor API not available');
+        return await this.requestMessage('xhgame_plugin', 'get-version');
     }
 
     async getSceneInfo(): Promise<any> {
