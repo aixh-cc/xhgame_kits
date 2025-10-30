@@ -380,6 +380,20 @@ async function restoreComponentFromBackup(component: any) {
     }
 }
 
+// 测试编辑器通信功能
+async function testEditorCommunication() {
+    try {
+        // 测试获取场景信息
+        const sceneInfo = await cocosEditorBridge.getSceneInfo();
+        message({ 
+            message: `场景信息: ${JSON.stringify(sceneInfo)}`, 
+            type: 'success',
+            duration: 5000
+        });
+    } catch (error) {
+        message({ message: '编辑器通信测试失败: ' + error, type: 'error' });
+    }
+}
 
 // 模拟资源变化事件
 function simulateAssetChange() {
@@ -469,7 +483,7 @@ onUnmounted(() => {
 <template>
     <div class="container">
         <el-tabs v-model="activeTab" class="main-tabs">
-            <el-tab-pane label="ui组件库" name="components">
+            <el-tab-pane label="网络组件库" name="components">
                 <CompList />
             </el-tab-pane>
             <el-tab-pane label="本地组件库" name="local">

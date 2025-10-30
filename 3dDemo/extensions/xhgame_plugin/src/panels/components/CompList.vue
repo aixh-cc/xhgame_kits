@@ -32,46 +32,18 @@ interface IPackageInfo {
   installStatus?: string;
   /** 备份状态 */
   backupStatus?: string;
-  /** 是否已安装 */
-  installed?: boolean;
   /** 是否需要更新 */
   needsUpdate?: boolean;
   /** 评分 */
   stars?: number;
-  /** 评论数量 */
-  reviewCount?: number;
-  /** 资源列表 */
-  resources?: any[];
   /** 包ID */
   id?: number;
   /** 使用方法 */
   usage?: string;
-  /** 目标安装路径 */
-  targetPaths?: Array<{
-    path: string;
-    description: string;
-  }>;
-  /** 已安装路径 */
-  installedPaths?: Array<{
-    path: string;
-    description: string;
-    type: string;
-  }>;
 }
 
 const appRootDom = inject(keyAppRoot);
 const message = inject(keyMessage)!;
-
-// 资源类型枚举
-const ResourceType = {
-  SCRIPT: 'script',
-  TEXTURE: 'texture',
-  AUDIO: 'audio',
-  PLIST: 'plist',
-  PREFAB: 'prefab',
-  CONFIG: 'config',
-  OTHER: 'other'
-};
 
 // 折叠卡片状态管理
 const expandedCards = ref<Record<number, number>>({});
@@ -86,12 +58,12 @@ const isCardExpanded = (id: number) => {
 
 // 计算属性：已安装组件
 const installedComponents = computed(() => {
-  return componentList.value.filter(comp => comp.installed);
+  return componentList.value.filter(comp => comp.installStatus === 'has');
 });
 
 // 计算属性：可更新组件
 const updatableComponents = computed(() => {
-  return componentList.value.filter(comp => comp.installed && comp.needsUpdate);
+  return componentList.value.filter(comp => comp.installStatus === 'has' && comp.needsUpdate);
 });
 
 // 计算属性：根据标签页筛选的组件
@@ -106,50 +78,14 @@ const filteredComponents = computed(() => {
   }
 });
 
-// 获取资源类型图标
-const getResourceTypeIcon = (type: string) => {
-  const iconMap: Record<string, string> = {
-    [ResourceType.SCRIPT]: 'el-icon-document',
-    [ResourceType.TEXTURE]: 'el-icon-picture-outline',
-    [ResourceType.AUDIO]: 'el-icon-headset',
-    [ResourceType.PLIST]: 'el-icon-files',
-    [ResourceType.PREFAB]: 'el-icon-s-grid',
-    [ResourceType.CONFIG]: 'el-icon-setting',
-    [ResourceType.OTHER]: 'el-icon-more'
-  };
-  return iconMap[type] || 'el-icon-more';
-};
-
-// 获取资源类型名称
-const getResourceTypeName = (type: string) => {
-  const nameMap: Record<string, string> = {
-    [ResourceType.SCRIPT]: '脚本',
-    [ResourceType.TEXTURE]: '纹理',
-    [ResourceType.AUDIO]: '音频',
-    [ResourceType.PLIST]: '图集',
-    [ResourceType.PREFAB]: '预制体',
-    [ResourceType.CONFIG]: '配置',
-    [ResourceType.OTHER]: '其他'
-  };
-  return nameMap[type] || '其他';
-};
-
-// 获取按钮文本
-const getActionButtonText = (comp: any) => {
-  if (!comp.installed) return '下载安装';
-  if (comp.needsUpdate) return '更新';
-  return '已安装';
-};
-
 // 组件列表数据
 let componentList = ref<IPackageInfo[]>([]);
-
 // 获取组件列表的异步函数
 const loadComponents = async () => {
   try {
     const response = await apiService.getPackages();
     componentList.value = response.data.packages || [];
-    console.log('origin response2222', response);
+    console.log('获取组件列表成功', response);
   } catch (error) {
     console.error('Failed to load components:', error);
     ElMessage.error('获取组件列表失败');
@@ -161,50 +97,15 @@ onMounted(() => {
   loadComponents();
 });
 
-// 评价数据
-const reviews = ref<Record<number, Array<{
-  user: string;
-  date: string;
-  rating: number;
-  comment: string;
-}>>>({
-  1: [
-    { user: '用户A', rating: 5, comment: '非常好用的角色控制器，移动流畅，配置简单', date: '2023-10-15' },
-    { user: '用户B', rating: 4, comment: '整体不错，但在某些特殊地形上有小问题', date: '2023-09-22' },
-    { user: '用户C', rating: 5, comment: '完美解决了我的角色控制需求，强烈推荐！', date: '2023-08-30' }
-  ],
-  2: [
-    { user: '用户D', rating: 4, comment: '物理交互效果很棒，但文档可以再详细些', date: '2023-10-10' },
-    { user: '用户E', rating: 5, comment: '拾取和投掷的效果非常自然，节省了大量开发时间', date: '2023-09-18' }
-  ],
-  3: [
-    { user: '用户F', rating: 5, comment: 'UI管理系统非常完善，层级管理很方便', date: '2023-10-12' },
-    { user: '用户G', rating: 5, comment: '动画过渡效果很棒，用户体验提升明显', date: '2023-09-25' },
-    { user: '用户H', rating: 4, comment: '功能强大，就是初始配置有点复杂', date: '2023-08-15' }
-  ],
-  4: [
-    { user: '用户I', rating: 5, comment: '云端存储功能非常实用，跨平台同步完美', date: '2023-10-05' },
-    { user: '用户J', rating: 4, comment: '整体不错，希望能增加更多的存储选项', date: '2023-09-20' }
-  ]
-});
-
-// 当前查看的评价组件ID
-const currentReviewComponentId = ref(null);
-const reviewDialogVisible = ref(false);
-
-// 显示评价对话框
-function showReviews(component:any) {
-  currentReviewComponentId.value = component.id;
-  reviewDialogVisible.value = true;
-}
-
 // 从插件assets安装组件
 async function installFromAssets(component: any) {
+  if(component.installStatus === 'has'){
+    return 
+  }
   console.log(`[xhgame_plugin] 安装【本地组件】请求:`, component.name);
   try {
     // 确认安装
-    const confirmMessage = `确定要从插件内置资源安装 "${component.name}" 组件到项目的 assets/script 目录吗？`;
-    
+    const confirmMessage = `确定要从插件内置资源安装 "${component.name}" 组件到项目吗？`;
     await ElMessageBox.confirm(
       confirmMessage,
       '确认安装',
@@ -276,27 +177,17 @@ async function installFromAssets(component: any) {
     
     <!-- 组件列表 -->
     <div class="components-grid">
-      <el-card v-for="component in filteredComponents" :key="component.id" class="component-card" :class="{ 'installed': component.installed }">
+      <el-card v-for="component in filteredComponents" :key="component.id" class="component-card" :class="{ 'installed': component.installStatus === 'has' }">
       <template #header>
         <div class="card-header">
           <div class="card-title">
-            <h3>{{ component.name }}</h3>
-            <el-tag v-if="component.installed" type="success" size="small">已安装</el-tag>
+            <h3>{{ component.name }}</h3><span class="version">v{{ component.version }}</span>
             <el-tag v-if="component.needsUpdate" type="warning" size="small">可更新</el-tag>
           </div>
           <div class="card-meta">
             <span class="author">作者: {{ component.author }}</span>
             <div class="rating">
               <el-rate v-model="component.stars" disabled text-color="#ff9900" score-template="{value}" />
-              <span class="review-count">({{ component.reviewCount }}评价)</span>
-            </div>
-            <div class="resource-icons" v-if="component.resources && component.resources.length">
-              <el-tooltip v-for="resource in component.resources" :key="resource.type" :content="`${resource.type}: ${resource.count}个`" placement="top">
-                <div class="resource-icon" :class="resource.type">
-                  <i :class="getResourceTypeIcon(resource.type)"></i>
-                  <span class="resource-count">{{ resource.count }}</span>
-                </div>
-              </el-tooltip>
             </div>
           </div>
         </div>
@@ -308,7 +199,7 @@ async function installFromAssets(component: any) {
         </div>
         
         <el-collapse v-model="expandedCards[component.id || 0]">
-          <el-collapse-item :name="component.id || 0">
+          <el-collapse-item class="compent-content" :name="component.id || 0">
             <template #title>
               <div class="collapse-title">
                 <span class="description-preview">{{ component.description.substring(0, 50) }}{{ component.description.length > 50 ? '...' : '' }}</span>
@@ -329,20 +220,8 @@ async function installFromAssets(component: any) {
             <div class="target-paths">
               <h4>安装路径</h4>
               <ul>
-                <li v-for="(target, index) in component.targetPaths" :key="index">
-                  {{ target.path }} <span class="path-desc">({{ target.description }})</span>
-                </li>
-              </ul>
-            </div>
-            
-            <div v-if="component.installed && component.installedPaths && component.installedPaths.length > 0" class="installed-paths">
-              <h4>已安装文件</h4>
-              <ul>
-                <li v-for="(installed, index) in component.installedPaths" :key="index">
-                  <span class="path-type-icon" :class="installed.type">
-                    <i :class="getResourceTypeIcon(installed.type)"></i>
-                  </span>
-                  {{ installed.path }} <span class="path-desc">({{ installed.description }})</span>
+                <li v-for="(target, index) in component.files" :key="index">
+                  {{ target }} 
                 </li>
               </ul>
             </div>
@@ -353,49 +232,14 @@ async function installFromAssets(component: any) {
           <el-button 
             type="success" 
             @click="installFromAssets(component)">
-             {{ component.installed ? (component.needsUpdate ? '更新' : '已安装') : '下载安装' }}
+             {{ component.installStatus === 'has' ? (component.needsUpdate ? '更新' : '已安装') : '下载安装' }}
           </el-button>
-          <el-button type="info" @click="showReviews(component)">
-            查看评价 ({{ component.reviewCount }})
-          </el-button>
+          
         </div>
       </div>
     </el-card>
   </div>
   </div>
-  
-  <!-- 评价对话框 -->
-  <el-dialog
-    v-model="reviewDialogVisible"
-    :title="currentReviewComponentId ? componentList.find(c => c.id === currentReviewComponentId)?.name + ' 的评价' : '评价'"
-    width="500px"
-    :append-to-body="true"
-    destroy-on-close
-    class="review-dialog"
-  >
-    <div v-if="currentReviewComponentId && reviews[currentReviewComponentId]?.length">
-      <div v-for="(review, index) in reviews[currentReviewComponentId]" :key="index" class="review-item">
-        <div class="review-header">
-          <span class="review-user">{{ review.user }}</span>
-          <span class="review-date">{{ review.date }}</span>
-        </div>
-        <div class="review-rating">
-          <el-rate v-model="review.rating" disabled text-color="#ff9900" />
-        </div>
-        <div class="review-comment">
-          {{ review.comment }}
-        </div>
-      </div>
-    </div>
-    <div v-else class="no-reviews">
-      暂无评价
-    </div>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="reviewDialogVisible = false">返回</el-button>
-      </div>
-    </template>
-  </el-dialog>
 </template>
 
 <style scoped>
@@ -702,5 +546,16 @@ async function installFromAssets(component: any) {
   text-align: center;
   padding: 20px;
   color: #999;
+}
+.version {
+    background-color: #409eff;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.compent-content{
+  text-align: left;
 }
 </style>
