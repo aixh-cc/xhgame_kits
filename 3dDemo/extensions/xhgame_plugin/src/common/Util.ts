@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { IGetVersionRes } from './defined';
 
 export const getPluginPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
@@ -12,6 +13,12 @@ export const getExtensionsPath = () => {
     const currentDir = process.cwd();
     const extensionsRoot = path.resolve(currentDir, '../');
     return extensionsRoot
+};
+export const getProjectPath = () => {
+    // 从当前插件目录向上找到项目根目录
+    const currentDir = process.cwd();
+    const projectRoot = path.resolve(currentDir, '../../');
+    return projectRoot
 };
 
 interface IBackupResult {
@@ -29,6 +36,26 @@ interface IInstallResult {
 }
 
 export class Util {
+    static async getVersion(): Promise<IGetVersionRes> {
+        const projectPath = getProjectPath();
+        // 检查备份信息文件是否存在
+        const packagePath = path.join(projectPath, 'package.json');
+        const hasFile = fs.existsSync(packagePath);
+        if (hasFile) {
+            const packageInfo = JSON.parse(await fs.promises.readFile(packagePath, 'utf-8'));
+            if (typeof packageInfo.creator != 'undefined') {
+                return {
+                    success: true,
+                    version: packageInfo.creator.version
+                };
+            }
+        }
+        return {
+            success: true,
+            version: '未知版本'
+        };
+    }
+
     static async checkInstallExists(param: any): Promise<IInstallResult> {
         const { pluginName } = param;
         if (!pluginName) {

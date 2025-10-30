@@ -5,6 +5,7 @@ import { packageRoutes } from './routes/packages';
 import { fileRoutes } from './routes/files';
 import { editerRoutes } from './routes/editer';
 import { version } from 'os';
+import { Util } from '../common/Util';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -24,12 +25,9 @@ app.use('/api/packages', packageRoutes);
 app.use('/api/files', fileRoutes);
 // app.use('/api/get-version', editerRoutes);
 
-// 健康检查
-app.post('/api/get-version', (req, res) => {
-    res.json({
-        success: true,
-        version: '3.8.1'
-    });
+// 获取版本
+app.post('/api/get-version', async (req, res) => {
+    res.json(await Util.getVersion());
 });
 
 // 健康检查
