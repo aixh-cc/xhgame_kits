@@ -68,6 +68,7 @@ export class Util {
     static async getPackages(): Promise<IGetPackagesRes> {
         try {
             const packagesPath = getPackagesPath('xhgame_plugin');
+            console.log('packagesPath', packagesPath)
 
             if (!fs.existsSync(packagesPath)) {
                 console.error('Packages directory not found' + packagesPath)

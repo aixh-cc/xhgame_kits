@@ -2,7 +2,8 @@ import { name } from '../../package.json' with { type: 'json' };
 import * as fs from 'fs';
 import { version } from 'os';
 import * as path from 'path';
-import { IGetVersionRes } from '../common/defined';
+import { IGetPackagesRes, IGetVersionRes } from '../common/defined';
+import { Util } from '../common/Util';
 
 // 配置文件接口定义
 interface PluginConfig {
@@ -227,8 +228,9 @@ export const methods = {
             version: Editor.App.version
         };
     },
-
-
+    async getPackages(): Promise<IGetPackagesRes> {
+        return await Util.getPackages()
+    },
 
 
 

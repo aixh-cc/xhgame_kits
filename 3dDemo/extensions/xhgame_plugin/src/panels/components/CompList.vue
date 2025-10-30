@@ -51,7 +51,6 @@ let componentList = ref<IPackageInfo[]>([]);
 // 获取组件列表的异步函数
 const loadComponents = async () => {
   try {
-    //const response = await apiService.getPackages();
     const package_res:IGetPackagesRes = await cocosEditorBridge.getPackages();
     console.log('package_res',package_res)
     componentList.value = package_res.packages || [];

@@ -51,8 +51,7 @@
                 "readonly": false
             }
         },
-        "menu": [
-            {
+        "menu": [{
                 "path": "i18n:menu.panel/xhgame_plugin",
                 "label": "i18n:xhgame_plugin.title",
                 "message": "open"
@@ -72,6 +71,11 @@
             "get-version": {
                 "methods": [
                     "getVersion"
+                ]
+            },
+            "get-packages": {
+                "methods": [
+                    "getPackages"
                 ]
             },
             "increase": {
