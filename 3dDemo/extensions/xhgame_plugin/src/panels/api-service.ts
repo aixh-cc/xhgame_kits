@@ -117,15 +117,17 @@ class ApiService {
     async isServiceAvailable(): Promise<boolean> {
         return this.healthCheck();
     }
-    async nodejsMessage(target: string, method: string, ...args: any[]): Promise<any> {
-        let param = { ...args } as any
-        param.pluginName = target;
+    async nodejsMessage(target: string, method: string, args: any): Promise<any> {
+        // args.push({ pluginName: target })
+        let param = { ...args, pluginName: target } as any
+        // param.pluginName = target;
         let options = {
             method: 'POST',
             body: JSON.stringify(param)
         }
         console.log('options', options)
-        return this.request('/' + method, options);
+        let res = await this.request('/' + method, options);
+        return res.data
     }
 }
 

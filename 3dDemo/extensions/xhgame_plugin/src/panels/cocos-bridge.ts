@@ -111,13 +111,12 @@ class CocosEditorBridge implements CocosEditorAPI {
         throw new Error('Editor API not available');
     }
 
-    async requestMessage(target: string, method: string, ...args: any[]): Promise<any> {
+    async requestMessage(target: string, method: string, args?: any): Promise<any> {
         if (this.isDevMode) {
-            let res = await apiService.nodejsMessage(target, method, ...args)
-            return res.data
+            return apiService.nodejsMessage(target, method, args)
         }
         if ((window as any).Editor && (window as any).Editor.Message) {
-            return (window as any).Editor.Message.request(target, method, ...args);
+            return (window as any).Editor.Message.request(target, method, args);
         }
         throw new Error('Editor API not available');
     }
