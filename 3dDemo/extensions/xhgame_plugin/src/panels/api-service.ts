@@ -50,79 +50,10 @@ class ApiService {
             };
         }
     }
-
-    // // 包管理 API
-    // async getPackages() {
-    //     return this.request('/get-packages');
-    // }
-
-    async getVersion() {
-        return this.request('/cocos-editor/version');
-    }
-
-    async getPackageDetails(packageName: string) {
-        return this.request(`/packages/${encodeURIComponent(packageName)}`);
-    }
-
-    async extractPackage(packageName: string) {
-        return this.request(`/packages/${encodeURIComponent(packageName)}/extract`, {
-            method: 'POST'
-        });
-    }
-
-    // 文件操作 API
-    async copyFile(source: string, destination: string) {
-        return this.request('/files/copy', {
-            method: 'POST',
-            body: JSON.stringify({ source, destination })
-        });
-    }
-
-    async moveFile(source: string, destination: string) {
-        return this.request('/files/move', {
-            method: 'POST',
-            body: JSON.stringify({ source, destination })
-        });
-    }
-
-    async deleteFile(filePath: string) {
-        return this.request('/files/delete', {
-            method: 'DELETE',
-            body: JSON.stringify({ filePath })
-        });
-    }
-
-    async readFile(filePath: string) {
-        return this.request(`/files/read?filePath=${encodeURIComponent(filePath)}`);
-    }
-
-    async writeFile(filePath: string, content: string) {
-        return this.request('/files/write', {
-            method: 'POST',
-            body: JSON.stringify({ filePath, content })
-        });
-    }
-
-    // 健康检查
-    async healthCheck() {
-        try {
-            const response = await fetch('http://localhost:3001/health');
-            return response.ok;
-        } catch {
-            return false;
-        }
-    }
-
-    // 检查服务是否可用
-    async isServiceAvailable(): Promise<boolean> {
-        return this.healthCheck();
-    }
     async nodejsMessage(target: string, method: string, args: any): Promise<any> {
-        // args.push({ pluginName: target })
         let param = { ...args, pluginName: target } as any
-        // param.pluginName = target;
         let options = {
-            method: 'POST',
+            method: 'POST', // 都为POST请求
             body: JSON.stringify(param)
         }
         console.log('options', options)

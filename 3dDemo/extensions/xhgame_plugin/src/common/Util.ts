@@ -635,42 +635,8 @@ export class Util {
                 // 不影响卸载结果，只是记录移除失败
             }
 
-            // await ConfigManager.removeInstalledComponent(componentCode);
-
-            // 更新本地组件配置文件中的状态
-            // try {
-            //     const localComponentsConfig = await ConfigManager.readLocalComponentsConfig();
-            //     if (localComponentsConfig[componentCode]) {
-            //         localComponentsConfig[componentCode].status = 'available';
-            //         delete localComponentsConfig[componentCode].installDate;
-            //         delete localComponentsConfig[componentCode].installPath;
-            //         await ConfigManager.writeLocalComponentsConfig(localComponentsConfig);
-            //         console.log(`[xhgame_plugin] 本地组件状态已更新为可用: ${componentCode}`);
-            //     }
-            // } catch (statusError) {
-            //     console.warn(`[xhgame_plugin] 更新本地组件状态失败:`, statusError);
-            //     // 不影响卸载结果，只是状态更新失败
-            // }
-
-            // // 创建备份信息文件
-            // const backupInfo = {
-            //     componentName: component.componentName,
-            //     componentId: component.componentId,
-            //     componentCode: component.componentCode,
-            //     version: component.version,
-            //     originalInstallTime: component.installedAt,
-            //     uninstallTime: new Date().toISOString(),
-            //     backedUpFiles: backedUpFiles,
-            //     deletedFiles: deletedFiles,
-            //     notFoundFiles: notFoundFiles
-            // };
-
-            // const backupInfoPath = path.join(componentBackupDir, 'backup-info.json');
-            // await fs.promises.writeFile(backupInfoPath, JSON.stringify(backupInfo, null, 2), 'utf-8');
-
             console.log(`[xhgame_plugin] 组件卸载完成: ${component.componentName}`);
             console.log(`[xhgame_plugin] 备份文件数: ${backedUpFiles.length}, 删除文件数: ${deletedFiles.length}, 未找到文件数: ${notFoundFiles.length}`);
-
 
             return {
                 success: true,

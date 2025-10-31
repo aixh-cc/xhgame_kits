@@ -1,10 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { packageRoutes } from './routes/packages';
-import { fileRoutes } from './routes/files';
-import { editerRoutes } from './routes/editer';
-import { version } from 'os';
 import { Util } from '../common/Util';
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -19,9 +15,6 @@ app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
     next();
 });
-
-// 路由
-app.use('/api/files', fileRoutes);
 
 // 获取版本
 app.post('/api/get-version', async (req, res) => {

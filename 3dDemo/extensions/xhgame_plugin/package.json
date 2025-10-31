@@ -105,12 +105,6 @@
                     "uninstallComponent"
                 ]
             },
-            "checkBackupExists": {
-                "info": "检查备份是否存在",
-                "methods": [
-                    "checkBackupExists"
-                ]
-            },
             "restoreFromBackup": {
                 "info": "从备份恢复组件",
                 "methods": [
