@@ -118,9 +118,11 @@ class ApiService {
         return this.healthCheck();
     }
     async nodejsMessage(target: string, method: string, ...args: any[]): Promise<any> {
+        let param = { ...args } as any
+        param.pluginName = target;
         let options = {
             method: 'POST',
-            body: JSON.stringify(args)
+            body: JSON.stringify(param)
         }
         console.log('options', options)
         return this.request('/' + method, options);

@@ -6,26 +6,46 @@ import { IGetPackagesRes, IGetVersionRes, IPackageInfoWithStatus } from './defin
 // 获取项目根目录下的 packages 路径
 export const getPackagesPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
-    const currentDir = process.cwd();
+    let currentDir = ''
+    if ((window as any).Editor && (window as any).Editor.Panel) {
+        currentDir = Editor.Package.getPath(pluginName) as string;
+    } else {
+        currentDir = process.cwd();
+    }
     const extensionsRoot = path.resolve(currentDir, '../');
     return path.join(extensionsRoot, pluginName, 'assets', 'packages');
 };
 
 export const getPluginPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
-    const currentDir = process.cwd();
+    let currentDir = ''
+    if ((window as any).Editor && (window as any).Editor.Panel) {
+        currentDir = Editor.Package.getPath(pluginName) as string;
+    } else {
+        currentDir = process.cwd();
+    }
     const extensionsRoot = path.resolve(currentDir, '../');
     return path.join(extensionsRoot, pluginName);
 };
-export const getExtensionsPath = () => {
+export const getExtensionsPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
-    const currentDir = process.cwd();
+    let currentDir = ''
+    if ((window as any).Editor && (window as any).Editor.Panel) {
+        currentDir = Editor.Package.getPath(pluginName) as string;
+    } else {
+        currentDir = process.cwd();
+    }
     const extensionsRoot = path.resolve(currentDir, '../');
     return extensionsRoot
 };
-export const getProjectPath = () => {
+export const getProjectPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
-    const currentDir = process.cwd();
+    let currentDir = ''
+    if ((window as any).Editor && (window as any).Editor.Panel) {
+        currentDir = Editor.Package.getPath(pluginName) as string;
+    } else {
+        currentDir = process.cwd();
+    }
     const projectRoot = path.resolve(currentDir, '../../');
     return projectRoot
 };
@@ -156,7 +176,7 @@ export class Util {
             };
         }
         try {
-            const extensionPath = getExtensionsPath();
+            const extensionPath = getExtensionsPath(pluginName);
             if (!extensionPath) {
                 throw new Error('无法获取插件路径');
             }
