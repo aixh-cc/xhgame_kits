@@ -150,9 +150,26 @@ export class Util {
                 console.log(`[xhgame_plugin] 发现zip包，准备解压: ${zipFilePath}`);
                 extractTempDir = path.join(packagePath, '__extract', compName);
                 await fs.promises.mkdir(extractTempDir, { recursive: true });
+
                 const zip = new AdmZip(zipFilePath);
                 zip.extractAllTo(extractTempDir, true);
                 console.log(`[xhgame_plugin] 解压完成到: ${extractTempDir}`);
+
+                // 选择正确的根目录：
+                // 1) 若存在单个顶级目录（排除 __MACOSX），以该目录为根
+                // 2) 若根目录下存在 assets，则以 assets 作为源
+                // 3) 否则使用解压根目录
+                const topEntries = await fs.promises.readdir(extractTempDir, { withFileTypes: true });
+                const candidateDirs = topEntries.filter(e => e.isDirectory() && e.name !== '__MACOSX');
+                let baseRoot = extractTempDir;
+                if (candidateDirs.length === 1) {
+                    baseRoot = path.join(extractTempDir, candidateDirs[0].name);
+                }
+                const extractedAssetsDir = path.join(baseRoot, 'assets');
+                assetsSourcePath = fs.existsSync(extractedAssetsDir) ? extractedAssetsDir : baseRoot;
+            } else if (fs.existsSync(legacyDirPath)) {
+                console.log(`[xhgame_plugin] 使用旧目录模式: ${legacyDirPath}`);
+                assetsSourcePath = legacyDirPath;
             } else {
                 return {
                     success: false,
@@ -277,10 +294,17 @@ export class Util {
                     };
                 }
             } else {
-                return {
-                    success: false,
-                    error: `安装失败：目前只支持按zip.meta内的文件进行安装，不支持直接安装整个目录`,
-                };
+                // 旧模式或无meta：复制整个源目录（保持兼容）
+                await checkConflicts(assetsSourcePath, targetPath);
+                if (conflictFiles.length > 0) {
+                    console.log(`[xhgame_plugin] 检测到冲突文件: ${conflictFiles.join('\n')}`);
+                    return {
+                        success: false,
+                        error: `安装失败：检测到以下文件已存在，请先删除或备份这些文件：\n${conflictFiles.join('\n')}`,
+                    };
+                }
+                console.log(`[xhgame_plugin] 没有冲突文件，开始复制整个目录...`);
+                await copyDirectory(assetsSourcePath, targetPath);
             }
 
             async function copyDirectory(srcDir: string, destDir: string, relativePath: string = '') {
