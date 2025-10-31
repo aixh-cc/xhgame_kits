@@ -62,17 +62,13 @@ export class Util {
             }
             // 当前组件安装情况
             let install = await Util.checkInstallExists({ pluginName: 'xhgame_plugin' })
-            console.log('install', install)
             let installedLists = install.installInfo?.installedComponents.map((item: any) => item.componentCode) || []
-            console.log('installedLists', installedLists)
             const items = fs.readdirSync(packagesPath);
             const packages = [];
 
             for (const item of items) {
                 const itemPath = path.join(packagesPath, item);
                 const stats = fs.statSync(itemPath);
-
-                console.log('itemPath', itemPath)
 
                 if (stats.isDirectory()) {
                     console.error('当前只支持zip')

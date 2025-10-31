@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-10-31T08:23:56.772Z",
+  "lastUpdated": "2025-10-31T08:40:07.043Z",
   "localComponents": {
     "HelpAndChat": {
       "status": "installed",
@@ -10,6 +10,11 @@
     "MissionItem": {
       "status": "installed",
       "installDate": "2025-10-25T11:43:21.248Z",
+      "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
+    },
+    "TestItem": {
+      "status": "installed",
+      "installDate": "2025-10-31T08:40:07.042Z",
       "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
     }
   },
@@ -42,6 +47,17 @@
         "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png.meta"
       ],
       "installedAt": "2025-10-25T11:43:21.244Z"
+    },
+    {
+      "componentName": "测试组件",
+      "componentId": "TestItem",
+      "componentCode": "TestItem",
+      "version": "1.0.1",
+      "copiedFiles": [
+        "script/Test.ts",
+        "script/Test.ts.meta"
+      ],
+      "installedAt": "2025-10-31T08:40:07.043Z"
     }
   ]
 }
