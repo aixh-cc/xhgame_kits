@@ -3,8 +3,13 @@ import * as path from 'path';
 import AdmZip from 'adm-zip';
 import { IGetPackagesRes, IGetVersionRes, IInstallInfoRes, IInstallRes, IPackageInfoWithStatus, IUninstallRes } from './defined';
 import { getExtensionsPath, getPackagesPath, getProjectPath } from './Util';
+import { InstallInfoManager } from './InstallInfoManager';
 
 export class Handles {
+    private static getInstallInfoManager(pluginName: string): InstallInfoManager {
+        return new InstallInfoManager(pluginName);
+    }
+
     static async getVersion(pluginName: string): Promise<IGetVersionRes> {
         const projectPath = getProjectPath(pluginName);
         // 检查备份信息文件是否存在
@@ -38,8 +43,9 @@ export class Handles {
                 };
             }
             // 当前组件安装情况
-            let install = await Handles.checkInstallExists({ pluginName: 'xhgame_plugin' })
-            let installedLists = install.installInfo?.installedComponents.map((item: any) => item.componentCode) || []
+            const installInfoManager = Handles.getInstallInfoManager(pluginName);
+            const installInfo = await installInfoManager.checkInstallExists();
+            let installedLists = installInfo?.installedComponents?.map((item: any) => item.componentCode) || []
             const items = fs.readdirSync(packagesPath);
             const packages = [];
 
@@ -291,68 +297,8 @@ export class Handles {
 
             // 记录安装信息到配置文件 copiedFiles等到xhgame_plugin-installInfo.json中的 installedComponents
             try {
-                const extensionPath = getExtensionsPath(pluginName);
-                const installInfoPath = path.join(extensionPath, pluginName + '-installInfo.json');
-                let installInfo: any = {
-                    version: '1.0.0',
-                    lastUpdated: new Date().toISOString(),
-                    localComponents: {},
-                    installedComponents: []
-                };
-
-                if (fs.existsSync(installInfoPath)) {
-                    try {
-                        const content = await fs.promises.readFile(installInfoPath, 'utf-8');
-                        const parsed = JSON.parse(content);
-                        installInfo = Object.assign(installInfo, parsed);
-                    } catch (e) {
-                        console.warn(`[xhgame_plugin] 读取安装信息失败，将创建新的安装信息文件`, e);
-                    }
-                }
-
-                // 从 meta 中获取显示名与版本（若可用）
-                let componentCode = compName;
-                let componentId = compName;
-                let componentDisplayName = compName;
-                let componentVersion = '1.0.0';
-                try {
-                    const metaPath = zipFilePath + '.meta';
-                    if (fs.existsSync(metaPath)) {
-                        const metaContent = await fs.promises.readFile(metaPath, 'utf-8');
-                        const metaData = JSON.parse(metaContent);
-                        if (metaData?.userData) {
-                            componentCode = metaData.userData.name || compName;
-                            componentId = metaData.userData.name || compName;
-                            componentDisplayName = metaData.userData.displayName || compName;
-                            componentVersion = metaData.userData.version || componentVersion;
-                        }
-                    }
-                } catch { }
-
-                // 更新 localComponents
-                installInfo.localComponents = installInfo.localComponents || {};
-                installInfo.localComponents[componentCode] = {
-                    status: 'installed',
-                    installDate: new Date().toISOString(),
-                    installPath: targetPath
-                };
-
-                // 更新 installedComponents 列表（去重后追加）
-                installInfo.installedComponents = Array.isArray(installInfo.installedComponents) ? installInfo.installedComponents : [];
-                installInfo.installedComponents = installInfo.installedComponents.filter((c: any) => c.componentCode !== componentCode);
-                installInfo.installedComponents.push({
-                    componentName: componentDisplayName,
-                    componentId: componentId,
-                    componentCode: componentCode,
-                    version: componentVersion,
-                    copiedFiles: copiedFiles,
-                    installedAt: new Date().toISOString()
-                });
-
-                installInfo.lastUpdated = new Date().toISOString();
-
-                await fs.promises.writeFile(installInfoPath, JSON.stringify(installInfo, null, 2), 'utf-8');
-                console.log(`[xhgame_plugin] 安装信息已写入: ${installInfoPath}`);
+                const installInfoManager = Handles.getInstallInfoManager(pluginName);
+                await installInfoManager.recordInstallation(zipFilePath, compName, targetPath, copiedFiles);
             } catch (writeErr) {
                 console.warn(`[xhgame_plugin] 写入安装信息失败，但组件安装已完成:`, writeErr);
             }
@@ -409,17 +355,16 @@ export class Handles {
             const projectPath = getProjectPath(pluginName)
             const assetsPath = path.join(projectPath, 'assets');
 
-            const extensionPath = getExtensionsPath(pluginName);
-            const installInfoPath = path.join(extensionPath, pluginName + '-installInfo.json');
-            if (!fs.existsSync(installInfoPath)) {
+            const installInfoManager = Handles.getInstallInfoManager(pluginName);
+            const installInfo = await installInfoManager.checkInstallExists();
+            if (!installInfo) {
                 return {
                     success: false,
                     error: '未找到组件安装信息文件'
                 };
             }
-            // 读取以前的安装信息
-            const installInfo = JSON.parse(await fs.promises.readFile(installInfoPath, 'utf-8'));
-            const component = installInfo.installedComponents.find((c: { componentCode: any; }) => c.componentCode === compName);
+            // 查找组件信息
+            const component = installInfo.installedComponents?.find((c: { componentCode: any; }) => c.componentCode === compName);
             if (!component) {
                 return {
                     success: false,
@@ -481,46 +426,8 @@ export class Handles {
 
             // 从配置中移除组件记录 
             try {
-                const extensionPath = getExtensionsPath(pluginName);
-                if (!extensionPath) {
-                    throw new Error('无法获取插件路径');
-                }
-                // 检查备份信息文件是否存在
-                const installInfoPath = path.join(extensionPath, pluginName + '-installInfo.json');
-
-                // const installInfoPath = path.join(getProjectPath('xhgame_plugin'), '..', 'xhgame_plugin-installInfo.json');
-                let installInfo: any = {};
-
-                // 读取现有的安装信息
-                if (await fs.promises.access(installInfoPath).then(() => true).catch(() => false)) {
-                    const installInfoContent = await fs.promises.readFile(installInfoPath, 'utf-8');
-                    installInfo = JSON.parse(installInfoContent);
-                }
-
-                // // 从 localComponents 中移除组件记录
-                // if (installInfo.localComponents && installInfo.localComponents[compName]) {
-                //     delete installInfo.localComponents[compName];
-                //     console.log(`[xhgame_plugin] 已从 localComponents 中移除组件: ${compName}`);
-                // }
-
-                // 从 installedComponents 中移除组件记录
-                if (installInfo.installedComponents && Array.isArray(installInfo.installedComponents)) {
-                    const originalLength = installInfo.installedComponents.length;
-                    installInfo.installedComponents = installInfo.installedComponents.filter(
-                        (comp: any) => comp.componentCode !== compName
-                    );
-                    if (installInfo.installedComponents.length < originalLength) {
-                        console.log(`[xhgame_plugin] 已从 installedComponents 中移除组件: ${compName}`);
-                    }
-                }
-
-                // 更新 lastUpdated 时间戳
-                installInfo.lastUpdated = new Date().toISOString();
-
-                // 写回文件
-                await fs.promises.writeFile(installInfoPath, JSON.stringify(installInfo, null, 2), 'utf-8');
-                console.log(`[xhgame_plugin] 组件记录已从安装信息中移除: ${compName}`);
-
+                const installInfoManager = Handles.getInstallInfoManager(pluginName);
+                await installInfoManager.removeComponent(compName);
             } catch (error) {
                 console.warn(`[xhgame_plugin] 移除组件记录失败:`, error);
                 // 不影响卸载结果，只是记录移除失败
@@ -555,16 +462,10 @@ export class Handles {
             };
         }
         try {
-            const extensionPath = getExtensionsPath(pluginName);
-            if (!extensionPath) {
-                throw new Error('无法获取插件路径');
-            }
-            // 检查备份信息文件是否存在
-            const installInfoPath = path.join(extensionPath, pluginName + '-installInfo.json');
-            const hasInstallFile = fs.existsSync(installInfoPath);
+            const installInfoManager = Handles.getInstallInfoManager(pluginName);
+            const installInfo = await installInfoManager.checkInstallExists();
 
-            if (hasInstallFile) {
-                const installInfo = JSON.parse(await fs.promises.readFile(installInfoPath, 'utf-8'));
+            if (installInfo) {
                 return {
                     success: true,
                     installInfo: installInfo
