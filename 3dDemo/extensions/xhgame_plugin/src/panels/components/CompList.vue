@@ -202,7 +202,7 @@ async function confirmUninstallComponent() {
       await loadComponents();
     } else {
       message({
-        message: (result && result.message) || `组件 ${componentName} 卸载失败`,
+        message: (result && result.error) || `组件 ${componentName} 卸载失败`,
         type: 'error',
       });
     }
@@ -336,7 +336,6 @@ async function confirmUninstallComponent() {
       >
         <p>卸载操作将会：</p>
         <ul>
-          <li>将组件相关文件备份到 extensions/xhgame_plugin/backup 目录</li>
           <li>从项目中删除组件文件</li>
         </ul>
         <p><strong>此操作不可逆，请谨慎操作！</strong></p>
