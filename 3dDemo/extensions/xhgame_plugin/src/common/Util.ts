@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import AdmZip from 'adm-zip';
 import { IGetPackagesRes, IGetVersionRes, IInstallRes, IPackageInfoWithStatus } from './defined';
 
 export const getPluginPath = (pluginName: string) => {
@@ -137,9 +138,35 @@ export class Util {
         const { compName, pluginName } = param;
 
         console.log(`[xhgame_plugin] 从内置资源安装组件请求: ${compName}`, param);
+        let extractTempDir = '';
         try {
             let packagePath = getPackagesPath(pluginName)
-            const assetsSourcePath = path.join(packagePath, compName);
+            const zipFilePath = path.join(packagePath, `${compName}.zip`);
+            const legacyDirPath = path.join(packagePath, compName);
+
+            // 解压源目录（如果是zip）或使用旧目录模式
+            let assetsSourcePath = legacyDirPath;
+            if (fs.existsSync(zipFilePath)) {
+                console.log(`[xhgame_plugin] 发现zip包，准备解压: ${zipFilePath}`);
+                extractTempDir = path.join(packagePath, '__extract', compName);
+                await fs.promises.mkdir(extractTempDir, { recursive: true });
+
+                const zip = new AdmZip(zipFilePath);
+                zip.extractAllTo(extractTempDir, true);
+                console.log(`[xhgame_plugin] 解压完成到: ${extractTempDir}`);
+
+                // 若zip中包含assets目录，则以其为根；否则直接使用解压根目录
+                const extractedAssetsDir = path.join(extractTempDir, 'assets');
+                assetsSourcePath = fs.existsSync(extractedAssetsDir) ? extractedAssetsDir : extractTempDir;
+            } else if (fs.existsSync(legacyDirPath)) {
+                console.log(`[xhgame_plugin] 使用旧目录模式: ${legacyDirPath}`);
+                assetsSourcePath = legacyDirPath;
+            } else {
+                return {
+                    success: false,
+                    error: `未找到组件资源：${zipFilePath} 或 ${legacyDirPath}`
+                };
+            }
 
             // 获取项目assets/script目录路径
             const projectPath = getProjectPath(pluginName);
@@ -151,9 +178,10 @@ export class Util {
             console.log(`[xhgame_plugin] 源路径: ${assetsSourcePath}`);
             console.log(`[xhgame_plugin] 目标路径: ${targetPath}`);
 
-            // 复制所有assets目录下的文件到项目script目录
+            // 复制所需文件到项目 assets 目录
             const copiedFiles: string[] = [];
             const conflictFiles: string[] = [];
+            const missingFiles: string[] = [];
 
             // 先检查是否有同名文件冲突
             async function checkConflicts(srcDir: string, destDir: string, relativePath: string = '') {
@@ -184,18 +212,91 @@ export class Util {
                 }
             }
 
-            // 先检查冲突
-            await checkConflicts(assetsSourcePath, targetPath);
+            // 若为zip并存在meta，则按meta中的userData.files进行安装
+            const metaPath = zipFilePath + '.meta';
+            const useMetaList = fs.existsSync(zipFilePath) && fs.existsSync(metaPath);
+            if (useMetaList) {
+                try {
+                    const metaContent = await fs.promises.readFile(metaPath, 'utf-8');
+                    const metaData = JSON.parse(metaContent);
+                    const filesList: string[] = Array.isArray(metaData?.userData?.files) ? metaData.userData.files : [];
+                    if (!filesList.length) {
+                        return {
+                            success: false,
+                            error: `安装失败：组件 ${compName} 的 meta 未声明要安装的 files`,
+                        };
+                    }
 
-            // 如果有冲突文件，返回错误
-            if (conflictFiles.length > 0) {
-                console.log(`[xhgame_plugin] 检测到冲突文件: ${conflictFiles.join('\n')}`);
-                return {
-                    success: false,
-                    error: `安装失败：检测到以下文件已存在，请先删除或备份这些文件：\n${conflictFiles.join('\n')}`,
-                };
+                    // 检查冲突（仅针对列出的文件）
+                    for (const fileRel of filesList) {
+                        if (fileRel.endsWith('.meta')) continue;
+                        const destPath = path.join(targetPath, fileRel);
+                        try {
+                            await fs.promises.access(destPath);
+                            conflictFiles.push(fileRel);
+                        } catch {}
+                    }
+                    if (conflictFiles.length > 0) {
+                        console.log(`[xhgame_plugin] 检测到冲突文件: ${conflictFiles.join('\n')}`);
+                        return {
+                            success: false,
+                            error: `安装失败：检测到以下文件已存在，请先删除或备份这些文件：\n${conflictFiles.join('\n')}`,
+                        };
+                    }
+
+                    console.log(`[xhgame_plugin] 使用meta files列表进行复制，文件数量: ${filesList.length}`);
+
+                    // 复制列出的文件
+                    async function copySelectedFiles(files: string[]) {
+                        for (const fileRel of files) {
+                            if (fileRel.endsWith('.meta')) continue;
+                            const srcPath = path.join(assetsSourcePath, fileRel);
+                            const destPath = path.join(targetPath, fileRel);
+                            try {
+                                const stat = await fs.promises.stat(srcPath);
+                                if (stat.isDirectory()) {
+                                    await fs.promises.mkdir(destPath, { recursive: true });
+                                    await copyDirectory(srcPath, destPath, fileRel);
+                                } else {
+                                    await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
+                                    await fs.promises.copyFile(srcPath, destPath);
+                                    copiedFiles.push(fileRel);
+                                    console.log(`[xhgame_plugin] 复制文件: ${fileRel}`);
+                                }
+                            } catch (e) {
+                                missingFiles.push(fileRel);
+                                console.warn(`[xhgame_plugin] 缺失文件（未在压缩包中找到）: ${fileRel}`);
+                            }
+                        }
+                    }
+
+                    await copySelectedFiles(filesList);
+
+                    if (missingFiles.length > 0) {
+                        return {
+                            success: false,
+                            error: `安装失败：以下声明的文件在压缩包中未找到：\n${missingFiles.join('\n')}`,
+                        };
+                    }
+                } catch (err) {
+                    return {
+                        success: false,
+                        error: `安装失败：读取组件meta失败或格式错误（${String(err)}）`,
+                    };
+                }
+            } else {
+                // 旧模式或无meta：复制整个源目录（保持兼容）
+                await checkConflicts(assetsSourcePath, targetPath);
+                if (conflictFiles.length > 0) {
+                    console.log(`[xhgame_plugin] 检测到冲突文件: ${conflictFiles.join('\n')}`);
+                    return {
+                        success: false,
+                        error: `安装失败：检测到以下文件已存在，请先删除或备份这些文件：\n${conflictFiles.join('\n')}`,
+                    };
+                }
+                console.log(`[xhgame_plugin] 没有冲突文件，开始复制整个目录...`);
+                await copyDirectory(assetsSourcePath, targetPath);
             }
-            console.log(`[xhgame_plugin] 没有冲突文件，开始复制...`);
 
             async function copyDirectory(srcDir: string, destDir: string, relativePath: string = '') {
                 const items = await fs.promises.readdir(srcDir, { withFileTypes: true });
@@ -216,14 +317,12 @@ export class Util {
                         await copyDirectory(srcPath, destPath, relPath);
                     } else {
                         // 复制文件
-                        await Editor.Utils.File.copy(srcPath, destPath);
+                        await fs.promises.copyFile(srcPath, destPath);
                         copiedFiles.push(relPath);
                         console.log(`[xhgame_plugin] 复制文件: ${relPath}`);
                     }
                 }
             }
-
-            await copyDirectory(assetsSourcePath, targetPath);
 
             console.log(`[xhgame_plugin] 组件安装完成，共复制 ${copiedFiles.length} 个文件`);
 
@@ -254,6 +353,23 @@ export class Util {
                 success: false,
                 error: error instanceof Error ? error.message : String(error)
             };
+        } finally {
+            // 清理临时解压目录
+            if (extractTempDir && fs.existsSync(extractTempDir)) {
+                try {
+                    await fs.promises.rm(extractTempDir, { recursive: true, force: true });
+                    const parentExtractDir = path.join(getPackagesPath(pluginName), '__extract');
+                    // 若父目录为空则清理
+                    try {
+                        const remain = await fs.promises.readdir(parentExtractDir);
+                        if (remain.length === 0) {
+                            await fs.promises.rm(parentExtractDir, { recursive: true, force: true });
+                        }
+                    } catch {}
+                } catch (cleanupErr) {
+                    console.warn(`[xhgame_plugin] 清理临时目录失败: ${extractTempDir}`, cleanupErr);
+                }
+            }
         }
 
 
