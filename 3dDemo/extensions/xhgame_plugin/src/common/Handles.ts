@@ -463,60 +463,6 @@ export class Handles {
                     console.warn(`[xhgame_plugin] 文件不存在或处理失败: ${relativeFilePath}`, error);
                     notFoundFiles.push(relativeFilePath);
                 }
-
-                // 处理对应的.meta文件
-                try {
-                    // 检查.meta文件是否存在
-                    await fs.promises.access(metaFilePath);
-                    // 删除原.meta文件
-                    await fs.promises.unlink(metaFilePath);
-                    deletedFiles.push(relativeMetaFilePath);
-                    console.log(`[xhgame_plugin] 删除.meta文件: ${relativeMetaFilePath}`);
-
-                } catch (error) {
-                    // .meta文件可能不存在，这是正常的，不记录为错误
-                    console.log(`[xhgame_plugin] .meta文件不存在或已删除: ${relativeMetaFilePath}`);
-                }
-            }
-
-            // 处理组件目录的.meta文件
-            const processedDirs = new Set<string>();
-            for (const relativeFilePath of component.copiedFiles) {
-                const dirPath = path.dirname(relativeFilePath);
-
-                // 避免重复处理同一个目录
-                if (processedDirs.has(dirPath)) {
-                    continue;
-                }
-                processedDirs.add(dirPath);
-
-                const fullDirPath = path.join(assetsPath, dirPath);
-                const dirMetaFilePath = fullDirPath + '.meta';
-                const relativeDirMetaFilePath = dirPath + '.meta';
-
-                try {
-                    // 检查目录的.meta文件是否存在
-                    await fs.promises.access(dirMetaFilePath);
-
-                    // 创建备份目录.meta文件的目录结构
-                    const backupDirMetaFilePath = path.join(componentBackupDir, relativeDirMetaFilePath);
-                    const backupDirMetaFileDir = path.dirname(backupDirMetaFilePath);
-                    await fs.promises.mkdir(backupDirMetaFileDir, { recursive: true });
-
-                    // 备份目录.meta文件
-                    await Editor.Utils.File.copy(dirMetaFilePath, backupDirMetaFilePath);
-                    backedUpFiles.push(relativeDirMetaFilePath);
-                    console.log(`[xhgame_plugin] 备份目录.meta文件: ${relativeDirMetaFilePath}`);
-
-                    // 删除原目录.meta文件
-                    await fs.promises.unlink(dirMetaFilePath);
-                    deletedFiles.push(relativeDirMetaFilePath);
-                    console.log(`[xhgame_plugin] 删除目录.meta文件: ${relativeDirMetaFilePath}`);
-
-                } catch (error) {
-                    // 目录.meta文件可能不存在，这是正常的，不记录为错误
-                    console.log(`[xhgame_plugin] 目录.meta文件不存在或已删除: ${relativeDirMetaFilePath}`);
-                }
             }
 
             // 清理空目录

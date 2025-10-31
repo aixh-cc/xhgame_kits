@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-10-31T08:48:58.398Z",
+  "lastUpdated": "2025-10-31T08:51:15.765Z",
   "localComponents": {
     "HelpAndChat": {
       "status": "installed",
@@ -14,7 +14,7 @@
     },
     "TestItem": {
       "status": "installed",
-      "installDate": "2025-10-31T08:48:58.398Z",
+      "installDate": "2025-10-31T08:51:15.765Z",
       "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
     }
   },
@@ -57,7 +57,7 @@
         "script/Test.ts",
         "script/Test.ts.meta"
       ],
-      "installedAt": "2025-10-31T08:48:58.398Z"
+      "installedAt": "2025-10-31T08:51:15.765Z"
     }
   ]
 }
