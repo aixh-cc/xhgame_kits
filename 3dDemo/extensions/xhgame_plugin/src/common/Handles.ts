@@ -95,6 +95,12 @@ export class Handles {
     static async installComponent(param: any): Promise<IInstallRes> {
 
         const { compName, pluginName } = param;
+        if (!compName || !pluginName) {
+            return {
+                success: false,
+                error: '组件名或插件名不能为空'
+            };
+        }
 
         console.log(`[xhgame_plugin] 安装组件请求: ${compName}`, param);
         let extractTempDir = '';
