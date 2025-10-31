@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import AdmZip from 'adm-zip';
-import { IGetPackagesRes, IGetVersionRes, IInstallRes, IPackageInfoWithStatus, IUninstallRes } from './defined';
+import { IGetPackagesRes, IGetVersionRes, IInstallInfoRes, IInstallRes, IPackageInfoWithStatus, IUninstallRes } from './defined';
 
 export const getPluginPath = (pluginName: string) => {
     if (typeof Editor != 'undefined' && Editor.Project) {
@@ -26,20 +26,6 @@ export const getProjectPath = (pluginName: string) => {
     let pluginPath = getPluginPath(pluginName);
     return path.resolve(pluginPath, '../../');
 };
-
-interface IBackupResult {
-    success: boolean;
-    error?: string;
-    hasBackup?: boolean;
-    exists?: boolean;
-    backupInfo?: any;
-    backupPath?: string;
-}
-interface IInstallResult {
-    success: boolean;
-    error?: string;
-    installInfo?: any
-}
 
 export class Util {
     static async getVersion(pluginName: string): Promise<IGetVersionRes> {
@@ -656,7 +642,7 @@ export class Util {
         }
     }
 
-    static async checkInstallExists(param: any): Promise<IInstallResult> {
+    static async checkInstallExists(param: any): Promise<IInstallInfoRes> {
         const { pluginName } = param;
         if (!pluginName) {
             return {
@@ -694,79 +680,4 @@ export class Util {
             };
         }
     }
-
-    // 检查组件是否有备份文件
-    static async checkBackupExists(param: any): Promise<IBackupResult> {
-        const { componentCode, pluginName } = param;
-
-        if (!componentCode || !pluginName) {
-            return {
-                success: false,
-                error: '组件代码不能为空或插件名不能为空'
-            };
-        }
-
-        try {
-            const pluginPath = getPluginPath(pluginName);
-            if (!pluginPath) {
-                throw new Error('无法获取插件路径');
-            }
-
-            const backupDir = path.join(pluginPath, 'backup');
-            console.log('backupDir', backupDir)
-            if (!fs.existsSync(backupDir)) {
-                console.log('不存在', backupDir)
-                return {
-                    success: true,
-                    hasBackup: false,
-                    exists: false
-                };
-            }
-
-            // 直接检查组件名目录
-            const componentBackupDir = componentCode;
-            const componentBackupPath = path.join(backupDir, componentBackupDir);
-            console.log('fs.existsSync(componentBackupPath)', componentBackupPath)
-            if (!fs.existsSync(componentBackupPath)) {
-                return {
-                    success: true,
-                    hasBackup: false,
-                    exists: false
-                };
-            }
-
-            // 检查备份信息文件是否存在
-            const backupInfoPath = path.join(componentBackupPath, 'backup-info.json');
-            const hasBackupInfo = fs.existsSync(backupInfoPath);
-
-            if (hasBackupInfo) {
-                const backupInfo = JSON.parse(await fs.promises.readFile(backupInfoPath, 'utf-8'));
-                return {
-                    success: true,
-                    hasBackup: true,
-                    exists: true,
-                    backupInfo: backupInfo,
-                    backupPath: componentBackupPath
-                };
-            } else {
-                return {
-                    success: true,
-                    hasBackup: false,
-                    exists: false,
-                    backupInfo: null,
-                    backupPath: ''
-                };
-            }
-
-        } catch (error) {
-            console.error(`[xhgame_plugin] 检查备份文件失败:`, error);
-            return {
-                success: false,
-                error: error instanceof Error ? error.message : String(error),
-                hasBackup: false,
-                exists: false
-            };
-        }
-    }
-
 }

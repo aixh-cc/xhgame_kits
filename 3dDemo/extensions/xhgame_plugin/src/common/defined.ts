@@ -22,6 +22,11 @@ export interface IInstallInfo {
     installedComponents: InstalledComp[];
     lastUpdated: string;
 }
+export interface IInstallInfoRes {
+    success: boolean;
+    error?: string;
+    installInfo?: any
+}
 export interface InstalledComp {
     componentName: string;
     componentId: string;
