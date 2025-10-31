@@ -315,12 +315,13 @@ export class Util {
                     const destPath = path.join(destDir, item.name);
                     const relPath = path.join(relativePath, item.name);
 
-                    // 跳过所有 .meta 文件和文件夹
-                    if (item.name.endsWith('.meta')) {
-                        continue;
-                    }
+
 
                     if (item.isDirectory()) {
+                        // 所有 .meta 文件夹可以跳过
+                        if (item.name.endsWith('.meta')) {
+                            continue;
+                        }
                         // 创建目录
                         await fs.promises.mkdir(destPath, { recursive: true });
                         await copyDirectory(srcPath, destPath, relPath);
@@ -543,6 +544,17 @@ export class Util {
                 try {
                     // 检查目录的.meta文件是否存在
                     await fs.promises.access(dirMetaFilePath);
+
+                    // 创建备份目录.meta文件的目录结构
+                    const backupDirMetaFilePath = path.join(componentBackupDir, relativeDirMetaFilePath);
+                    const backupDirMetaFileDir = path.dirname(backupDirMetaFilePath);
+                    await fs.promises.mkdir(backupDirMetaFileDir, { recursive: true });
+
+                    // 备份目录.meta文件
+                    await Editor.Utils.File.copy(dirMetaFilePath, backupDirMetaFilePath);
+                    backedUpFiles.push(relativeDirMetaFilePath);
+                    console.log(`[xhgame_plugin] 备份目录.meta文件: ${relativeDirMetaFilePath}`);
+
                     // 删除原目录.meta文件
                     await fs.promises.unlink(dirMetaFilePath);
                     deletedFiles.push(relativeDirMetaFilePath);
