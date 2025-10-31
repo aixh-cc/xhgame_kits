@@ -500,17 +500,6 @@ export class Util {
                 try {
                     // 检查文件是否存在
                     await fs.promises.access(fullFilePath);
-
-                    // 创建备份文件的目录结构
-                    const backupFilePath = path.join(componentBackupDir, relativeFilePath);
-                    const backupFileDir = path.dirname(backupFilePath);
-                    await fs.promises.mkdir(backupFileDir, { recursive: true });
-
-                    // 备份文件
-                    await fs.promises.copyFile(fullFilePath, backupFilePath);
-                    backedUpFiles.push(relativeFilePath);
-                    console.log(`[xhgame_plugin] 备份文件: ${relativeFilePath}`);
-
                     // 删除原文件
                     await fs.promises.unlink(fullFilePath);
                     deletedFiles.push(relativeFilePath);
@@ -525,17 +514,6 @@ export class Util {
                 try {
                     // 检查.meta文件是否存在
                     await fs.promises.access(metaFilePath);
-
-                    // 创建备份.meta文件的目录结构
-                    const backupMetaFilePath = path.join(componentBackupDir, relativeMetaFilePath);
-                    const backupMetaFileDir = path.dirname(backupMetaFilePath);
-                    await fs.promises.mkdir(backupMetaFileDir, { recursive: true });
-
-                    // 备份.meta文件
-                    await fs.promises.copyFile(metaFilePath, backupMetaFilePath);
-                    backedUpFiles.push(relativeMetaFilePath);
-                    console.log(`[xhgame_plugin] 备份.meta文件: ${relativeMetaFilePath}`);
-
                     // 删除原.meta文件
                     await fs.promises.unlink(metaFilePath);
                     deletedFiles.push(relativeMetaFilePath);
@@ -565,17 +543,6 @@ export class Util {
                 try {
                     // 检查目录的.meta文件是否存在
                     await fs.promises.access(dirMetaFilePath);
-
-                    // 创建备份目录.meta文件的目录结构
-                    const backupDirMetaFilePath = path.join(componentBackupDir, relativeDirMetaFilePath);
-                    const backupDirMetaFileDir = path.dirname(backupDirMetaFilePath);
-                    await fs.promises.mkdir(backupDirMetaFileDir, { recursive: true });
-
-                    // 备份目录.meta文件
-                    await Editor.Utils.File.copy(dirMetaFilePath, backupDirMetaFilePath);
-                    backedUpFiles.push(relativeDirMetaFilePath);
-                    console.log(`[xhgame_plugin] 备份目录.meta文件: ${relativeDirMetaFilePath}`);
-
                     // 删除原目录.meta文件
                     await fs.promises.unlink(dirMetaFilePath);
                     deletedFiles.push(relativeDirMetaFilePath);
