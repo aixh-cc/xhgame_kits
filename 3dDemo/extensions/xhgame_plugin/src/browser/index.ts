@@ -1,6 +1,6 @@
 import { name } from '../../package.json' with { type: 'json' };
 import { IGetPackagesRes, IGetVersionRes } from '../common/defined';
-import { Util } from '../common/Util';
+import { Handles } from '../common/Handles';
 
 export const methods = {
     async open() {
@@ -13,7 +13,7 @@ export const methods = {
         };
     },
     async getPackages(): Promise<IGetPackagesRes> {
-        return await Util.getPackages(name)
+        return await Handles.getPackages(name)
     }
 };
 

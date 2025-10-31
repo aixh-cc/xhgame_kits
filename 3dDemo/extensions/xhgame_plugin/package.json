@@ -87,10 +87,10 @@
                     "getPackages"
                 ]
             },
-            "install-from-assets": {
+            "install-component": {
                 "info": "安装组件",
                 "methods": [
-                    "installFromAssets"
+                    "installComponent"
                 ]
             },
             "remove-installed-component": {

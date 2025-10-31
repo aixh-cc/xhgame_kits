@@ -26,8 +26,8 @@ class CocosEditorBridge {
     async getPackages(): Promise<IGetPackagesRes> {
         return this.requestMessage('xhgame_plugin', 'get-packages');
     }
-    async installFromAssets(param: { compName: string }): Promise<IInstallRes> {
-        return this.requestMessage('xhgame_plugin', 'install-from-assets', param);
+    async installComponent(param: { compName: string }): Promise<IInstallRes> {
+        return this.requestMessage('xhgame_plugin', 'install-component', param);
     }
     async uninstallComponent(param: { compName: string }): Promise<IUninstallRes> {
         try {

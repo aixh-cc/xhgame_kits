@@ -67,7 +67,7 @@ onMounted(() => {
 });
 
 // 从插件assets安装组件
-async function installFromAssets(component: any) {
+async function installComponent(component: any) {
   if(component.installStatus === 'has'){
     return 
   }
@@ -91,7 +91,7 @@ async function installFromAssets(component: any) {
       type: 'info'
     });
     
-    const install_res:IInstallRes = await cocosEditorBridge.installFromAssets({
+    const install_res:IInstallRes = await cocosEditorBridge.installComponent({
       compName:component.name
     });
     
@@ -116,55 +116,6 @@ async function installFromAssets(component: any) {
   }
 }
 
-// 从插件assets卸载组件
-async function uninstallFromAssets(component: any) {
-  if(component.installStatus === 'has'){
-    return 
-  }
-  console.log(`[xhgame_plugin] 卸载【本地组件】请求:`, component.name);
-  try {
-    // 确认安装
-    const confirmMessage = `确定要卸载 "${component.name}" 组件吗？`;
-    await ElMessageBox.confirm(
-      confirmMessage,
-      '确认安装',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        appendTo: appRootDom
-      }
-    );
-    
-    message({
-      message: `正在安装 ${component.name}...`,
-      type: 'info'
-    });
-    
-    const install_res:IInstallRes = await cocosEditorBridge.installFromAssets({
-      compName:component.name
-    });
-    
-    if (install_res && install_res.success) {
-      message({
-        message: `${component.name} 从内置资源安装成功！`,
-        type: 'success'
-      });
-    } else {
-      message({
-        message: install_res.error,
-        type: 'error'
-      });
-    }
-  } catch (error: any) {
-    if (error === 'cancel') return;
-    
-    message({
-      message: `安装失败: ${error.message || error}`,
-      type: 'error'
-    });
-  }
-}
 // 卸载相关状态与方法
 const uninstallDialogVisible = ref(false);
 const currentUninstallComponent = ref<any | null>(null);
@@ -298,7 +249,7 @@ async function confirmUninstallComponent() {
         <div class="actions">
           <el-button 
             type="success" 
-            @click="installFromAssets(component)">
+            @click="installComponent(component)">
              {{ component.installStatus === 'has' ? (component.needsUpdate ? '更新' : '已安装') : '下载安装' }}
           </el-button>
           <el-button 

@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { Util } from '../common/Util';
+import { Handles } from '../common/Handles';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -18,19 +18,19 @@ app.use((req, res, next) => {
 
 // 获取版本
 app.post('/api/get-version', async (req, res) => {
-    res.json(await Util.getVersion(req.body.pluginName));
+    res.json(await Handles.getVersion(req.body.pluginName));
 });
 // 获取组件列表
 app.post('/api/get-packages', async (req, res) => {
-    res.json(await Util.getPackages(req.body.pluginName));
+    res.json(await Handles.getPackages(req.body.pluginName));
 });
 // 安装组件
-app.post('/api/install-from-assets', async (req, res) => {
-    res.json(await Util.installFromAssets(req.body));
+app.post('/api/install-component', async (req, res) => {
+    res.json(await Handles.installComponent(req.body));
 });
 // 卸载组件
 app.post('/api/uninstall-component', async (req, res) => {
-    res.json(await Util.uninstallComponent(req.body));
+    res.json(await Handles.uninstallComponent(req.body));
 });
 
 // 健康检查

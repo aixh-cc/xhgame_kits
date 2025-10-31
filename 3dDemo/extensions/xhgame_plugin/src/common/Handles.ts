@@ -86,7 +86,7 @@ export class Handles {
             };
         }
     }
-    static async installFromAssets(param: any): Promise<IInstallRes> {
+    static async installComponent(param: any): Promise<IInstallRes> {
 
         const { compName, pluginName } = param;
 
