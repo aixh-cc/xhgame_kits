@@ -1,0 +1,31 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "imported": true,
+  "uuid": "234d311f-767c-4496-b4a5-f1126d266eb1",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "name": "TestItem",
+    "displayName": "测试组件",
+    "version": "1.0.1",
+    "stars": 4,
+    "description": "测试组件",
+    "author": "xhgame",
+    "category": "测试组件",
+    "tags": ["测试组件"],
+    "files": [
+      "script/Test.ts"
+    ],
+    "dependencies": [
+      "@aixh-cc/xhgame_ec_framework"
+    ],
+    "features": [
+      "item而已"
+    ],
+    "usage": {
+      "import": "import { HelpComp, HelpSystem } from './HelpComp'",
+      "example": "xhgame.gameEntity.attachComponent(HelpComp)"
+    }
+  }
+}

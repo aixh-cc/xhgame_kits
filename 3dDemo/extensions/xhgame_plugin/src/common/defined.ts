@@ -9,6 +9,10 @@ export interface IGetPackagesRes {
     packagesPath: string
     packages: IPackageInfoWithStatus[]
 }
+export interface IInstallRes {
+    success: boolean,
+    error?: string,
+}
 
 // 包信息接口定义
 export interface IPackageInfo {

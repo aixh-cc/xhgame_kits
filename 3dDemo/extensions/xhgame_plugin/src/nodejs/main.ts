@@ -21,17 +21,21 @@ app.use((req, res, next) => {
 });
 
 // 路由
-// app.use('/api/packages', packageRoutes);
 app.use('/api/files', fileRoutes);
-// app.use('/api/get-version', editerRoutes);
 
 // 获取版本
 app.post('/api/get-version', async (req, res) => {
     res.json(await Util.getVersion(req.body.pluginName));
 });
+// 获取组件列表
 app.post('/api/get-packages', async (req, res) => {
     res.json(await Util.getPackages(req.body.pluginName));
 });
+// 获取组件列表
+app.post('/api/install-from-assets', async (req, res) => {
+    res.json(await Util.installFromAssets(req.body));
+});
+
 
 // 健康检查
 app.get('/health', (req, res) => {

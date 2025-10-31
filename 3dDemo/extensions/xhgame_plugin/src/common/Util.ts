@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { IGetPackagesRes, IGetVersionRes, IPackageInfoWithStatus } from './defined';
+import { IGetPackagesRes, IGetVersionRes, IInstallRes, IPackageInfoWithStatus } from './defined';
 
 export const getPluginPath = (pluginName: string) => {
     if (typeof Editor != 'undefined' && Editor.Project) {
@@ -62,6 +62,7 @@ export class Util {
     }
 
     static async getPackages(pluginName: string): Promise<IGetPackagesRes> {
+        console.log('getPackages', pluginName)
         try {
             const packagesPath = getPackagesPath(pluginName);
             if (!fs.existsSync(packagesPath)) {
@@ -130,6 +131,136 @@ export class Util {
                 packages: []
             };
         }
+    }
+    static async installFromAssets(param: any): Promise<IInstallRes> {
+
+        const { compName, pluginName } = param;
+
+        console.log(`[xhgame_plugin] 从内置资源安装组件请求: ${compName}`);
+        try {
+            let packagePath = getPackagesPath(pluginName)
+            const assetsSourcePath = path.join(packagePath, compName);
+
+            // 获取项目assets/script目录路径
+            const projectPath = getProjectPath(pluginName);
+            const targetPath = path.join(projectPath, 'assets');
+
+            // 确保目标目录存在
+            await fs.promises.mkdir(targetPath, { recursive: true });
+
+            console.log(`[xhgame_plugin] 源路径: ${assetsSourcePath}`);
+            console.log(`[xhgame_plugin] 目标路径: ${targetPath}`);
+
+            // 复制所有assets目录下的文件到项目script目录
+            const copiedFiles: string[] = [];
+            const conflictFiles: string[] = [];
+
+            // 先检查是否有同名文件冲突
+            async function checkConflicts(srcDir: string, destDir: string, relativePath: string = '') {
+                const items = await fs.promises.readdir(srcDir, { withFileTypes: true });
+
+                for (const item of items) {
+                    const destPath = path.join(destDir, item.name);
+                    const relPath = path.join(relativePath, item.name);
+
+                    // 跳过所有 .meta 文件和文件夹
+                    if (item.name.endsWith('.meta')) {
+                        continue;
+                    }
+
+                    if (item.isDirectory()) {
+                        // 检查目录下的文件
+                        const srcSubDir = path.join(srcDir, item.name);
+                        await checkConflicts(srcSubDir, destPath, relPath);
+                    } else {
+                        // 检查文件是否已存在
+                        try {
+                            await fs.promises.access(destPath);
+                            conflictFiles.push(relPath);
+                        } catch (error) {
+                            // 文件不存在，没有冲突
+                        }
+                    }
+                }
+            }
+
+            // 先检查冲突
+            await checkConflicts(assetsSourcePath, targetPath);
+
+            // 如果有冲突文件，返回错误
+            if (conflictFiles.length > 0) {
+                console.log(`[xhgame_plugin] 检测到冲突文件: ${conflictFiles.join('\n')}`);
+                return {
+                    success: false,
+                    error: `安装失败：检测到以下文件已存在，请先删除或备份这些文件：\n${conflictFiles.join('\n')}`,
+                };
+            }
+            console.log(`[xhgame_plugin] 没有冲突文件，开始复制...`);
+
+            async function copyDirectory(srcDir: string, destDir: string, relativePath: string = '') {
+                const items = await fs.promises.readdir(srcDir, { withFileTypes: true });
+
+                for (const item of items) {
+                    const srcPath = path.join(srcDir, item.name);
+                    const destPath = path.join(destDir, item.name);
+                    const relPath = path.join(relativePath, item.name);
+
+                    // 跳过所有 .meta 文件和文件夹
+                    if (item.name.endsWith('.meta')) {
+                        continue;
+                    }
+
+                    if (item.isDirectory()) {
+                        // 创建目录
+                        await fs.promises.mkdir(destPath, { recursive: true });
+                        await copyDirectory(srcPath, destPath, relPath);
+                    } else {
+                        // 复制文件
+                        await Editor.Utils.File.copy(srcPath, destPath);
+                        copiedFiles.push(relPath);
+                        console.log(`[xhgame_plugin] 复制文件: ${relPath}`);
+                    }
+                }
+            }
+
+            await copyDirectory(assetsSourcePath, targetPath);
+
+            console.log(`[xhgame_plugin] 组件安装完成，共复制 ${copiedFiles.length} 个文件`);
+
+            // 记录安装信息到配置文件
+            // try {
+            //     await ConfigManager.addInstalledComponent({
+            //         componentName,
+            //         componentId,
+            //         componentCode,
+            //         version: '1.0.0', // 可以从param中获取或从组件包信息中读取
+            //         copiedFiles: copiedFiles
+            //     });
+            //     console.log(`[xhgame_plugin] 组件安装信息已记录到配置文件`);
+            // } catch (configError) {
+            //     console.warn(`[xhgame_plugin] 记录安装信息失败，但组件安装成功:`, configError);
+            //     // 不影响安装结果，只是记录失败
+            // }
+
+            return {
+                success: true,
+                error: `组件 ${compName} 从内置资源安装成功！`,
+                // copiedFiles: copiedFiles
+            };
+
+        } catch (error) {
+            console.error(`[xhgame_plugin] 从内置资源安装组件失败: `, error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+
+
+        return {
+            success: false,
+            error: 'Failed to get packages',
+        };
     }
 
     static async checkInstallExists(param: any): Promise<IInstallResult> {

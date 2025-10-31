@@ -92,11 +92,13 @@ async function installFromAssets(component: any) {
     });
     
     // 调用后端API进行文件复制
-    const result = await Editor.Message.request(name, 'install-from-assets', {
-      componentName: component.name,
-      componentId: component.id,
-      componentCode: component.code
-    });
+    // const result = await Editor.Message.request(name, 'install-from-assets', {
+    //   compName: component.name,
+    //   componentId: component.id,
+    //   componentCode: component.code
+    // });
+
+    const install_res:IGetPackagesRes = await cocosEditorBridge.installFromAssets();
     
     if (result && result.success) {
       message({
