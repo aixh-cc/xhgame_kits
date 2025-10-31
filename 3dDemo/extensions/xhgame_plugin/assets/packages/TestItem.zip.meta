@@ -15,7 +15,8 @@
     "category": "测试组件",
     "tags": ["测试组件"],
     "files": [
-      "script/Test.ts"
+      "script/Test.ts",
+      "script/Test.ts.meta"
     ],
     "dependencies": [
       "@aixh-cc/xhgame_ec_framework"
