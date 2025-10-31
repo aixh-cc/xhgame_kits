@@ -7,8 +7,8 @@ import { IGetPackagesRes, IGetVersionRes, IPackageInfoWithStatus } from './defin
 export const getPackagesPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
     let currentDir = ''
-    if ((window as any).Editor && (window as any).Editor.Panel) {
-        currentDir = Editor.Package.getPath(pluginName) as string;
+    if (typeof Editor != 'undefined' && Editor.Project) {
+        currentDir = path.join(Editor.Project.path, 'extensions', pluginName);
     } else {
         currentDir = process.cwd();
     }
@@ -19,8 +19,8 @@ export const getPackagesPath = (pluginName: string) => {
 export const getPluginPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
     let currentDir = ''
-    if ((window as any).Editor && (window as any).Editor.Panel) {
-        currentDir = Editor.Package.getPath(pluginName) as string;
+    if (typeof Editor != 'undefined' && Editor.Project) {
+        currentDir = path.join(Editor.Project.path, 'extensions', pluginName);
     } else {
         currentDir = process.cwd();
     }
@@ -30,8 +30,8 @@ export const getPluginPath = (pluginName: string) => {
 export const getExtensionsPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
     let currentDir = ''
-    if ((window as any).Editor && (window as any).Editor.Panel) {
-        currentDir = Editor.Package.getPath(pluginName) as string;
+    if (typeof Editor != 'undefined' && Editor.Project) {
+        currentDir = path.join(Editor.Project.path, 'extensions', pluginName);
     } else {
         currentDir = process.cwd();
     }
@@ -41,8 +41,8 @@ export const getExtensionsPath = (pluginName: string) => {
 export const getProjectPath = (pluginName: string) => {
     // 从当前插件目录向上找到项目根目录
     let currentDir = ''
-    if ((window as any).Editor && (window as any).Editor.Panel) {
-        currentDir = Editor.Package.getPath(pluginName) as string;
+    if (typeof Editor != 'undefined' && Editor.Project) {
+        currentDir = path.join(Editor.Project.path, 'extensions', pluginName);
     } else {
         currentDir = process.cwd();
     }
@@ -65,8 +65,8 @@ interface IInstallResult {
 }
 
 export class Util {
-    static async getVersion(): Promise<IGetVersionRes> {
-        const projectPath = getProjectPath();
+    static async getVersion(pluginName: string): Promise<IGetVersionRes> {
+        const projectPath = getProjectPath(pluginName);
         // 检查备份信息文件是否存在
         const packagePath = path.join(projectPath, 'package.json');
         const hasFile = fs.existsSync(packagePath);

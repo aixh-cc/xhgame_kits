@@ -27,7 +27,7 @@ app.use('/api/files', fileRoutes);
 
 // 获取版本
 app.post('/api/get-version', async (req, res) => {
-    res.json(await Util.getVersion());
+    res.json(await Util.getVersion(req.body.pluginName));
 });
 app.post('/api/get-packages', async (req, res) => {
     res.json(await Util.getPackages());
