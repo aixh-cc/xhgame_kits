@@ -5,7 +5,7 @@ import { inject } from 'vue';
 import { name } from '../../../package.json';
 import { keyAppRoot, keyMessage } from '../provide-inject';
 import { apiService } from '../api-service';
-import { IGetPackagesRes, IPackageInfo } from '../../common/defined';
+import { IGetPackagesRes, IInstallRes, IPackageInfo } from '../../common/defined';
 import cocosEditorBridge from '../cocos-bridge';
 
 
@@ -98,16 +98,18 @@ async function installFromAssets(component: any) {
     //   componentCode: component.code
     // });
 
-    const install_res:IGetPackagesRes = await cocosEditorBridge.installFromAssets();
+    const install_res:IInstallRes = await cocosEditorBridge.installFromAssets({
+      compName:component.name
+    });
     
-    if (result && result.success) {
+    if (install_res && install_res.success) {
       message({
         message: `${component.name} 从内置资源安装成功！`,
         type: 'success'
       });
     } else {
       message({
-        message: result.message,
+        message: install_res.error,
         type: 'error'
       });
     }

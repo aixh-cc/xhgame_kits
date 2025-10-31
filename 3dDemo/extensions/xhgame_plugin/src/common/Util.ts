@@ -136,7 +136,7 @@ export class Util {
 
         const { compName, pluginName } = param;
 
-        console.log(`[xhgame_plugin] 从内置资源安装组件请求: ${compName}`);
+        console.log(`[xhgame_plugin] 从内置资源安装组件请求: ${compName}`, param);
         try {
             let packagePath = getPackagesPath(pluginName)
             const assetsSourcePath = path.join(packagePath, compName);
