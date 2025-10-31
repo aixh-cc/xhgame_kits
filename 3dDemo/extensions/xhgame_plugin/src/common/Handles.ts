@@ -426,23 +426,9 @@ export class Handles {
                     error: `未找到组件 ${compName} 的安装记录`
                 };
             }
-            // 创建备份目录
-            const backupDir = path.join(extensionPath, pluginName, 'backup');
-            await fs.promises.mkdir(backupDir, { recursive: true });
-            // 使用组件名作为备份文件夹名称（简化版本，只保留一个备份）
-            const backupFolderName = compName;
-            const componentBackupDir = path.join(backupDir, backupFolderName);
-            // 如果已存在旧备份，先删除
-            if (fs.existsSync(componentBackupDir)) {
-                await fs.promises.rm(componentBackupDir, { recursive: true });
-                console.log(`[xhgame_plugin] 删除旧备份目录: ${componentBackupDir}`);
-            }
-            await fs.promises.mkdir(componentBackupDir, { recursive: true });
-
-            console.log(`[xhgame_plugin] 备份目录: ${componentBackupDir}`);
 
             // 备份和删除文件
-            const backedUpFiles: string[] = [];
+            // const backedUpFiles: string[] = [];
             const deletedFiles: string[] = [];
             const notFoundFiles: string[] = [];
 
@@ -541,7 +527,6 @@ export class Handles {
             }
 
             console.log(`[xhgame_plugin] 组件卸载完成: ${component.componentName}`);
-            console.log(`[xhgame_plugin] 备份文件数: ${backedUpFiles.length}, 删除文件数: ${deletedFiles.length}, 未找到文件数: ${notFoundFiles.length}`);
 
             return {
                 success: true,
