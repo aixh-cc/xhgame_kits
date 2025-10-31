@@ -3,7 +3,7 @@ import { CCInteger } from 'cc';
 import { CCString } from 'cc';
 import { xhgame } from 'db://assets/script/xhgame';
 import { BYTEDANCE } from 'cc/env';
-import { CocosBaseView } from 'db://xhgame_plugin/Ui/CocosBaseView';
+import { CocosBaseView } from 'db://xhgame-plugin-framework/Ui/CocosBaseView';
 import { GateViewComp } from '../../comps/gate/GateViewComp';
 
 const { ccclass, property } = _decorator;

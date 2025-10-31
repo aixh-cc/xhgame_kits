@@ -1,5 +1,5 @@
 import { CCFloat, ProgressBar, CCBoolean, _decorator } from 'cc';
-import { CocosBaseView } from 'db://xhgame_plugin/Ui/CocosBaseView';
+import { CocosBaseView } from 'db://xhgame-plugin-framework/Ui/CocosBaseView';
 import { ILoadResourceToGateViewVM } from '../../comps/enter/LoadResourceToGateComp';
 
 const { ccclass, property } = _decorator;

@@ -1,8 +1,8 @@
 import { _decorator, Component, director, instantiate, Node, Prefab } from "cc";
 import { xhgame } from "db://assets/script/xhgame";
 import { DI, IAudioDrive } from "@aixh-cc/xhgame_ec_framework";
-import { AudioEffect } from "db://xhgame_plugin/ccComponent/AudioEffect";
-import { AudioMusic } from "db://xhgame_plugin/ccComponent/AudioMusic";
+import { AudioEffect } from "db://xhgame-plugin-framework/ccComponent/AudioEffect";
+import { AudioMusic } from "db://xhgame-plugin-framework/ccComponent/AudioMusic";
 
 const { ccclass } = _decorator;
 

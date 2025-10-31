@@ -1,7 +1,7 @@
 import { _decorator } from "cc";
 import { xhgame } from "db://assets/script/xhgame";
 import { CCBoolean } from "cc";
-import { CocosBaseView } from "db://xhgame_plugin/Ui/CocosBaseView";
+import { CocosBaseView } from "db://xhgame-plugin-framework/Ui/CocosBaseView";
 import { ISettingViewVM } from "../../comps/common/SettingViewComp";
 
 const { ccclass, property } = _decorator;

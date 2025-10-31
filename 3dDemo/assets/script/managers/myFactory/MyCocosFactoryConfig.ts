@@ -1,11 +1,11 @@
-import { CocosUiItem, CocosUiItemFactoryDrive } from "db://xhgame_plugin/sample/items/CocosUiItem"
-import { CocosTextUiItem, CocosTextUiItemFactoryDrive } from "db://xhgame_plugin/sample/items/CocosTextUiItem"
-import { CocosUnitUiItem, CocosUnitUiItemFactoryDrive } from "db://xhgame_plugin/sample/items/CocosUnitUiItem"
-import { CocosEffectItem, CocosEffectItemFactoryDrive } from "db://xhgame_plugin/sample/items/CocosEffectItem"
-import { CocosTiledItem, CocosTiledItemFactoryDrive } from "db://xhgame_plugin/sample/items/CocosTiledItem"
+import { CocosUiItem, CocosUiItemFactoryDrive } from "db://xhgame-plugin-framework/sample/items/CocosUiItem"
+import { CocosTextUiItem, CocosTextUiItemFactoryDrive } from "db://xhgame-plugin-framework/sample/items/CocosTextUiItem"
+import { CocosUnitUiItem, CocosUnitUiItemFactoryDrive } from "db://xhgame-plugin-framework/sample/items/CocosUnitUiItem"
+import { CocosEffectItem, CocosEffectItemFactoryDrive } from "db://xhgame-plugin-framework/sample/items/CocosEffectItem"
+import { CocosTiledItem, CocosTiledItemFactoryDrive } from "db://xhgame-plugin-framework/sample/items/CocosTiledItem"
 import { IFactoryConfig } from "@aixh-cc/xhgame_ec_framework"
 import { EffectItemFactory, FactoryType, TextUiItemFactory, TiledItemFactory, UiItemFactory, UnitItemFactory, UnitUiItemFactory } from "./MyFactorys"
-import { CocosUnitItem, CocosUnitItemFactoryDrive } from "db://xhgame_plugin/sample/items/CocosUnitItem"
+import { CocosUnitItem, CocosUnitItemFactoryDrive } from "db://xhgame-plugin-framework/sample/items/CocosUnitItem"
 
 export class MyCocosFactoryConfig implements IFactoryConfig {
     [FactoryType.unitItem]: UnitItemFactory<CocosUnitItemFactoryDrive, CocosUnitItem> = (new UnitItemFactory<CocosUnitItemFactoryDrive, CocosUnitItem>()).setItemProduceDrive(new CocosUnitItemFactoryDrive());

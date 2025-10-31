@@ -1,5 +1,5 @@
 import { Label, _decorator } from 'cc';
-import { CocosBaseView } from 'db://xhgame_plugin/Ui/CocosBaseView';
+import { CocosBaseView } from 'db://xhgame-plugin-framework/Ui/CocosBaseView';
 import { xhgame } from '../../xhgame';
 
 const { ccclass, property } = _decorator;

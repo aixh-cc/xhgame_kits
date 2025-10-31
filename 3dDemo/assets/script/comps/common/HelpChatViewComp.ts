@@ -2,7 +2,7 @@
 import { System } from "@aixh-cc/xhgame_ec_framework"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { xhgame } from "../../xhgame"
-import { IHelpChatView } from "db://xhgame_plugin/packages/HelpAndChat/script/comps/third/HelpAndChat/HelpChatViewComp"
+import { IHelpChatView } from "../../managers/myTable/tables/HelpTable"
 
 export class HelpChatViewSystem extends System {
 

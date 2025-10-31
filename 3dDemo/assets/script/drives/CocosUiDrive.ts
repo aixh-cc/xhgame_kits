@@ -2,7 +2,7 @@ import { _decorator, AssetManager, Component, instantiate, math, Node, Prefab, R
 import { BaseModelComp, DI, IUiDrive, IView } from "@aixh-cc/xhgame_ec_framework";
 import { xhgame } from "db://assets/script/xhgame";
 import { IUiItem } from "../managers/myFactory/MyFactorys";
-import { CocosBaseView } from "db://xhgame_plugin/Ui/CocosBaseView";
+import { CocosBaseView } from "db://xhgame-plugin-framework/Ui/CocosBaseView";
 import { FirstUiView } from "../views/first_ui/FirstUiView";
 import { find } from "cc";
 

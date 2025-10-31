@@ -1,9 +1,9 @@
 import { _decorator, Label, Node, CCString } from "cc";
-import { PlistSpriteComponent } from "db://xhgame_plugin/ccComponent/PlistSpriteComponent";
-import { CocosBaseView } from "db://xhgame_plugin/Ui/CocosBaseView";
+import { PlistSpriteComponent } from "db://xhgame-plugin-framework/ccComponent/PlistSpriteComponent";
+import { CocosBaseView } from "db://xhgame-plugin-framework/Ui/CocosBaseView";
 import { HelpChatViewComp } from "../../comps/common/HelpChatViewComp";
 import { xhgame } from "db://assets/script/xhgame";
-import { IHelpChatView } from "db://xhgame_plugin/packages/HelpAndChat/script/comps/third/HelpAndChat/HelpChatViewComp";
+import { IHelpChatView } from "db://xhgame-plugin-framework/packages/HelpAndChat/script/comps/third/HelpAndChat/HelpChatViewComp";
 
 const { ccclass, property } = _decorator;
 

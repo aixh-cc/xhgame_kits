@@ -1,5 +1,5 @@
 import { _decorator, CCBoolean, CCInteger, Component, Label, Node } from "cc";
-import { CocosBaseItemView } from "db://xhgame_plugin/ccComponent/CocosBaseItemView";
+import { CocosBaseItemView } from "db://xhgame-plugin-framework/ccComponent/CocosBaseItemView";
 
 const { ccclass, property, executeInEditMode } = _decorator;
 

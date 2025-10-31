@@ -1,7 +1,7 @@
 import { Label, ProgressBar, _decorator } from 'cc';
 import { CCFloat } from 'cc';
 import { CCString } from 'cc';
-import { CocosBaseView } from 'db://xhgame_plugin/Ui/CocosBaseView';
+import { CocosBaseView } from 'db://xhgame-plugin-framework/Ui/CocosBaseView';
 
 const { ccclass, property } = _decorator;
 
