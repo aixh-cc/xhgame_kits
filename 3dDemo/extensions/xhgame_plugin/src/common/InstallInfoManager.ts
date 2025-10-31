@@ -1,26 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { getExtensionsPath } from './Util';
-
-export interface IInstallInfo {
-    version: string;
-    lastUpdated: string;
-    installedComponents: Array<{
-        componentName: string;
-        componentId: string;
-        componentCode: string;
-        version: string;
-        copiedFiles: string[];
-        installedAt: string;
-    }>;
-}
-
-export interface IComponentMetadata {
-    componentCode: string;
-    componentId: string;
-    componentDisplayName: string;
-    componentVersion: string;
-}
+import { IComponentMetadata, IInstallInfo } from './defined';
 
 export class InstallInfoManager {
     private pluginName: string;

@@ -27,6 +27,14 @@ export interface IInstallInfoRes {
     error?: string;
     installInfo?: any
 }
+
+export interface IComponentMetadata {
+    componentCode: string;
+    componentId: string;
+    componentDisplayName: string;
+    componentVersion: string;
+}
+
 export interface InstalledComp {
     componentName: string;
     componentId: string;

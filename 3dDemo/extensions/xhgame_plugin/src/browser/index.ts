@@ -1,5 +1,5 @@
 import { name } from '../../package.json' with { type: 'json' };
-import { IGetPackagesRes, IGetVersionRes } from '../common/defined';
+import { IGetPackagesRes, IGetVersionRes, IInstallInfoRes, IUninstallRes } from '../common/defined';
 import { Handles } from '../common/Handles';
 
 export const methods = {
@@ -14,6 +14,12 @@ export const methods = {
     },
     async getPackages(): Promise<IGetPackagesRes> {
         return await Handles.getPackages(name)
+    },
+    async installComponent(): Promise<IInstallInfoRes> {
+        return await Handles.installComponent(name)
+    },
+    async uninstallComponent(): Promise<IUninstallRes> {
+        return await Handles.uninstallComponent(name)
     }
 };
 

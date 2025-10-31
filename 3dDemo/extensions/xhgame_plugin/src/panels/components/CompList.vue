@@ -100,6 +100,7 @@ async function installComponent(component: any) {
         message: `${component.name} 从内置资源安装成功！`,
         type: 'success'
       });
+      await loadComponents();
     } else {
       message({
         message: install_res.error,

@@ -93,22 +93,10 @@
                     "installComponent"
                 ]
             },
-            "remove-installed-component": {
-                "info": "移除组件记录",
-                "methods": [
-                    "removeInstalledComponent"
-                ]
-            },
             "uninstall-component": {
                 "info": "卸载组件",
                 "methods": [
                     "uninstallComponent"
-                ]
-            },
-            "restoreFromBackup": {
-                "info": "从备份恢复组件",
-                "methods": [
-                    "restoreFromBackup"
                 ]
             }
         }
