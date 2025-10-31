@@ -30,17 +30,6 @@
         "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png.meta"
       ],
       "installedAt": "2025-10-25T11:43:21.244Z"
-    },
-    {
-      "componentName": "测试组件",
-      "componentId": "TestItem",
-      "componentCode": "TestItem",
-      "version": "1.0.1",
-      "copiedFiles": [
-        "script/Test.ts",
-        "script/Test.ts.meta"
-      ],
-      "installedAt": "2025-10-31T12:22:46.420Z"
     }
   ]
 }
