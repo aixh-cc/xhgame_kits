@@ -229,6 +229,7 @@ export class Util {
                     const metaContent = await fs.promises.readFile(metaPath, 'utf-8');
                     const metaData = JSON.parse(metaContent);
                     const filesList: string[] = Array.isArray(metaData?.userData?.files) ? metaData.userData.files : [];
+                    console.log('需要进行copy的filesList', filesList)
                     if (!filesList.length) {
                         return {
                             success: false,
@@ -258,7 +259,6 @@ export class Util {
                     // 复制列出的文件
                     async function copySelectedFiles(files: string[]) {
                         for (const fileRel of files) {
-                            if (fileRel.endsWith('.meta')) continue;
                             const srcPath = path.join(assetsSourcePath, fileRel);
                             const destPath = path.join(targetPath, fileRel);
                             try {
@@ -612,21 +612,21 @@ export class Util {
             //     // 不影响卸载结果，只是状态更新失败
             // }
 
-            // 创建备份信息文件
-            const backupInfo = {
-                componentName: component.componentName,
-                componentId: component.componentId,
-                componentCode: component.componentCode,
-                version: component.version,
-                originalInstallTime: component.installedAt,
-                uninstallTime: new Date().toISOString(),
-                backedUpFiles: backedUpFiles,
-                deletedFiles: deletedFiles,
-                notFoundFiles: notFoundFiles
-            };
+            // // 创建备份信息文件
+            // const backupInfo = {
+            //     componentName: component.componentName,
+            //     componentId: component.componentId,
+            //     componentCode: component.componentCode,
+            //     version: component.version,
+            //     originalInstallTime: component.installedAt,
+            //     uninstallTime: new Date().toISOString(),
+            //     backedUpFiles: backedUpFiles,
+            //     deletedFiles: deletedFiles,
+            //     notFoundFiles: notFoundFiles
+            // };
 
-            const backupInfoPath = path.join(componentBackupDir, 'backup-info.json');
-            await fs.promises.writeFile(backupInfoPath, JSON.stringify(backupInfo, null, 2), 'utf-8');
+            // const backupInfoPath = path.join(componentBackupDir, 'backup-info.json');
+            // await fs.promises.writeFile(backupInfoPath, JSON.stringify(backupInfo, null, 2), 'utf-8');
 
             console.log(`[xhgame_plugin] 组件卸载完成: ${component.componentName}`);
             console.log(`[xhgame_plugin] 备份文件数: ${backedUpFiles.length}, 删除文件数: ${deletedFiles.length}, 未找到文件数: ${notFoundFiles.length}`);
