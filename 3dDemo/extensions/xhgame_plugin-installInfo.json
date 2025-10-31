@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-10-31T13:30:50.484Z",
+  "lastUpdated": "2025-10-31T13:34:46.363Z",
   "installedComponents": [
     {
       "componentName": "帮助与聊天组件",
@@ -13,34 +13,6 @@
         "script/comps/third/HelpAndChat/HelpGuideComp.ts"
       ],
       "installedAt": "2025-10-24T06:12:03.452Z"
-    },
-    {
-      "componentName": "uiItem的body组件",
-      "componentId": "MissionItem",
-      "componentCode": "MissionItem",
-      "version": "1.0.0",
-      "copiedFiles": [
-        "script/views/item_bodys/MissionItemView.ts",
-        "script/views/item_bodys/MissionItemView.ts.meta",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab.meta",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist.meta",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png",
-        "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png.meta"
-      ],
-      "installedAt": "2025-10-25T11:43:21.244Z"
-    },
-    {
-      "componentName": "测试组件",
-      "componentId": "TestItem",
-      "componentCode": "TestItem",
-      "version": "1.0.1",
-      "copiedFiles": [
-        "script/Test.ts",
-        "script/Test.ts.meta"
-      ],
-      "installedAt": "2025-10-31T13:30:50.484Z"
     }
   ]
 }
