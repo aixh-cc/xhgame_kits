@@ -3,8 +3,8 @@ import { NodeUtil } from "../../util/cc/NodeUtil";
 import { BaseCocosItem } from "./BaseCocosItem";
 import { IItemProduceDrive } from "@aixh-cc/xhgame_ec_framework";
 import { IUiItem } from "./consts/Interfaces";
-import { CocosBaseItemView } from "../../ccComponent/CocosBaseItemView";
 import { xhgame } from "db://assets/script/xhgame";
+import { CocosBaseItemView } from "db://assets/script/views/CocosBaseItemView";
 
 const { ccclass, property } = _decorator;
 

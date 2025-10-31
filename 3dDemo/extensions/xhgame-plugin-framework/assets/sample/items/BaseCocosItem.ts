@@ -1,6 +1,6 @@
 import { IItem } from "@aixh-cc/xhgame_ec_framework"
 import { v3, Component } from "cc"
-import { CocosBaseItemView } from "../../ccComponent/CocosBaseItemView"
+import { CocosBaseItemView } from "db://assets/script/views/CocosBaseItemView"
 
 export abstract class BaseCocosItem extends Component implements IItem {
     static className = 'BaseCocosItem'

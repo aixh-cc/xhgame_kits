@@ -23,7 +23,7 @@
             "delay_time": 0
         }],
         "param": {
-            "maxBattleId": 8
+            "maxBattleId": 1
         }
     }
 }
