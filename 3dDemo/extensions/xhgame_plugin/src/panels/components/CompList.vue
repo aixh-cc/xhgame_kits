@@ -91,13 +91,6 @@ async function installFromAssets(component: any) {
       type: 'info'
     });
     
-    // 调用后端API进行文件复制
-    // const result = await Editor.Message.request(name, 'install-from-assets', {
-    //   compName: component.name,
-    //   componentId: component.id,
-    //   componentCode: component.code
-    // });
-
     const install_res:IInstallRes = await cocosEditorBridge.installFromAssets({
       compName:component.name
     });
@@ -120,6 +113,107 @@ async function installFromAssets(component: any) {
       message: `安装失败: ${error.message || error}`,
       type: 'error'
     });
+  }
+}
+
+// 从插件assets卸载组件
+async function uninstallFromAssets(component: any) {
+  if(component.installStatus === 'has'){
+    return 
+  }
+  console.log(`[xhgame_plugin] 卸载【本地组件】请求:`, component.name);
+  try {
+    // 确认安装
+    const confirmMessage = `确定要卸载 "${component.name}" 组件吗？`;
+    await ElMessageBox.confirm(
+      confirmMessage,
+      '确认安装',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        appendTo: appRootDom
+      }
+    );
+    
+    message({
+      message: `正在安装 ${component.name}...`,
+      type: 'info'
+    });
+    
+    const install_res:IInstallRes = await cocosEditorBridge.installFromAssets({
+      compName:component.name
+    });
+    
+    if (install_res && install_res.success) {
+      message({
+        message: `${component.name} 从内置资源安装成功！`,
+        type: 'success'
+      });
+    } else {
+      message({
+        message: install_res.error,
+        type: 'error'
+      });
+    }
+  } catch (error: any) {
+    if (error === 'cancel') return;
+    
+    message({
+      message: `安装失败: ${error.message || error}`,
+      type: 'error'
+    });
+  }
+}
+// 卸载相关状态与方法
+const uninstallDialogVisible = ref(false);
+const currentUninstallComponent = ref<any | null>(null);
+const uninstallingComponents = ref<Set<string>>(new Set());
+
+function showUninstallDialog(component: any) {
+  currentUninstallComponent.value = {
+    componentName: component.name,
+    componentCode: (component as any).code || component.name,
+    version: component.version,
+    installedAt: (component as any).installedAt || Date.now(),
+  };
+  uninstallDialogVisible.value = true;
+}
+
+function cancelUninstall() {
+  uninstallDialogVisible.value = false;
+  currentUninstallComponent.value = null;
+}
+
+async function confirmUninstallComponent() {
+  if (!currentUninstallComponent.value) return;
+  const { componentCode, componentName } = currentUninstallComponent.value;
+  try {
+    uninstallingComponents.value.add(componentCode);
+    uninstallDialogVisible.value = false;
+
+    const result = await cocosEditorBridge.uninstallComponent({ componentCode });
+    if (result && result.success) {
+      message({
+        message: result.message || `组件 ${componentName} 卸载成功！`,
+        type: 'success',
+        duration: 5000,
+      });
+      await loadComponents();
+    } else {
+      message({
+        message: (result && result.message) || `组件 ${componentName} 卸载失败`,
+        type: 'error',
+      });
+    }
+  } catch (error: any) {
+    message({
+      message: `卸载组件失败: ${error?.message || String(error)}`,
+      type: 'error',
+    });
+  } finally {
+    uninstallingComponents.value.delete(componentCode);
+    currentUninstallComponent.value = null;
   }
 }
 </script>
@@ -207,12 +301,57 @@ async function installFromAssets(component: any) {
             @click="installFromAssets(component)">
              {{ component.installStatus === 'has' ? (component.needsUpdate ? '更新' : '已安装') : '下载安装' }}
           </el-button>
-          
+          <el-button 
+            type="warning" 
+            v-if="component.installStatus === 'has'"
+            @click="showUninstallDialog(component)">
+             {{ '卸载组件' }}
+          </el-button>
         </div>
       </div>
     </el-card>
   </div>
   </div>
+  
+  <!-- 卸载确认对话框 -->
+  <el-dialog
+    v-model="uninstallDialogVisible"
+    title="确认卸载组件"
+    width="500px"
+    :before-close="cancelUninstall"
+  >
+    <div v-if="currentUninstallComponent">
+      <p><strong>您确定要卸载以下组件吗？</strong></p>
+      <div class="uninstall-info">
+        <p><strong>组件名称:</strong> {{ currentUninstallComponent.componentName }}</p>
+        <p><strong>组件代码:</strong> {{ currentUninstallComponent.componentCode }}</p>
+        <p><strong>版本:</strong> v{{ currentUninstallComponent.version }}</p>
+        <p><strong>安装时间:</strong> {{ new Date(currentUninstallComponent.installedAt).toLocaleString() }}</p>
+      </div>
+      <el-alert
+        title="注意"
+        type="warning"
+        :closable="false"
+        show-icon
+      >
+        <p>卸载操作将会：</p>
+        <ul>
+          <li>将组件相关文件备份到 extensions/xhgame_plugin/backup 目录</li>
+          <li>从项目中删除组件文件</li>
+        </ul>
+        <p><strong>此操作不可逆，请谨慎操作！</strong></p>
+      </el-alert>
+    </div>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="cancelUninstall">取消</el-button>
+        <el-button type="danger" @click="confirmUninstallComponent">
+          确认卸载
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>

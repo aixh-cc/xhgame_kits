@@ -335,20 +335,77 @@ export class Util {
 
             console.log(`[xhgame_plugin] 组件安装完成，共复制 ${copiedFiles.length} 个文件`);
 
-            // 记录安装信息到配置文件
-            // try {
-            //     await ConfigManager.addInstalledComponent({
-            //         componentName,
-            //         componentId,
-            //         componentCode,
-            //         version: '1.0.0', // 可以从param中获取或从组件包信息中读取
-            //         copiedFiles: copiedFiles
-            //     });
-            //     console.log(`[xhgame_plugin] 组件安装信息已记录到配置文件`);
-            // } catch (configError) {
-            //     console.warn(`[xhgame_plugin] 记录安装信息失败，但组件安装成功:`, configError);
-            //     // 不影响安装结果，只是记录失败
-            // }
+            // 记录安装信息到配置文件 copiedFiles等到xhgame_plugin-installInfo.json中的 installedComponents
+            try {
+                const extensionPath = getExtensionsPath(pluginName);
+                const installInfoPath = path.join(extensionPath, pluginName + '-installInfo.json');
+                let installInfo: any = {
+                    version: '1.0.0',
+                    lastUpdated: new Date().toISOString(),
+                    localComponents: {},
+                    installedComponents: []
+                };
+
+                if (fs.existsSync(installInfoPath)) {
+                    try {
+                        const content = await fs.promises.readFile(installInfoPath, 'utf-8');
+                        const parsed = JSON.parse(content);
+                        installInfo = Object.assign(installInfo, parsed);
+                    } catch (e) {
+                        console.warn(`[xhgame_plugin] 读取安装信息失败，将创建新的安装信息文件`, e);
+                    }
+                }
+
+                // 从 meta 中获取显示名与版本（若可用）
+                let componentCode = compName;
+                let componentId = compName;
+                let componentDisplayName = compName;
+                let componentVersion = '1.0.0';
+                try {
+                    const metaPath = zipFilePath + '.meta';
+                    if (fs.existsSync(metaPath)) {
+                        const metaContent = await fs.promises.readFile(metaPath, 'utf-8');
+                        const metaData = JSON.parse(metaContent);
+                        if (metaData?.userData) {
+                            componentCode = metaData.userData.name || compName;
+                            componentId = metaData.userData.name || compName;
+                            componentDisplayName = metaData.userData.displayName || compName;
+                            componentVersion = metaData.userData.version || componentVersion;
+                        }
+                    }
+                } catch {}
+
+                // 更新 localComponents
+                installInfo.localComponents = installInfo.localComponents || {};
+                installInfo.localComponents[componentCode] = {
+                    status: 'installed',
+                    installDate: new Date().toISOString(),
+                    installPath: targetPath
+                };
+
+                // 更新 installedComponents 列表（去重后追加）
+                installInfo.installedComponents = Array.isArray(installInfo.installedComponents) ? installInfo.installedComponents : [];
+                installInfo.installedComponents = installInfo.installedComponents.filter((c: any) => c.componentCode !== componentCode);
+                installInfo.installedComponents.push({
+                    componentName: componentDisplayName,
+                    componentId: componentId,
+                    componentCode: componentCode,
+                    version: componentVersion,
+                    copiedFiles: copiedFiles,
+                    installedAt: new Date().toISOString()
+                });
+
+                installInfo.lastUpdated = new Date().toISOString();
+
+                await fs.promises.writeFile(installInfoPath, JSON.stringify(installInfo, null, 2), 'utf-8');
+                console.log(`[xhgame_plugin] 安装信息已写入: ${installInfoPath}`);
+            } catch (writeErr) {
+                console.warn(`[xhgame_plugin] 写入安装信息失败，但组件安装已完成:`, writeErr);
+            }
+
+            // 记录安装信息到配置文件 copiedFiles等到xhgame_plugin-installInfo.json中的 installedComponents
+
+
 
             return {
                 success: true,

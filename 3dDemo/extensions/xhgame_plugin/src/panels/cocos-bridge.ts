@@ -349,28 +349,6 @@ class CocosEditorBridge implements CocosEditorAPI {
         }
     }
 
-    async uninstallComponent(param: { componentCode: string }): Promise<any> {
-        if (this.isDevMode) {
-            console.log(`🔧 [CocosEditorBridge] Mock uninstall component: ${param.componentCode}`);
-            return {
-                success: true,
-                message: `组件 ${param.componentCode} 卸载成功！\n备份位置: HelpAndChat_20241201120000`,
-                backupPath: '/mock/backup/path',
-                backedUpFiles: ['script/helpAndChat.ts', 'gui/helpAndChat.prefab'],
-                deletedFiles: ['script/helpAndChat.ts', 'gui/helpAndChat.prefab'],
-                notFoundFiles: []
-            };
-        }
-
-        try {
-            const result = await this.sendMessage('xhgame_plugin', 'uninstall-component', param);
-            console.log(`🎮 [CocosEditorBridge] Uninstalled component:`, result);
-            return result;
-        } catch (error) {
-            console.error('❌ [CocosEditorBridge] Failed to uninstall component:', error);
-            throw error;
-        }
-    }
 
     async checkBackupExists(componentCode: string): Promise<{ exists: boolean; backupPath?: string; backupInfo?: any }> {
         if (this.isDevMode) {
@@ -442,6 +420,18 @@ class CocosEditorBridge implements CocosEditorAPI {
     }
     async installFromAssets(param: { compName: string }): Promise<IInstallRes> {
         return this.requestMessage('xhgame_plugin', 'install-from-assets', param);
+    }
+
+
+    async uninstallComponent(param: { componentCode: string }): Promise<any> {
+        try {
+            const result = await this.sendMessage('xhgame_plugin', 'uninstall-component', param);
+            console.log(`🎮 [CocosEditorBridge] Uninstalled component:`, result);
+            return result;
+        } catch (error) {
+            console.error('❌ [CocosEditorBridge] Failed to uninstall component:', error);
+            throw error;
+        }
     }
 
 }
