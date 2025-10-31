@@ -497,11 +497,11 @@ export class Handles {
                     installInfo = JSON.parse(installInfoContent);
                 }
 
-                // 从 localComponents 中移除组件记录
-                if (installInfo.localComponents && installInfo.localComponents[compName]) {
-                    delete installInfo.localComponents[compName];
-                    console.log(`[xhgame_plugin] 已从 localComponents 中移除组件: ${compName}`);
-                }
+                // // 从 localComponents 中移除组件记录
+                // if (installInfo.localComponents && installInfo.localComponents[compName]) {
+                //     delete installInfo.localComponents[compName];
+                //     console.log(`[xhgame_plugin] 已从 localComponents 中移除组件: ${compName}`);
+                // }
 
                 // 从 installedComponents 中移除组件记录
                 if (installInfo.installedComponents && Array.isArray(installInfo.installedComponents)) {
