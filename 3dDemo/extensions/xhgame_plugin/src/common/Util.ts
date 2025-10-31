@@ -104,13 +104,7 @@ export class Util {
                                 // 检查是否已安装
                                 packageInfoWithStatus.installStatus = installedLists.includes(packageInfoWithStatus.name) ? 'has' : 'none';
                                 // 检查备份状态
-                                let backup = await Util.checkBackupExists({ pluginName: 'xhgame_plugin', componentCode: packageInfoWithStatus.name })
-                                console.log('backup', backup)
-                                if (backup) {
-                                    packageInfoWithStatus.backupStatus = backup.backupInfo ? 'has' : 'none';
-                                } else {
-                                    packageInfoWithStatus.backupStatus = 'none';
-                                }
+                                packageInfoWithStatus.backupStatus = 'none';
                                 packages.push(packageInfoWithStatus);
                             }
                         } catch (error) {
@@ -594,7 +588,53 @@ export class Util {
             // 从assets目录开始清理空目录
             await cleanupEmptyDirs(assetsPath);
 
-            // 从配置中移除组件记录 @todo
+            // 从配置中移除组件记录 
+            try {
+                const extensionPath = getExtensionsPath(pluginName);
+                if (!extensionPath) {
+                    throw new Error('无法获取插件路径');
+                }
+                // 检查备份信息文件是否存在
+                const installInfoPath = path.join(extensionPath, pluginName + '-installInfo.json');
+
+                // const installInfoPath = path.join(getProjectPath('xhgame_plugin'), '..', 'xhgame_plugin-installInfo.json');
+                let installInfo: any = {};
+
+                // 读取现有的安装信息
+                if (await fs.promises.access(installInfoPath).then(() => true).catch(() => false)) {
+                    const installInfoContent = await fs.promises.readFile(installInfoPath, 'utf-8');
+                    installInfo = JSON.parse(installInfoContent);
+                }
+
+                // 从 localComponents 中移除组件记录
+                if (installInfo.localComponents && installInfo.localComponents[compName]) {
+                    delete installInfo.localComponents[compName];
+                    console.log(`[xhgame_plugin] 已从 localComponents 中移除组件: ${compName}`);
+                }
+
+                // 从 installedComponents 中移除组件记录
+                if (installInfo.installedComponents && Array.isArray(installInfo.installedComponents)) {
+                    const originalLength = installInfo.installedComponents.length;
+                    installInfo.installedComponents = installInfo.installedComponents.filter(
+                        (comp: any) => comp.componentCode !== compName
+                    );
+                    if (installInfo.installedComponents.length < originalLength) {
+                        console.log(`[xhgame_plugin] 已从 installedComponents 中移除组件: ${compName}`);
+                    }
+                }
+
+                // 更新 lastUpdated 时间戳
+                installInfo.lastUpdated = new Date().toISOString();
+
+                // 写回文件
+                await fs.promises.writeFile(installInfoPath, JSON.stringify(installInfo, null, 2), 'utf-8');
+                console.log(`[xhgame_plugin] 组件记录已从安装信息中移除: ${compName}`);
+
+            } catch (error) {
+                console.warn(`[xhgame_plugin] 移除组件记录失败:`, error);
+                // 不影响卸载结果，只是记录移除失败
+            }
+
             // await ConfigManager.removeInstalledComponent(componentCode);
 
             // 更新本地组件配置文件中的状态

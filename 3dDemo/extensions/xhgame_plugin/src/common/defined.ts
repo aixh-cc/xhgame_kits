@@ -17,6 +17,19 @@ export interface IUninstallRes {
     success: boolean,
     error?: string,
 }
+export interface IInstallInfo {
+    version: string;
+    installedComponents: InstalledComp[];
+    lastUpdated: string;
+}
+export interface InstalledComp {
+    componentName: string;
+    componentId: string;
+    componentCode: string;
+    version: string;
+    installedAt: string;
+    copiedFiles: string[];
+}
 // 包信息接口定义
 export interface IPackageInfo {
     /** 包名,英文字母 */
