@@ -61,13 +61,10 @@ export class Util {
         };
     }
 
-    static async getPackages(): Promise<IGetPackagesRes> {
+    static async getPackages(pluginName: string): Promise<IGetPackagesRes> {
         try {
-            const packagesPath = getPackagesPath('xhgame_plugin');
-            console.log('packagesPath', packagesPath)
-
+            const packagesPath = getPackagesPath(pluginName);
             if (!fs.existsSync(packagesPath)) {
-                console.error('Packages directory not found' + packagesPath)
                 return {
                     success: false,
                     error: 'Packages directory not found',
@@ -95,14 +92,6 @@ export class Util {
                     // 处理 .zip 包文件
                     const zipName = path.basename(item, '.zip');
                     const metaPath = itemPath + '.meta';
-
-                    // let packageInfoWithStatus: IPackageInfoWithStatus = {
-                    //     name: zipName,
-                    //     version: '',
-                    //     installStatus: 'none',
-                    //     backupStatus: 'none',
-                    // }
-
                     // 尝试从 .meta 文件读取包信息
                     if (fs.existsSync(metaPath)) {
                         try {

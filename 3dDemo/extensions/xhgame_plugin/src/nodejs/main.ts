@@ -30,7 +30,7 @@ app.post('/api/get-version', async (req, res) => {
     res.json(await Util.getVersion(req.body.pluginName));
 });
 app.post('/api/get-packages', async (req, res) => {
-    res.json(await Util.getPackages());
+    res.json(await Util.getPackages(req.body.pluginName));
 });
 
 // 健康检查
