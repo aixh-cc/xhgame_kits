@@ -1,18 +1,6 @@
 {
   "version": "1.0.0",
   "lastUpdated": "2025-10-31T10:07:37.498Z",
-  "localComponents": {
-    "HelpAndChat": {
-      "status": "installed",
-      "installDate": "2025-10-24T06:12:03.457Z",
-      "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
-    },
-    "MissionItem": {
-      "status": "installed",
-      "installDate": "2025-10-25T11:43:21.248Z",
-      "installPath": "/Users/hd/Documents/website/aixh/xhgame_kits/3dDemo/assets"
-    }
-  },
   "installedComponents": [
     {
       "componentName": "帮助与聊天组件",
