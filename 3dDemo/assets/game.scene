@@ -989,14 +989,13 @@
     "__type__": "d1c662/lO9HYrQG0iNe8xp7",
     "_name": "",
     "_objFlags": 0,
-    "__editorExtras__": {},
     "node": {
       "__id__": 13
     },
     "_enabled": true,
     "__prefab": null,
     "_progress": 0,
-    "_isLoadResFinished": true,
+    "_isFinished": false,
     "_id": "87yhJp185MtaRfeDfw4gWO"
   },
   {
@@ -1484,7 +1483,6 @@
     "__type__": "612758C3uFDPr1gPwtVdE2Q",
     "_name": "",
     "_objFlags": 0,
-    "__editorExtras__": {},
     "node": {
       "__id__": 7
     },

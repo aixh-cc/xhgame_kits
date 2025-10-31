@@ -15,10 +15,14 @@ export const methods = {
     async getPackages(): Promise<IGetPackagesRes> {
         return await Handles.getPackages(name)
     },
-    async installComponent(): Promise<IInstallInfoRes> {
-        return await Handles.installComponent(name)
+    async installComponent(param: any): Promise<IInstallInfoRes> {
+        console.log('editer installComponent param', param)
+        param.pluginName = name
+        return await Handles.installComponent(param)
     },
-    async uninstallComponent(): Promise<IUninstallRes> {
+    async uninstallComponent(param: any): Promise<IUninstallRes> {
+        console.log('editer uninstallComponent param', param)
+        param.pluginName = name
         return await Handles.uninstallComponent(name)
     }
 };

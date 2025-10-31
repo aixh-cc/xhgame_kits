@@ -100,6 +100,8 @@ export class Handles {
         let extractTempDir = '';
         try {
             let packagePath = getPackagesPath(pluginName)
+            console.log(`[xhgame_plugin] 组件安装目录: ${packagePath}`);
+
             const zipFilePath = path.join(packagePath, `${compName}.zip`);
             const legacyDirPath = path.join(packagePath, compName);
 
