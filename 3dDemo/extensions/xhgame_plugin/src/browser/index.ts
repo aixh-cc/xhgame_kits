@@ -21,10 +21,9 @@ export const methods = {
         return await Handles.installComponent(param)
     },
     async uninstallComponent(param: any): Promise<IUninstallRes> {
-
         param.pluginName = name
         console.log('editer uninstallComponent param', param)
-        return await Handles.uninstallComponent(name)
+        return await Handles.uninstallComponent(param)
     }
 };
 
