@@ -192,10 +192,10 @@ async function confirmUninstallComponent() {
     uninstallingComponents.value.add(componentCode);
     uninstallDialogVisible.value = false;
 
-    const result = await cocosEditorBridge.uninstallComponent({ componentCode });
+    const result = await cocosEditorBridge.uninstallComponent({ compName:componentCode });
     if (result && result.success) {
       message({
-        message: result.message || `组件 ${componentName} 卸载成功！`,
+        message: result.error || `组件 ${componentName} 卸载成功！`,
         type: 'success',
         duration: 5000,
       });

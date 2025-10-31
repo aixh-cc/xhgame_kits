@@ -13,7 +13,10 @@ export interface IInstallRes {
     success: boolean,
     error?: string,
 }
-
+export interface IUninstallRes {
+    success: boolean,
+    error?: string,
+}
 // 包信息接口定义
 export interface IPackageInfo {
     /** 包名,英文字母 */

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import AdmZip from 'adm-zip';
-import { IGetPackagesRes, IGetVersionRes, IInstallRes, IPackageInfoWithStatus } from './defined';
+import { IGetPackagesRes, IGetVersionRes, IInstallRes, IPackageInfoWithStatus, IUninstallRes } from './defined';
 
 export const getPluginPath = (pluginName: string) => {
     if (typeof Editor != 'undefined' && Editor.Project) {
@@ -137,7 +137,7 @@ export class Util {
 
         const { compName, pluginName } = param;
 
-        console.log(`[xhgame_plugin] 从内置资源安装组件请求: ${compName}`, param);
+        console.log(`[xhgame_plugin] 安装组件请求: ${compName}`, param);
         let extractTempDir = '';
         try {
             let packagePath = getPackagesPath(pluginName)
@@ -373,7 +373,7 @@ export class Util {
                             componentVersion = metaData.userData.version || componentVersion;
                         }
                     }
-                } catch {}
+                } catch { }
 
                 // 更新 localComponents
                 installInfo.localComponents = installInfo.localComponents || {};
@@ -437,12 +437,238 @@ export class Util {
                 }
             }
         }
+    }
+    static async uninstallComponent(param: any): Promise<IUninstallRes> {
+        console.log('uninstallComponent', param)
+        const { compName, pluginName } = param;
+        if (!compName || !pluginName) {
+            return {
+                success: false,
+                error: '组件名或插件名不能为空'
+            };
+        }
+
+        console.log(`[xhgame_plugin] 安装卸载组件请求: ${compName}`, param);
+
+        try {
+            // 获取项目路径
+            const projectPath = getProjectPath(pluginName)
+            const assetsPath = path.join(projectPath, 'assets');
+
+            const extensionPath = getExtensionsPath(pluginName);
+            const installInfoPath = path.join(extensionPath, pluginName + '-installInfo.json');
+            if (!fs.existsSync(installInfoPath)) {
+                return {
+                    success: false,
+                    error: '未找到组件安装信息文件'
+                };
+            }
+            // 读取以前的安装信息
+            const installInfo = JSON.parse(await fs.promises.readFile(installInfoPath, 'utf-8'));
+            const component = installInfo.installedComponents.find((c: { componentCode: any; }) => c.componentCode === compName);
+            if (!component) {
+                return {
+                    success: false,
+                    error: `未找到组件 ${compName} 的安装记录`
+                };
+            }
+            // 创建备份目录
+            const backupDir = path.join(extensionPath, pluginName, 'backup');
+            await fs.promises.mkdir(backupDir, { recursive: true });
+            // 使用组件名作为备份文件夹名称（简化版本，只保留一个备份）
+            const backupFolderName = compName;
+            const componentBackupDir = path.join(backupDir, backupFolderName);
+            // 如果已存在旧备份，先删除
+            if (fs.existsSync(componentBackupDir)) {
+                await fs.promises.rm(componentBackupDir, { recursive: true });
+                console.log(`[xhgame_plugin] 删除旧备份目录: ${componentBackupDir}`);
+            }
+            await fs.promises.mkdir(componentBackupDir, { recursive: true });
+
+            console.log(`[xhgame_plugin] 备份目录: ${componentBackupDir}`);
+
+            // 备份和删除文件
+            const backedUpFiles: string[] = [];
+            const deletedFiles: string[] = [];
+            const notFoundFiles: string[] = [];
+
+            for (const relativeFilePath of component.copiedFiles) {
+                const fullFilePath = path.join(assetsPath, relativeFilePath);
+                const metaFilePath = fullFilePath + '.meta';
+                const relativeMetaFilePath = relativeFilePath + '.meta';
+
+                try {
+                    // 检查文件是否存在
+                    await fs.promises.access(fullFilePath);
+
+                    // 创建备份文件的目录结构
+                    const backupFilePath = path.join(componentBackupDir, relativeFilePath);
+                    const backupFileDir = path.dirname(backupFilePath);
+                    await fs.promises.mkdir(backupFileDir, { recursive: true });
+
+                    // 备份文件
+                    await fs.promises.copyFile(fullFilePath, backupFilePath);
+                    backedUpFiles.push(relativeFilePath);
+                    console.log(`[xhgame_plugin] 备份文件: ${relativeFilePath}`);
+
+                    // 删除原文件
+                    await fs.promises.unlink(fullFilePath);
+                    deletedFiles.push(relativeFilePath);
+                    console.log(`[xhgame_plugin] 删除文件: ${relativeFilePath}`);
+
+                } catch (error) {
+                    console.warn(`[xhgame_plugin] 文件不存在或处理失败: ${relativeFilePath}`, error);
+                    notFoundFiles.push(relativeFilePath);
+                }
+
+                // 处理对应的.meta文件
+                try {
+                    // 检查.meta文件是否存在
+                    await fs.promises.access(metaFilePath);
+
+                    // 创建备份.meta文件的目录结构
+                    const backupMetaFilePath = path.join(componentBackupDir, relativeMetaFilePath);
+                    const backupMetaFileDir = path.dirname(backupMetaFilePath);
+                    await fs.promises.mkdir(backupMetaFileDir, { recursive: true });
+
+                    // 备份.meta文件
+                    await fs.promises.copyFile(metaFilePath, backupMetaFilePath);
+                    backedUpFiles.push(relativeMetaFilePath);
+                    console.log(`[xhgame_plugin] 备份.meta文件: ${relativeMetaFilePath}`);
+
+                    // 删除原.meta文件
+                    await fs.promises.unlink(metaFilePath);
+                    deletedFiles.push(relativeMetaFilePath);
+                    console.log(`[xhgame_plugin] 删除.meta文件: ${relativeMetaFilePath}`);
+
+                } catch (error) {
+                    // .meta文件可能不存在，这是正常的，不记录为错误
+                    console.log(`[xhgame_plugin] .meta文件不存在或已删除: ${relativeMetaFilePath}`);
+                }
+            }
+
+            // 处理组件目录的.meta文件
+            const processedDirs = new Set<string>();
+            for (const relativeFilePath of component.copiedFiles) {
+                const dirPath = path.dirname(relativeFilePath);
+
+                // 避免重复处理同一个目录
+                if (processedDirs.has(dirPath)) {
+                    continue;
+                }
+                processedDirs.add(dirPath);
+
+                const fullDirPath = path.join(assetsPath, dirPath);
+                const dirMetaFilePath = fullDirPath + '.meta';
+                const relativeDirMetaFilePath = dirPath + '.meta';
+
+                try {
+                    // 检查目录的.meta文件是否存在
+                    await fs.promises.access(dirMetaFilePath);
+
+                    // 创建备份目录.meta文件的目录结构
+                    const backupDirMetaFilePath = path.join(componentBackupDir, relativeDirMetaFilePath);
+                    const backupDirMetaFileDir = path.dirname(backupDirMetaFilePath);
+                    await fs.promises.mkdir(backupDirMetaFileDir, { recursive: true });
+
+                    // 备份目录.meta文件
+                    await Editor.Utils.File.copy(dirMetaFilePath, backupDirMetaFilePath);
+                    backedUpFiles.push(relativeDirMetaFilePath);
+                    console.log(`[xhgame_plugin] 备份目录.meta文件: ${relativeDirMetaFilePath}`);
+
+                    // 删除原目录.meta文件
+                    await fs.promises.unlink(dirMetaFilePath);
+                    deletedFiles.push(relativeDirMetaFilePath);
+                    console.log(`[xhgame_plugin] 删除目录.meta文件: ${relativeDirMetaFilePath}`);
+
+                } catch (error) {
+                    // 目录.meta文件可能不存在，这是正常的，不记录为错误
+                    console.log(`[xhgame_plugin] 目录.meta文件不存在或已删除: ${relativeDirMetaFilePath}`);
+                }
+            }
+
+            // 清理空目录
+            const cleanupEmptyDirs = async (dirPath: string) => {
+                try {
+                    const items = await fs.promises.readdir(dirPath);
+
+                    // 递归清理子目录
+                    for (const item of items) {
+                        const itemPath = path.join(dirPath, item);
+                        const stat = await fs.promises.stat(itemPath);
+                        if (stat.isDirectory()) {
+                            await cleanupEmptyDirs(itemPath);
+                        }
+                    }
+
+                    // 检查目录是否为空
+                    const remainingItems = await fs.promises.readdir(dirPath);
+                    if (remainingItems.length === 0) {
+                        await fs.promises.rmdir(dirPath);
+                        console.log(`[xhgame_plugin] 删除空目录: ${dirPath}`);
+                    }
+                } catch (error) {
+                    // 忽略清理目录时的错误
+                }
+            };
+
+            // 从assets目录开始清理空目录
+            await cleanupEmptyDirs(assetsPath);
+
+            // 从配置中移除组件记录 @todo
+            // await ConfigManager.removeInstalledComponent(componentCode);
+
+            // 更新本地组件配置文件中的状态
+            // try {
+            //     const localComponentsConfig = await ConfigManager.readLocalComponentsConfig();
+            //     if (localComponentsConfig[componentCode]) {
+            //         localComponentsConfig[componentCode].status = 'available';
+            //         delete localComponentsConfig[componentCode].installDate;
+            //         delete localComponentsConfig[componentCode].installPath;
+            //         await ConfigManager.writeLocalComponentsConfig(localComponentsConfig);
+            //         console.log(`[xhgame_plugin] 本地组件状态已更新为可用: ${componentCode}`);
+            //     }
+            // } catch (statusError) {
+            //     console.warn(`[xhgame_plugin] 更新本地组件状态失败:`, statusError);
+            //     // 不影响卸载结果，只是状态更新失败
+            // }
+
+            // 创建备份信息文件
+            const backupInfo = {
+                componentName: component.componentName,
+                componentId: component.componentId,
+                componentCode: component.componentCode,
+                version: component.version,
+                originalInstallTime: component.installedAt,
+                uninstallTime: new Date().toISOString(),
+                backedUpFiles: backedUpFiles,
+                deletedFiles: deletedFiles,
+                notFoundFiles: notFoundFiles
+            };
+
+            const backupInfoPath = path.join(componentBackupDir, 'backup-info.json');
+            await fs.promises.writeFile(backupInfoPath, JSON.stringify(backupInfo, null, 2), 'utf-8');
+
+            console.log(`[xhgame_plugin] 组件卸载完成: ${component.componentName}`);
+            console.log(`[xhgame_plugin] 备份文件数: ${backedUpFiles.length}, 删除文件数: ${deletedFiles.length}, 未找到文件数: ${notFoundFiles.length}`);
 
 
-        return {
-            success: false,
-            error: 'Failed to get packages',
-        };
+            return {
+                success: true,
+                // error: `组件 ${component.componentName} 卸载成功！\n备份位置: ${backupFolderName}`,
+                // backupPath: componentBackupDir,
+                // backedUpFiles: backedUpFiles,
+                // deletedFiles: deletedFiles,
+                // notFoundFiles: notFoundFiles
+            };
+
+        } catch (error) {
+            console.error(`[xhgame_plugin] 卸载组件失败: `, error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
     }
 
     static async checkInstallExists(param: any): Promise<IInstallResult> {

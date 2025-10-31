@@ -31,11 +31,14 @@ app.post('/api/get-version', async (req, res) => {
 app.post('/api/get-packages', async (req, res) => {
     res.json(await Util.getPackages(req.body.pluginName));
 });
-// 获取组件列表
+// 安装组件
 app.post('/api/install-from-assets', async (req, res) => {
     res.json(await Util.installFromAssets(req.body));
 });
-
+// 卸载组件
+app.post('/api/uninstall-component', async (req, res) => {
+    res.json(await Util.uninstallComponent(req.body));
+});
 
 // 健康检查
 app.get('/health', (req, res) => {

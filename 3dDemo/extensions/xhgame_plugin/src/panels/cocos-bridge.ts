@@ -2,7 +2,7 @@
  * Cocos Creator 编辑器通信桥接模块
  * 提供与 Cocos Creator 编辑器的双向通信功能
  */
-import { IGetPackagesRes, IGetVersionRes, IInstallRes } from '../common/defined';
+import { IGetPackagesRes, IGetVersionRes, IInstallRes, IUninstallRes } from '../common/defined';
 import { apiService } from './api-service';
 
 export interface CocosEditorAPI {
@@ -34,7 +34,7 @@ export interface CocosEditorAPI {
     // 插件配置操作
 
     removeInstalledComponent(param: { componentCode: string }): Promise<any>;
-    uninstallComponent(param: { componentCode: string }): Promise<any>;
+    uninstallComponent(param: { compName: string }): Promise<any>;
 
     // 备份文件操作
     checkBackupExists(componentCode: string): Promise<{ exists: boolean; backupPath?: string; backupInfo?: any }>;
@@ -423,9 +423,9 @@ class CocosEditorBridge implements CocosEditorAPI {
     }
 
 
-    async uninstallComponent(param: { componentCode: string }): Promise<any> {
+    async uninstallComponent(param: { compName: string }): Promise<IUninstallRes> {
         try {
-            const result = await this.sendMessage('xhgame_plugin', 'uninstall-component', param);
+            const result = await this.requestMessage('xhgame_plugin', 'uninstall-component', param);
             console.log(`🎮 [CocosEditorBridge] Uninstalled component:`, result);
             return result;
         } catch (error) {
