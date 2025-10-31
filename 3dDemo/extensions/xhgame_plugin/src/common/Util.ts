@@ -2,52 +2,28 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IGetPackagesRes, IGetVersionRes, IPackageInfoWithStatus } from './defined';
 
+export const getPluginPath = (pluginName: string) => {
+    if (typeof Editor != 'undefined' && Editor.Project) {
+        return path.join(Editor.Project.path, 'extensions', pluginName);
+    } else {
+        return process.cwd();
+    }
+};
 
 // 获取项目根目录下的 packages 路径
 export const getPackagesPath = (pluginName: string) => {
-    // 从当前插件目录向上找到项目根目录
-    let currentDir = ''
-    if (typeof Editor != 'undefined' && Editor.Project) {
-        currentDir = path.join(Editor.Project.path, 'extensions', pluginName);
-    } else {
-        currentDir = process.cwd();
-    }
-    const extensionsRoot = path.resolve(currentDir, '../');
-    return path.join(extensionsRoot, pluginName, 'assets', 'packages');
+    let pluginPath = getPluginPath(pluginName);
+    return path.join(pluginPath, 'assets', 'packages');
 };
 
-export const getPluginPath = (pluginName: string) => {
-    // 从当前插件目录向上找到项目根目录
-    let currentDir = ''
-    if (typeof Editor != 'undefined' && Editor.Project) {
-        currentDir = path.join(Editor.Project.path, 'extensions', pluginName);
-    } else {
-        currentDir = process.cwd();
-    }
-    const extensionsRoot = path.resolve(currentDir, '../');
-    return path.join(extensionsRoot, pluginName);
-};
 export const getExtensionsPath = (pluginName: string) => {
-    // 从当前插件目录向上找到项目根目录
-    let currentDir = ''
-    if (typeof Editor != 'undefined' && Editor.Project) {
-        currentDir = path.join(Editor.Project.path, 'extensions', pluginName);
-    } else {
-        currentDir = process.cwd();
-    }
-    const extensionsRoot = path.resolve(currentDir, '../');
-    return extensionsRoot
+    let pluginPath = getPluginPath(pluginName);
+    return path.resolve(pluginPath, '../');
 };
+
 export const getProjectPath = (pluginName: string) => {
-    // 从当前插件目录向上找到项目根目录
-    let currentDir = ''
-    if (typeof Editor != 'undefined' && Editor.Project) {
-        currentDir = path.join(Editor.Project.path, 'extensions', pluginName);
-    } else {
-        currentDir = process.cwd();
-    }
-    const projectRoot = path.resolve(currentDir, '../../');
-    return projectRoot
+    let pluginPath = getPluginPath(pluginName);
+    return path.resolve(pluginPath, '../../');
 };
 
 interface IBackupResult {
