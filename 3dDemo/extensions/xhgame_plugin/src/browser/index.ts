@@ -141,16 +141,6 @@ class ConfigManager {
         }
     }
 
-    static async getInstalledComponents(): Promise<InstalledComponent[]> {
-        try {
-            const config = await this.readConfig();
-            return config.installedComponents;
-        } catch (error) {
-            console.error('[ConfigManager] 获取已安装组件列表失败:', error);
-            return [];
-        }
-    }
-
     static async removeInstalledComponent(componentCode: string): Promise<void> {
         try {
             const config = await this.readConfig();
@@ -229,7 +219,7 @@ export const methods = {
         };
     },
     async getPackages(): Promise<IGetPackagesRes> {
-        return await Util.getPackages()
+        return await Util.getPackages(name)
     },
 
 
@@ -237,26 +227,6 @@ export const methods = {
 
 
 
-
-    ///
-    // 获取已安装的组件列表
-    async getInstalledComponents() {
-        try {
-            const components = await ConfigManager.getInstalledComponents();
-            console.log(`[xhgame_plugin] 获取已安装组件列表，共 ${components.length} 个组件`);
-            return {
-                success: true,
-                components: components
-            };
-        } catch (error) {
-            console.error(`[xhgame_plugin] 获取已安装组件列表失败:`, error);
-            return {
-                success: false,
-                error: error instanceof Error ? error.message : String(error),
-                components: []
-            };
-        }
-    },
 
     // 移除已安装的组件记录
     async removeInstalledComponent(param: any) {
@@ -285,106 +255,6 @@ export const methods = {
         }
     },
 
-    // 获取本地组件库列表
-    async getLocalComponents() {
-        try {
-            const packagePath = path.join(Editor.Package.getPath(name) || '', 'assets', 'packages');
-            console.log(`[xhgame_plugin] 扫描本地组件库路径: ${packagePath}`);
-
-            if (!fs.existsSync(packagePath)) {
-                console.log(`[xhgame_plugin] 本地组件库路径不存在: ${packagePath}`);
-                return {
-                    success: true,
-                    components: [],
-                    error: ''
-                };
-            }
-
-            // 读取本地组件配置文件
-            const localComponentsConfig = await ConfigManager.readLocalComponentsConfig();
-            console.log(`[xhgame_plugin] 读取本地组件配置: ${Object.keys(localComponentsConfig).length} 个组件`);
-
-            const components = [];
-            const items = await fs.promises.readdir(packagePath);
-
-            for (const item of items) {
-                const itemPath = path.join(packagePath, item);
-                const stat = await fs.promises.stat(itemPath);
-
-                // 跳过文件，只处理目录
-                if (!stat.isDirectory()) {
-                    continue;
-                }
-
-                // 查找对应的 .json 文件
-                const infoFilePath = path.join(itemPath, `${item}.json`);
-
-                if (fs.existsSync(infoFilePath)) {
-                    try {
-                        const infoContent = await fs.promises.readFile(infoFilePath, 'utf-8');
-                        const componentInfo = JSON.parse(infoContent);
-
-                        // 添加本地组件标识和路径
-                        componentInfo.isLocal = true;
-                        componentInfo.localPath = itemPath;
-
-                        // 从配置文件获取安装状态
-                        const componentConfig = localComponentsConfig[item];
-                        if (componentConfig) {
-                            componentInfo.status = componentConfig.status;
-                            componentInfo.installDate = componentConfig.installDate;
-                            componentInfo.installPath = componentConfig.installPath;
-                        } else {
-                            componentInfo.status = 'available';
-                        }
-
-                        components.push(componentInfo);
-                        console.log(`[xhgame_plugin] 发现本地组件: ${item}, 状态: ${componentInfo.status}`);
-                    } catch (error) {
-                        console.error(`[xhgame_plugin] 解析组件信息文件失败 ${infoFilePath}:`, error);
-                        // 如果解析失败，创建基本信息
-                        components.push({
-                            name: item,
-                            displayName: item,
-                            version: '1.0.0',
-                            description: '本地组件',
-                            isLocal: true,
-                            localPath: itemPath,
-                            status: 'unknown'
-                        });
-                    }
-                } else {
-                    console.log(`[xhgame_plugin] 组件 ${item} 缺少 .json 文件`);
-                    // 没有 .json 文件的组件，创建基本信息
-                    components.push({
-                        name: item,
-                        displayName: item,
-                        version: '1.0.0',
-                        description: '本地组件（缺少详细信息）',
-                        isLocal: true,
-                        localPath: itemPath,
-                        status: 'no_info'
-                    });
-                }
-            }
-
-            console.log(`[xhgame_plugin] 获取本地组件库列表，共 ${components.length} 个组件`);
-            console.log('components', JSON.stringify(components));
-
-            return {
-                success: true,
-                components: components,
-                error: ''
-            };
-        } catch (error) {
-            console.error(`[xhgame_plugin] 获取本地组件库列表失败:`, error);
-            return {
-                success: false,
-                components: [],
-                error: error instanceof Error ? error.message : String(error)
-            };
-        }
-    },
 
     // 从插件assets安装组件的消息处理器
     async installFromAssets(param: any) {
@@ -511,144 +381,6 @@ export const methods = {
 
         } catch (error) {
             console.error(`[xhgame_plugin] 从内置资源安装组件失败: `, error);
-            return {
-                success: false,
-                error: error instanceof Error ? error.message : String(error)
-            };
-        }
-    },
-
-    // 安装本地组件
-    async installLocalComponent(param: any) {
-        const { componentName, componentCode, localPath } = param;
-
-        console.log(`[xhgame_plugin] 安装本地组件请求: ${componentName}, 路径: ${localPath}`);
-
-        try {
-            // 读取组件的 .json 文件
-            const infoFilePath = path.join(localPath, `${componentCode}.json`);
-            let componentInfo: any;
-
-            try {
-                const infoContent = await fs.promises.readFile(infoFilePath, 'utf-8');
-                componentInfo = JSON.parse(infoContent);
-            } catch (error) {
-                console.error(`[xhgame_plugin] 无法读取组件信息文件: ${infoFilePath}`, error);
-                return {
-                    success: false,
-                    message: `安装失败：无法读取组件信息文件 ${componentCode}.info`
-                };
-            }
-
-            // 获取要复制的文件列表
-            const filesToCopy = componentInfo.files || [];
-            if (filesToCopy.length === 0) {
-                return {
-                    success: false,
-                    message: `安装失败：组件信息文件中没有指定要复制的文件`
-                };
-            }
-
-            // 获取项目assets目录路径
-            const projectPath = Editor.Project.path;
-            const targetPath = path.join(projectPath, 'assets');
-
-            // 确保目标目录存在
-            await fs.promises.mkdir(targetPath, { recursive: true });
-
-            console.log(`[xhgame_plugin] 源路径: ${localPath}`);
-            console.log(`[xhgame_plugin] 目标路径: ${targetPath}`);
-            console.log(`[xhgame_plugin] 要复制的文件: ${filesToCopy.join(', ')}`);
-
-            const copiedFiles: string[] = [];
-            const conflictFiles: string[] = [];
-
-            // 检查指定文件的冲突
-            for (const relativeFilePath of filesToCopy) {
-                const targetFilePath = path.join(targetPath, relativeFilePath);
-
-                try {
-                    await fs.promises.access(targetFilePath);
-                    conflictFiles.push(relativeFilePath);
-                } catch (error) {
-                    // 文件不存在，没有冲突
-                }
-            }
-
-            // 如果有冲突文件，返回错误
-            if (conflictFiles.length > 0) {
-                console.log(`[xhgame_plugin] 检测到冲突文件: ${conflictFiles.join('\n')}`);
-                return {
-                    success: false,
-                    message: `安装失败：检测到以下文件已存在，请先删除或备份这些文件：\n${conflictFiles.join('\n')}`,
-                    conflictFiles: conflictFiles
-                };
-            }
-            console.log(`[xhgame_plugin] 没有冲突文件，开始复制...`);
-
-            // 复制指定的文件
-            for (const relativeFilePath of filesToCopy) {
-                const srcFilePath = path.join(localPath, relativeFilePath);
-                const targetFilePath = path.join(targetPath, relativeFilePath);
-
-                try {
-                    // 确保目标目录存在
-                    const targetDir = path.dirname(targetFilePath);
-                    await fs.promises.mkdir(targetDir, { recursive: true });
-
-                    // 复制文件
-                    await Editor.Utils.File.copy(srcFilePath, targetFilePath);
-                    copiedFiles.push(relativeFilePath);
-                    console.log(`[xhgame_plugin] 复制文件: ${relativeFilePath}`);
-                } catch (error) {
-                    console.error(`[xhgame_plugin] 复制文件失败: ${relativeFilePath}`, error);
-                    return {
-                        success: false,
-                        message: `安装失败：复制文件 ${relativeFilePath} 时出错`
-                    };
-                }
-            }
-
-            console.log(`[xhgame_plugin] 本地组件安装完成，共复制 ${copiedFiles.length} 个文件`);
-
-            // 记录安装信息到配置文件
-            try {
-                await ConfigManager.addInstalledComponent({
-                    componentName,
-                    componentId: componentCode, // 使用componentCode作为ID
-                    componentCode,
-                    version: '1.0.0', // 可以从.info文件中读取
-                    copiedFiles: copiedFiles
-                });
-                console.log(`[xhgame_plugin] 本地组件安装信息已记录到配置文件`);
-            } catch (configError) {
-                console.warn(`[xhgame_plugin] 记录安装信息失败，但组件安装成功:`, configError);
-                // 不影响安装结果，只是记录失败
-            }
-
-            // 更新本地组件配置文件中的状态
-            try {
-                const localComponentsConfig = await ConfigManager.readLocalComponentsConfig();
-                localComponentsConfig[componentCode] = {
-                    status: 'installed',
-                    installDate: new Date().toISOString(),
-                    installPath: targetPath
-                };
-                await ConfigManager.writeLocalComponentsConfig(localComponentsConfig);
-                console.log(`[xhgame_plugin] 本地组件状态已更新为已安装: ${componentCode}`);
-            } catch (statusError) {
-                console.warn(`[xhgame_plugin] 更新本地组件状态失败:`, statusError);
-                // 不影响安装结果，只是状态更新失败
-            }
-
-            return {
-                success: true,
-                message: `本地组件 ${componentName} 安装成功！`,
-                copiedFiles: copiedFiles
-            };
-
-        } catch (error) {
-            console.error(`[xhgame_plugin] 安装本地组件失败: `, error);
             return {
                 success: false,
                 error: error instanceof Error ? error.message : String(error)

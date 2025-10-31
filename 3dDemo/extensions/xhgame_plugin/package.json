@@ -63,62 +63,56 @@
             }
         ],
         "messages": {
+            "increase": {
+                "info": "测试increase",
+                "methods": [
+                    "default.increase"
+                ]
+            },
             "open": {
+                "info": "打开插件面板",
                 "methods": [
                     "open"
                 ]
             },
             "get-version": {
+                "info": "获取编辑版本",
                 "methods": [
                     "getVersion"
                 ]
             },
             "get-packages": {
+                "info": "获取组件列表",
                 "methods": [
                     "getPackages"
                 ]
             },
-            "increase": {
-                "methods": [
-                    "default.increase"
-                ]
-            },
             "install-from-assets": {
+                "info": "安装组件",
                 "methods": [
                     "installFromAssets"
                 ]
             },
-            "get-installed-components": {
-                "methods": [
-                    "getInstalledComponents"
-                ]
-            },
             "remove-installed-component": {
+                "info": "移除组件记录",
                 "methods": [
                     "removeInstalledComponent"
                 ]
             },
             "uninstall-component": {
+                "info": "卸载组件",
                 "methods": [
                     "uninstallComponent"
                 ]
             },
-            "get-local-components": {
-                "methods": [
-                    "getLocalComponents"
-                ]
-            },
-            "install-local-component": {
-                "methods": [
-                    "installLocalComponent"
-                ]
-            },
             "checkBackupExists": {
+                "info": "检查备份是否存在",
                 "methods": [
                     "checkBackupExists"
                 ]
             },
             "restoreFromBackup": {
+                "info": "从备份恢复组件",
                 "methods": [
                     "restoreFromBackup"
                 ]
