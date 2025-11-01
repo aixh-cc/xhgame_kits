@@ -34,10 +34,10 @@ async function showVersion() {
 
         <el-tabs v-model="activeTab" class="main-tabs">
             <el-tab-pane label="uiItem组件库" name="components">
-                <CompList />
+                <CompList target="packages" />
             </el-tab-pane>
             <el-tab-pane label="弹窗组件库" name="dialogs">
-                <CompList />
+                <CompList target="dialogs" />
             </el-tab-pane>
             <el-tab-pane label="示例" name="examples">
                 <HelloWorld msg="Vite + Vue + Cocos Creator + element-plus" />

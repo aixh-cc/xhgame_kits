@@ -23,8 +23,8 @@ class CocosEditorBridge {
     async getVersion(): Promise<IGetVersionRes> {
         return this.requestMessage('xhgame_plugin', 'get-version');
     }
-    async getPackages(): Promise<IGetPackagesRes> {
-        return this.requestMessage('xhgame_plugin', 'get-packages');
+    async getPackages(target?: string): Promise<IGetPackagesRes> {
+        return this.requestMessage('xhgame_plugin', 'get-packages', { target });
     }
     async installComponent(param: { compName: string }): Promise<IInstallRes> {
         return this.requestMessage('xhgame_plugin', 'install-component', param);

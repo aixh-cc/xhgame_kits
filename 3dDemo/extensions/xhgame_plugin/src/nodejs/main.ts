@@ -22,7 +22,8 @@ app.post('/api/get-version', async (req, res) => {
 });
 // 获取组件列表
 app.post('/api/get-packages', async (req, res) => {
-    res.json(await Handles.getPackages(req.body.pluginName));
+    console.log(req.body);
+    res.json(await Handles.getPackages(req.body.pluginName, req.body.target));
 });
 // 安装组件
 app.post('/api/install-component', async (req, res) => {

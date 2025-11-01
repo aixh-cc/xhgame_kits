@@ -30,10 +30,10 @@ export class Handles {
         };
     }
 
-    static async getPackages(pluginName: string): Promise<IGetPackagesRes> {
-        console.log('getPackages', pluginName)
+    static async getPackages(pluginName: string, target: string = 'packages'): Promise<IGetPackagesRes> {
+        console.log('getPackages', pluginName, target)
         try {
-            const packagesPath = getPackagesPath(pluginName);
+            const packagesPath = getPackagesPath(pluginName, target);
             if (!fs.existsSync(packagesPath)) {
                 return {
                     success: false,

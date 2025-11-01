@@ -9,6 +9,15 @@ import { IGetPackagesRes, IInstallRes, IPackageInfo } from '../../common/defined
 import cocosEditorBridge from '../cocos-bridge';
 import CodeHighlight from '../../components/CodeHighlight.vue';
 
+// 定义组件的props
+interface Props {
+  target?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  target: 'components'
+});
+
 
 
 const appRootDom = inject(keyAppRoot);
@@ -52,7 +61,7 @@ let componentList = ref<IPackageInfo[]>([]);
 // 获取组件列表的异步函数
 const loadComponents = async () => {
   try {
-    const package_res:IGetPackagesRes = await cocosEditorBridge.getPackages();
+    const package_res:IGetPackagesRes = await cocosEditorBridge.getPackages(props.target);
     console.log('package_res',package_res)
     componentList.value = package_res.packages || [];
     console.log('获取组件列表成功', package_res.packages);
