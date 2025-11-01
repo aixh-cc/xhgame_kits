@@ -12,10 +12,12 @@ import CodeHighlight from '../../components/CodeHighlight.vue';
 // 定义组件的props
 interface Props {
   target?: string;
+  title?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  target: 'components'
+  target: 'components',
+  title: '组件库' 
 });
 
 
@@ -186,7 +188,7 @@ async function confirmUninstallComponent() {
 
 <template>
   <div class="comp-list-container">
-    <h2>uiItem组件库</h2>
+    <h2>{{ title }}</h2>
     
     <!-- 组件筛选标签 -->
     <el-tabs v-model="activeTab" class="comp-filter-tabs">
@@ -206,8 +208,8 @@ async function confirmUninstallComponent() {
         </div>
       </el-tab-pane>
       <el-tab-pane label="开发规范" name="devinfo">
-        <div class="tab-content dev-guidelines">
-          <h3>开发约束</h3>
+        <div v-if="target === 'uiItems'" class="tab-content dev-guidelines">
+          <h3>开发规范</h3>
           <div class="guideline-section">
             <h4>必须引入</h4>
             <CodeHighlight language="ts" :code="codeImportSnippet" />

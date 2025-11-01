@@ -1,0 +1,32 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "imported": true,
+  "uuid": "234d311f-767c-4496-b4a5-f1126d266eb1",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "name": "Xhgame",
+    "displayName": "Xhgame基础框架",
+    "version": "1.0.0",
+    "stars": 4,
+    "description": "Xhgame基础框架",
+    "author": "xhgame",
+    "category": "Xhgame基础框架",
+    "tags": ["基础框架"],
+    "files": [
+      "script/Test.ts",
+      "script/Test.ts.meta"
+    ],
+    "dependencies": [
+      "@aixh-cc/xhgame_ec_framework"
+    ],
+    "features": [
+      "item而已"
+    ],
+    "usage": {
+      "import": "import { HelpComp, HelpSystem } from './HelpComp'",
+      "example": "xhgame.gameEntity.attachComponent(HelpComp)"
+    }
+  }
+}

@@ -33,15 +33,32 @@ async function showVersion() {
         </div>
 
         <el-tabs v-model="activeTab" class="main-tabs">
-            <el-tab-pane label="uiItem组件库" name="components">
-                <CompList target="packages" />
+            <el-tab-pane label="框架模板库" name="coreTemplates">
+                <CompList target="coreTemplates" title="框架模板库" />
             </el-tab-pane>
-            <el-tab-pane label="弹窗组件库" name="dialogs">
-                <CompList target="dialogs" />
+            <el-tab-pane label="item模板库" name="itemTemplates">
+                <CompList target="itemTemplates" title="item模板库" />
             </el-tab-pane>
-            <el-tab-pane label="示例" name="examples">
-                <HelloWorld msg="Vite + Vue + Cocos Creator + element-plus" />
-                <p>Try to click the menu: [ panel/{{ name }}/send to panel ] {{ state.a }}</p>
+            <el-tab-pane label="gui库" name="guis">
+                <CompList target="guis" title="gui库" />
+            </el-tab-pane>
+            <el-tab-pane label="弹窗系统库" name="dialogs">
+                <CompList target="dialogs" title="弹窗系统库" />
+            </el-tab-pane>
+            <el-tab-pane label="游戏玩法库" name="gamebox">
+                <CompList target="gamebox" title="游戏玩法库" />
+            </el-tab-pane>
+            <el-tab-pane label="uiItem视图库" name="uiItems">
+                <CompList target="uiItems" title="uiItem视图库" />
+            </el-tab-pane>
+            <el-tab-pane label="单位Item视图库" name="unitItems">
+                <CompList target="unitItems" title="单位Item视图库" />
+            </el-tab-pane>
+            <el-tab-pane label="特效Item视图库" name="effectItems">
+                <CompList target="effectItems" title="特效Item视图库" />
+            </el-tab-pane>
+            <el-tab-pane label="地板Item视图库" name="TiledItems">
+                <CompList target="TiledItems" title="地板Item视图库" />
             </el-tab-pane>
         </el-tabs>
     </div>
