@@ -33,7 +33,7 @@ async function showVersion() {
         </div>
 
         <el-tabs v-model="activeTab" class="main-tabs">
-            <el-tab-pane label="ui组件库" name="components">
+            <el-tab-pane label="uiItem组件库" name="components">
                 <CompList />
             </el-tab-pane>
             

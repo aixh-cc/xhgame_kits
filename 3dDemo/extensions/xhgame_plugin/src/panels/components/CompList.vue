@@ -172,8 +172,29 @@ async function confirmUninstallComponent() {
 
 <template>
   <div class="comp-list-container">
-    <h2>组件库</h2>
-    <p class="description">从下方列表中选择并安装组件到您的项目中</p>
+    <h2>uiItem组件库</h2>
+    <p class="description">
+        开发约束
+    </p>
+        必须引入
+        <pre>
+        import { CocosBaseItemView } from "db://assets/script/views/CocosBaseItemView";
+        </pre>
+        当前item的vm必须在本文件里
+        <pre>
+        export interface IXXXUiItemViewVM {
+            num: number
+        }
+
+        @ccclass('XXXUiItemView')
+        @executeInEditMode(true)
+        export class XXXUiItemView extends CocosBaseItemView implements IXXXUiItemViewVM {
+            ....
+        }
+        </pre>
+
+
+    
     
     <!-- 组件筛选标签 -->
     <el-tabs v-model="activeTab" class="comp-filter-tabs">
@@ -342,8 +363,9 @@ async function confirmUninstallComponent() {
 }
 
 .description {
-  color: #666;
   margin-bottom: 20px;
+  text-align: left;
+  color: #ffffff;
 }
 
 .component-card {
