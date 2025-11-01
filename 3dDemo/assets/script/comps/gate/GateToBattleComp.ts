@@ -7,6 +7,7 @@ import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { GateSenceComp } from "./GateSenceComp"
 import { BattleModelComp } from "../models/BattleModelComp"
 import { LoadingViewComp } from "./LoadingViewComp"
+import { BattleSenceComp } from "../battle/BattleSenceComp"
 
 export class GateToBattleSystem extends System {
 

@@ -3,9 +3,9 @@ import { System } from "@aixh-cc/xhgame_ec_framework";
 import { xhgame } from "../../xhgame";
 ;
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework";
-// import { ILoadingViewVM } from "../../cocos/view/ui/common/LoadingView";
+// import { ILoadingvm } from "../../cocos/view/ui/common/LoadingView";
 
-export interface ILoadingViewVM {
+export interface ILoadingvm {
     /** tips */
     text: string
     /** 进度,1为100 */
@@ -24,31 +24,32 @@ export class LoadingViewCompSystem extends System {
         // // 
         comp.total = 5 // 目前这里手动
         comp.finished = 0
-        comp.viewVM.text = '加载环境资源'
+        comp.vm.text = '加载环境资源'
         await xhgame.factory.actions.getTiledItemFactory().preloadItemsResource()
         comp.finished += 1
         comp.notify();
-        comp.viewVM.text = '加载单位资源'
+        comp.vm.text = '加载单位资源'
         await xhgame.factory.actions.getUnitItemFactory().preloadItemsResource()
         await xhgame.factory.actions.getUnitUiItemFactory().preloadItemsResource()
         comp.finished += 1
         comp.notify();
-        comp.viewVM.text = '加载特效资源'
+        comp.vm.text = '加载特效资源'
         await xhgame.factory.actions.getEffectItemFactory().getItemProduceDrive().preloadItemsResource()
         comp.finished += 1
         comp.notify();
-        comp.viewVM.text = '加载ui资源'
+        comp.vm.text = '加载ui资源'
         await xhgame.factory.actions.getUiItemFactory().preloadItemsResource()
         await xhgame.factory.actions.getTextUiItemFactory().preloadItemsResource()
         comp.finished += 1
         comp.notify();
-        comp.viewVM.text = '开始初始化游戏'
+        comp.vm.text = '开始初始化游戏'
         if (comp.otherPromise) {
             await comp.otherPromise()
         }
-        comp.viewVM.text = '初始化完成'
+        comp.vm.text = '初始化完成'
         comp.finished += 1
         comp.notify();
+
     }
 }
 
@@ -58,7 +59,7 @@ export class LoadingViewComp extends BaseModelComp {
     //
     otherPromise: () => Promise<void> = null
     time_uuid: string = ''
-    viewVM: ILoadingViewVM = {
+    vm: ILoadingvm = {
         text: '正在加载中',
         progress: 0
     }
@@ -70,7 +71,7 @@ export class LoadingViewComp extends BaseModelComp {
     }
     set finished(val) {
         this._finished = val
-        this.viewVM.progress = Math.ceil(this.finished * 1000 / this.total) / 1000
+        this.vm.progress = Math.ceil(this.finished * 1000 / this.total) / 1000
     }
     reset() {
         this.otherPromise = null
@@ -78,7 +79,7 @@ export class LoadingViewComp extends BaseModelComp {
             xhgame.timer.unschedule(this.time_uuid) // 移除
         }
         this.time_uuid = ''
-        this.viewVM = {
+        this.vm = {
             text: '正在加载中',
             progress: 0.00,
         }

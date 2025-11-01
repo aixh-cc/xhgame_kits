@@ -42,8 +42,8 @@ export class LoadingView extends CocosBaseView implements ILoadingViewVM {
 
     protected onLoad(): void {
         this.setBindAttrMap({
-            "text": 'LoadingViewComp::viewVM.text',
-            "progress": 'LoadingViewComp::viewVM.progress',
+            "text": 'LoadingViewComp::vm.text',
+            "progress": 'LoadingViewComp::vm.progress',
         })
     }
     reset(): void {
