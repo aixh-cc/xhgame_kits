@@ -36,7 +36,9 @@ async function showVersion() {
             <el-tab-pane label="uiItem组件库" name="components">
                 <CompList />
             </el-tab-pane>
-            
+            <el-tab-pane label="弹窗组件库" name="dialogs">
+                <CompList />
+            </el-tab-pane>
             <el-tab-pane label="示例" name="examples">
                 <HelloWorld msg="Vite + Vue + Cocos Creator + element-plus" />
                 <p>Try to click the menu: [ panel/{{ name }}/send to panel ] {{ state.a }}</p>
