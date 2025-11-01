@@ -20,7 +20,7 @@ export class GateToBattleSystem extends System {
                 // await xhgame.gameEntity.attachComponent(BattleSenceComp).setup({ battleId: comp.battleId }).done()
             }
         }).done()
-        // xhgame.gameEntity.detachComponent(LoadingViewComp)
+        xhgame.gameEntity.detachComponent(LoadingViewComp)
         xhgame.gameEntity.detachComponent(GateSenceComp)
     }
 

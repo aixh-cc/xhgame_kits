@@ -11,7 +11,7 @@ export class GateSenceComp extends BaseModelComp {
     actions = {
     }
     onDetach() {
-
+        xhgame.gameEntity.detachComponent(GateViewComp)
     }
 }
 

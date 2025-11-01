@@ -377,7 +377,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 119.60546875,
+      "width": 164,
       "height": 54.4
     },
     "_anchorPoint": {
@@ -413,7 +413,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "sssdd",
+    "_string": "准备加载",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 40,
@@ -603,7 +603,7 @@
       "y": 0
     },
     "_fillStart": 0,
-    "_fillRange": 0.5,
+    "_fillRange": 0.01,
     "_isTrimmedMode": true,
     "_useGrayscale": false,
     "_atlas": null,
@@ -693,7 +693,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 84.05859375,
+      "width": 61.8125,
       "height": 54.4
     },
     "_anchorPoint": {
@@ -729,7 +729,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "50%",
+    "_string": "1%",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 40,
@@ -896,7 +896,7 @@
     },
     "_mode": 2,
     "_totalLength": 1,
-    "_progress": 0.5,
+    "_progress": 0.01,
     "_reverse": false,
     "_id": ""
   },
@@ -1029,8 +1029,8 @@
     "__prefab": {
       "__id__": 47
     },
-    "_text": "sssdd",
-    "_progress": 0.5,
+    "_text": "准备加载",
+    "_progress": 0.01,
     "_id": ""
   },
   {
