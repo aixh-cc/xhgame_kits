@@ -7,6 +7,7 @@ import { keyAppRoot, keyMessage } from '../provide-inject';
 import { apiService } from '../api-service';
 import { IGetPackagesRes, IInstallRes, IPackageInfo } from '../../common/defined';
 import cocosEditorBridge from '../cocos-bridge';
+import CodeHighlight from '../../components/CodeHighlight.vue';
 
 
 
@@ -65,6 +66,10 @@ const loadComponents = async () => {
 onMounted(() => {
   loadComponents();
 });
+
+// 高亮代码片段（避免在模板内直接写多行字符串导致解析错误）
+const codeImportSnippet = `import { CocosBaseItemView } from "db://assets/script/views/CocosBaseItemView";`;
+const codeClassSnippet = `export interface IXXXUiItemViewVM {\n  num: number\n}\n\n@ccclass('XXXUiItemView')\n@executeInEditMode(true)\nexport class XXXUiItemView extends CocosBaseItemView implements IXXXUiItemViewVM {\n  // ... 你的组件逻辑\n}`;
 
 // 从插件assets安装组件
 async function installComponent(component: any) {
@@ -173,28 +178,6 @@ async function confirmUninstallComponent() {
 <template>
   <div class="comp-list-container">
     <h2>uiItem组件库</h2>
-    <p class="description">
-        开发约束
-    </p>
-        必须引入
-        <pre>
-        import { CocosBaseItemView } from "db://assets/script/views/CocosBaseItemView";
-        </pre>
-        当前item的vm必须在本文件里
-        <pre>
-        export interface IXXXUiItemViewVM {
-            num: number
-        }
-
-        @ccclass('XXXUiItemView')
-        @executeInEditMode(true)
-        export class XXXUiItemView extends CocosBaseItemView implements IXXXUiItemViewVM {
-            ....
-        }
-        </pre>
-
-
-    
     
     <!-- 组件筛选标签 -->
     <el-tabs v-model="activeTab" class="comp-filter-tabs">
@@ -213,10 +196,23 @@ async function confirmUninstallComponent() {
           <div class="tab-stats">有 {{ updatableComponents.length }} 个组件可更新</div>
         </div>
       </el-tab-pane>
+      <el-tab-pane label="开发规范" name="devinfo">
+        <div class="tab-content dev-guidelines">
+          <h3>开发约束</h3>
+          <div class="guideline-section">
+            <h4>必须引入</h4>
+            <CodeHighlight language="ts" :code="codeImportSnippet" />
+          </div>
+          <div class="guideline-section">
+            <h4>当前item的vm必须在本文件里</h4>
+            <CodeHighlight language="ts" :code="codeClassSnippet" />
+          </div>
+        </div>
+      </el-tab-pane>
     </el-tabs>
     
-    <!-- 组件列表 -->
-    <div class="components-grid">
+    <!-- 组件列表 - 只在非开发规范标签页显示 -->
+    <div v-if="activeTab !== 'devinfo'" class="components-grid">
       <el-card v-for="component in filteredComponents" :key="component.id" class="component-card" :class="{ 'installed': component.installStatus === 'has' }">
       <template #header>
         <div class="card-header">
@@ -642,5 +638,36 @@ async function confirmUninstallComponent() {
 }
 .compent-content{
   text-align: left;
+}
+
+/* 开发规范标签页样式 */
+.dev-guidelines {
+  padding: 20px;
+  max-width: 800px;
+}
+
+.dev-guidelines h3 {
+  color: #409EFF;
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.guideline-section {
+  margin-bottom: 24px;
+}
+
+.guideline-section h4 {
+  color: #333;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 确保代码高亮组件在标签页中正确显示 */
+.dev-guidelines .hljs-wrap {
+  margin-bottom: 16px;
+  font-size: 13px;
+  line-height: 1.5;
 }
 </style>
