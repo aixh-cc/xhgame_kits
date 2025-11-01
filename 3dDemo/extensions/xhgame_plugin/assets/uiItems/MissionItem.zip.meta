@@ -15,14 +15,14 @@
     "category": "UI组件",
     "tags": ["UI组件","关卡"],
     "files": [
-      "script/views/item_bodys/MissionItemView.ts",
-      "script/views/item_bodys/MissionItemView.ts.meta",
-      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab",
-      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item.prefab.meta",
-      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist",
-      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.plist.meta",
-      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png",
-      "bundle_factory/prefabs/item_bodys/uiItems/mission_item/mission_item_plist.png.meta"
+      "script/views/item_views/MissionItemView.ts",
+      "script/views/item_views/MissionItemView.ts.meta",
+      "bundle_factory/prefabs/item_views/uiItems/mission_item/mission_item.prefab",
+      "bundle_factory/prefabs/item_views/uiItems/mission_item/mission_item.prefab.meta",
+      "bundle_factory/prefabs/item_views/uiItems/mission_item/mission_item_plist.plist",
+      "bundle_factory/prefabs/item_views/uiItems/mission_item/mission_item_plist.plist.meta",
+      "bundle_factory/prefabs/item_views/uiItems/mission_item/mission_item_plist.png",
+      "bundle_factory/prefabs/item_views/uiItems/mission_item/mission_item_plist.png.meta"
     ],
     "dependencies": [
       "@aixh-cc/xhgame_ec_framework"

@@ -2,7 +2,7 @@
   "ver": "1.2.0",
   "importer": "directory",
   "imported": true,
-  "uuid": "234d311f-767c-4496-b4a5-f1126d266eb1",
+  "uuid": "2ec18cff-bb74-4de8-a786-a6fa7982e2e8",
   "files": [],
   "subMetas": {},
   "userData": {
@@ -13,7 +13,9 @@
     "description": "测试组件",
     "author": "xhgame",
     "category": "测试组件",
-    "tags": ["测试组件"],
+    "tags": [
+      "测试组件"
+    ],
     "files": [
       "script/Test.ts",
       "script/Test.ts.meta"

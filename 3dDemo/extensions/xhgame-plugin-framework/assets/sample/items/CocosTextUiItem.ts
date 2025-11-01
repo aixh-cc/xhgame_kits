@@ -71,7 +71,7 @@ export class CocosTextUiItemFactoryDrive extends Component implements IItemProdu
                     }
                     this._prefab = prefab
                     console.log('this._prefab', this._prefab)
-                    bundle.loadDir<Prefab>('prefabs/item_bodys/textUiItems', (errp, prefabs: Prefab[]) => {
+                    bundle.loadDir<Prefab>('prefabs/item_views/textUiItems', (errp, prefabs: Prefab[]) => {
                         if (errp) {
                             console.error(errp)
                             reject(false)

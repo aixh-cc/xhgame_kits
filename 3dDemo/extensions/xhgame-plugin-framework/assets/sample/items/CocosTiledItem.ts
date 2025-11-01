@@ -40,8 +40,8 @@ export class CocosTiledItemFactoryDrive extends Component implements IItemProduc
     async preloadItemsResource(): Promise<boolean> {
         console.log('CocosTiledItemFactoryDrive preloadItemsResource 33')
         return new Promise((resolve, reject) => {
-            xhgame.asset.loadBundle('bundle_game', (err, bundle) => {
-                bundle.load<Prefab>('prefabs/cocosItems/cocosTiledItem', (errp, prefab: Prefab) => {
+            xhgame.asset.loadBundle('bundle_factory', (err, bundle) => {
+                bundle.load<Prefab>('prefabs/item_templates/cocosTiledItem', (errp, prefab: Prefab) => {
                     if (errp) {
                         console.error(errp)
                         reject(false)
@@ -49,7 +49,7 @@ export class CocosTiledItemFactoryDrive extends Component implements IItemProduc
                     }
                     this._prefab = prefab
                     // console.log('this.prefab', this._prefab)
-                    bundle.loadDir<Prefab>('prefabs/modelViews/tiledItems', (errp, prefabs: Prefab[]) => {
+                    bundle.loadDir<Prefab>('prefabs/item_views/tiledItems', (errp, prefabs: Prefab[]) => {
                         if (errp) {
                             console.error(errp)
                             reject(false)

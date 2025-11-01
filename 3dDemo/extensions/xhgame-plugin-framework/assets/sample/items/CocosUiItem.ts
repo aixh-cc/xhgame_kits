@@ -144,7 +144,7 @@ export class CocosUiItemFactoryDrive extends Component implements IItemProduceDr
                     }
                     this._prefab = prefab
                     // console.log('this.prefab', this._prefab)
-                    bundle.loadDir<Prefab>('prefabs/item_bodys/uiItems', (errp, prefabs: Prefab[]) => {
+                    bundle.loadDir<Prefab>('prefabs/item_views/uiItems', (errp, prefabs: Prefab[]) => {
                         if (errp) {
                             console.error(errp)
                             reject(false)
