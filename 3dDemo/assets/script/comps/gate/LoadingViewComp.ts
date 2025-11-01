@@ -49,9 +49,6 @@ export class LoadingViewCompSystem extends System {
         comp.viewVM.text = '初始化完成'
         comp.finished += 1
         comp.notify();
-        // setTimeout(() => {
-        //     callback && callback()
-        // }, 100)
     }
 }
 
