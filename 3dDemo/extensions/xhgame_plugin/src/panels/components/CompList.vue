@@ -666,8 +666,25 @@ async function confirmUninstallComponent() {
 
 /* 确保代码高亮组件在标签页中正确显示 */
 .dev-guidelines .hljs-wrap {
-  margin-bottom: 16px;
-  font-size: 13px;
-  line-height: 1.5;
+  margin-bottom: 16px !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  text-align: left !important;
+  direction: ltr !important;
+}
+
+/* 强制覆盖 Element Plus 标签页的样式 */
+.el-tab-pane .dev-guidelines {
+  text-align: left !important;
+}
+
+.el-tab-pane .dev-guidelines * {
+  text-align: inherit !important;
+}
+
+.el-tab-pane .dev-guidelines .hljs-wrap,
+.el-tab-pane .dev-guidelines .hljs-wrap * {
+  text-align: left !important;
+  direction: ltr !important;
 }
 </style>
