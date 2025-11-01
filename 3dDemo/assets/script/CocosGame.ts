@@ -61,6 +61,7 @@ export class CocosGame extends Component implements IGame {
     async play() {
         xhgame.timer.timePlay()
         await xhgame.gameEntity.attachComponent(GameEnterComp).done()
+        xhgame.gameEntity.detachComponent(LoadResourceToGateComp)
     }
 
     // is_pause: boolean = false

@@ -1,5 +1,5 @@
 
-import { IBundle, IView, System } from "@aixh-cc/xhgame_ec_framework"
+import { IBundle, System } from "@aixh-cc/xhgame_ec_framework"
 import { xhgame } from "../../xhgame"
 import { BaseModelComp } from "@aixh-cc/xhgame_ec_framework"
 import { TableType } from "../../managers/MyTableManager"
@@ -23,6 +23,7 @@ export class LoadResourceToGateSystem extends System {
                 await this.load_gui(comp, bundle)
                 await this.load_json(comp, bundle)
                 comp.vm.isFinished = true;
+                comp.notify()
                 resolve(true)
             })
         })
@@ -66,20 +67,22 @@ export class LoadResourceToGateSystem extends System {
 export class LoadResourceToGateComp extends BaseModelComp {
     compName: string = 'LoadResourceToGateComp'
     initBySystems: (typeof System)[] = [LoadResourceToGateSystem]
-    loadFinishedCallback: Function = null
     vm: ILoadResourceToGateViewVM = {
         progress: 0,
         isFinished: false,
     }
     reset() {
-        this.loadFinishedCallback = null
+        this.vm = {
+            progress: 0,
+            isFinished: false,
+        }
     }
-
     actions = {
 
     }
 
     onDetach() {
-
+        let firstUIView = xhgame.gui.getFirstUIView() as any
+        firstUIView.node.parent = null
     }
 }
